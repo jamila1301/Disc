@@ -21,7 +21,7 @@ class OnboardingViewController: UIViewController {
         let v = UILabel()
         v.text = "Discover Latest Music and Podcast"
         v.numberOfLines = .zero
-        v.font = UIFont.plusJakartaSans36
+        v.font = UIFont.plusJakartaSansSemiBold36
         v.textAlignment = .center
         return v
     }()
@@ -30,7 +30,7 @@ class OnboardingViewController: UIViewController {
         let v = UILabel()
         v.text = "Listen to the latest music and podcast releases\nusing Disc. app"
         v.numberOfLines = .zero
-        v.font = UIFont.plusJakartaSans14
+        v.font = UIFont.plusJakartaSansRegular14
         v.textAlignment = .center
         v.textColor = .lightGrayPrimary
         return v
@@ -39,7 +39,7 @@ class OnboardingViewController: UIViewController {
     private lazy var startButton: UIButton = {
         let v = UIButton(type: .system)
         v.setTitle("Start Exploring", for: .normal)
-        v.titleLabel?.font = UIFont.plusJakartaSans16
+        v.titleLabel?.font = UIFont.plusJakartaSansSemiBold16
         v.setTitleColor(.white, for: .normal)
         v.backgroundColor = .defaultBlue
         v.layer.cornerRadius = 8
@@ -66,6 +66,12 @@ class OnboardingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     private func setupUI() {
@@ -102,6 +108,9 @@ class OnboardingViewController: UIViewController {
     }
     
     @objc
-    private func didTapStartButton() {}
+    private func didTapStartButton() {
+        let vc = LoginViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
 }
 

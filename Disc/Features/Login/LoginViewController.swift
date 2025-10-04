@@ -1,0 +1,345 @@
+//
+//  LoginViewController.swift
+//  Disc
+//
+//  Created by Jamila Mahammadli on 03.10.25.
+//
+
+import UIKit
+import SnapKit
+
+final class LoginViewController: UIViewController {
+    
+    private let topLabel: UILabel = {
+        let v = UILabel()
+        v.text = "Sign In"
+        v.font = UIFont.plusJakartaSansSemibold24
+        return v
+    }()
+    
+    private let topTitleLabel: UILabel = {
+        let v = UILabel()
+        v.text = "Please sign in to your account"
+        v.font = UIFont.plusJakartaSansRegular16
+        v.textColor = .lightGrayPrimary
+        v.numberOfLines = .zero
+        return v
+    }()
+    
+    private let emailLabel: UILabel = {
+        let v = UILabel()
+        v.text = "Email"
+        v.font = UIFont.plusJakartaSansMedium16
+        v.textColor = .lightBlueSecondinary
+        return v
+    }()
+    
+    private let emailTextField: CustomTextField = {
+        let v = CustomTextField()
+        v.placeholder = "Enter Your Email"
+        v.isSecureTextEntry = false
+        v.showPasswordToggleButton(show: false)
+        return v
+    }()
+    
+    private let passwordLabel: UILabel = {
+        let v = UILabel()
+        v.text = "Password"
+        v.font = UIFont.plusJakartaSansMedium16
+        v.textColor = .lightBlueSecondinary
+        return v
+    }()
+    
+    private let passwordTextField: CustomTextField = {
+        let v = CustomTextField()
+        v.placeholder = "Password"
+        v.isSecureTextEntry = true
+        v.showPasswordToggleButton(show: true)
+        return v
+    }()
+    
+    private lazy var forgotPasswordButton: UIButton = {
+        let v = UIButton(type: .system)
+        v.setTitle("Forgot Password?", for: .normal)
+        v.titleLabel?.font = UIFont.plusJakartaSansMedium14
+        v.setTitleColor(.defaultBlue, for: .normal)
+        v.contentHorizontalAlignment = .trailing
+        v.addTarget(self, action: #selector(didTapForgotPasswordButton), for: .touchUpInside)
+        return v
+    }()
+    
+    private lazy var signInButton: UIButton = {
+        let v = UIButton(type: .system)
+        v.setTitle("Sign In", for: .normal)
+        v.titleLabel?.font = UIFont.plusJakartaSansSemiBold16
+        v.setTitleColor(.white, for: .normal)
+        v.backgroundColor = .defaultBlue
+        v.layer.cornerRadius = 8
+        v.addTarget(self, action: #selector(didTapSignInButton), for: .touchUpInside)
+        return v
+    }()
+    
+    private let orContinueLabel: UILabel = {
+        let v = UILabel()
+        v.text = "Or sign in using your social profile"
+        v.font = UIFont.plusJakartaSansRegular14
+        v.textColor = .lightGrayPrimary
+        v.textAlignment = .center
+        return v
+    }()
+    
+    private let googleImageView: UIImageView = {
+        let v = UIImageView()
+        v.image = .google
+        return v
+    }()
+    
+    private let facebookImageView: UIImageView = {
+        let v = UIImageView()
+        v.image = .facebook
+        return v
+    }()
+    
+    private let appleImageView: UIImageView = {
+        let v = UIImageView()
+        v.image = .apple
+        return v
+    }()
+    
+    private lazy var googleView: UIView = {
+        let v = UIView()
+        v.backgroundColor = .buttonView
+        v.layer.cornerRadius = 20
+        
+        v.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action:#selector(didTapGoogle))
+        v.addGestureRecognizer(tapGesture)
+        
+        return v
+    }()
+    
+    private lazy var facebookView: UIView = {
+        let v = UIView()
+        v.backgroundColor = .buttonView
+        v.layer.cornerRadius = 20
+        
+        v.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action:#selector(didTapFacebook))
+        v.addGestureRecognizer(tapGesture)
+        
+        return v
+    }()
+    
+    private lazy var appleView: UIView = {
+        let v = UIView()
+        v.backgroundColor = .buttonView
+        v.layer.cornerRadius = 20
+        
+        v.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action:#selector(didTapApple))
+        v.addGestureRecognizer(tapGesture)
+        
+        return v
+    }()
+    
+    private let signUpLabel: UILabel = {
+        let v = UILabel()
+        v.text = "Don’t have account?"
+        v.font = UIFont.plusJakartaSansRegular14
+        v.textColor = .lightGrayPrimary
+        return v
+    }()
+    
+    private lazy var signUpButton: UIButton = {
+        let v = UIButton(type: .system)
+        v.setTitle("Create Account", for: .normal)
+        v.titleLabel?.font = UIFont.plusJakartaSansMedium14
+        v.setTitleColor(.defaultBlue, for: .normal)
+        v.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
+        return v
+    }()
+    
+    private let topStackView: UIStackView = {
+        let v = UIStackView()
+        v.axis = .vertical
+        v.spacing = 6
+        return v
+    }()
+    
+    private let emailStackView: UIStackView = {
+        let v = UIStackView()
+        v.axis = .vertical
+        v.spacing = 12
+        return v
+    }()
+    
+    private let paswordStackView: UIStackView = {
+        let v = UIStackView()
+        v.axis = .vertical
+        v.spacing = 12
+        return v
+    }()
+    
+    private let textFieldsStackView: UIStackView = {
+        let v = UIStackView()
+        v.axis = .vertical
+        v.spacing = 20
+        return v
+    }()
+    
+    private let middleStackView: UIStackView = {
+        let v = UIStackView()
+        v.axis = .vertical
+        v.spacing = 16
+        return v
+    }()
+    
+    private let signUpStackView: UIStackView = {
+        let v = UIStackView()
+        v.axis = .horizontal
+        v.spacing = 2
+        return v
+    }()
+    
+    private let socialStackView: UIStackView = {
+        let v = UIStackView()
+        v.axis = .horizontal
+        v.spacing = 17
+        v.alignment = .center
+        return v
+    }()
+    
+    private let downStackView: UIStackView = {
+        let v = UIStackView()
+        v.axis = .vertical
+        v.spacing = 16
+        v.alignment = .center
+        return v
+    }()
+    
+    private let bottomStackView: UIStackView = {
+        let v = UIStackView()
+        v.axis = .vertical
+        v.spacing = 24
+        return v
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = .white
+        
+        [topStackView, middleStackView, bottomStackView].forEach { v in
+            view.addSubview(v)
+        }
+        
+        [topLabel, topTitleLabel].forEach { v in
+            topStackView.addArrangedSubview(v)
+        }
+        
+        [emailLabel, emailTextField].forEach { v in
+            emailStackView.addArrangedSubview(v)
+        }
+        
+        [passwordLabel, passwordTextField].forEach { v in
+            paswordStackView.addArrangedSubview(v)
+        }
+        
+        [emailStackView, paswordStackView].forEach { v in
+            textFieldsStackView.addArrangedSubview(v)
+        }
+        
+        [textFieldsStackView, forgotPasswordButton].forEach { v in
+            middleStackView.addArrangedSubview(v)
+        }
+        
+        [signUpLabel, signUpButton].forEach { v in
+            signUpStackView.addArrangedSubview(v)
+        }
+        
+        googleView.addSubview(googleImageView)
+        facebookView.addSubview(facebookImageView)
+        appleView.addSubview(appleImageView)
+        
+        [googleView, facebookView, appleView].forEach { v in
+            socialStackView.addArrangedSubview(v)
+        }
+        
+        [orContinueLabel, socialStackView, signUpStackView].forEach { v in
+            downStackView.addArrangedSubview(v)
+        }
+        
+        [signInButton, downStackView].forEach { v in
+            bottomStackView.addArrangedSubview(v)
+        }
+        
+        googleImageView.snp.makeConstraints { make in
+            make.size.equalTo(30)
+        }
+        
+        facebookImageView.snp.makeConstraints { make in
+            make.size.equalTo(26)
+        }
+        
+        appleImageView.snp.makeConstraints { make in
+            make.size.equalTo(32)
+        }
+        
+        googleImageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(5)
+        }
+        
+        facebookImageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(7)
+        }
+        
+        appleImageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(4)
+        }
+        
+        signInButton.snp.makeConstraints { make in
+            make.height.equalTo(52)
+        }
+        
+        topStackView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(24)
+            make.horizontalEdges.equalToSuperview().inset(24)
+        }
+        
+        middleStackView.snp.makeConstraints { make in
+            make.top.equalTo(topStackView.snp.bottom).offset(36)
+            make.horizontalEdges.equalToSuperview().inset(24)
+        }
+        
+        bottomStackView.snp.makeConstraints { make in
+            make.top.greaterThanOrEqualTo(middleStackView.snp.bottom).offset(16)
+            make.horizontalEdges.equalToSuperview().inset(24)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(24)
+        }
+    }
+    
+    @objc
+    private func didTapSignInButton() {}
+    
+    @objc
+    private func didTapForgotPasswordButton() {}
+    
+    @objc
+    private func didTapSignUpButton() {}
+    
+    @objc
+    private func didTapGoogle() {
+    }
+    
+    @objc
+    private func didTapFacebook() {
+    }
+    
+    @objc
+    private func didTapApple() {
+    }
+}
