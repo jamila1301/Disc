@@ -87,7 +87,7 @@ final class CustomTextField: UIView {
         }
         
         self.snp.makeConstraints { make in
-            make.height.equalTo(52)
+            make.height.equalTo(50)
         }
     }
     

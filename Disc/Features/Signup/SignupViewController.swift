@@ -1,14 +1,14 @@
 //
-//  LoginViewController.swift
+//  SignupViewController.swift
 //  Disc
 //
-//  Created by Jamila Mahammadli on 03.10.25.
+//  Created by Jamila Mahammadli on 04.10.25.
 //
 
 import UIKit
 import SnapKit
 
-final class LoginViewController: UIViewController, Keyboardable {
+final class SignupViewController: UIViewController, Keyboardable {
     
     var targetConstraint: Constraint? = nil
     
@@ -24,17 +24,33 @@ final class LoginViewController: UIViewController, Keyboardable {
     
     private let topLabel: UILabel = {
         let v = UILabel()
-        v.text = "Sign In"
+        v.text = "Create Account"
         v.font = UIFont.plusJakartaSansSemibold24
         return v
     }()
     
     private let topTitleLabel: UILabel = {
         let v = UILabel()
-        v.text = "Please sign in to your account"
+        v.text = "Please fill in to complete your account"
         v.font = UIFont.plusJakartaSansRegular16
         v.textColor = .lightGrayPrimary
         v.numberOfLines = .zero
+        return v
+    }()
+    
+    private let nameLabel: UILabel = {
+        let v = UILabel()
+        v.text = "Name"
+        v.font = UIFont.plusJakartaSansMedium16
+        v.textColor = .lightBlueSecondinary
+        return v
+    }()
+    
+    private let nameTextField: CustomTextField = {
+        let v = CustomTextField()
+        v.placeholder = "Enter Your Name"
+        v.isSecureTextEntry = false
+        v.showPasswordToggleButton(show: false)
         return v
     }()
     
@@ -64,40 +80,26 @@ final class LoginViewController: UIViewController, Keyboardable {
     
     private let passwordTextField: CustomTextField = {
         let v = CustomTextField()
-        v.placeholder = "Password"
+        v.placeholder = "Create Password"
         v.isSecureTextEntry = true
         v.showPasswordToggleButton(show: true)
         return v
     }()
     
-    private lazy var forgotPasswordLabel: UILabel = {
-        let v = UILabel()
-        v.text = "Forgot Password?"
-        v.font = UIFont.plusJakartaSansMedium14
-        v.textColor = .defaultBlue
-        v.textAlignment = .right
-        
-        v.isUserInteractionEnabled = true
-        let tapGesture = UITapGestureRecognizer(target: self, action:#selector(didTapForgotPassword))
-        v.addGestureRecognizer(tapGesture)
-        
-        return v
-    }()
-    
-    private lazy var signInButton: UIButton = {
+    private lazy var signUpButton: UIButton = {
         let v = UIButton(type: .system)
-        v.setTitle("Sign In", for: .normal)
+        v.setTitle("Sign Up", for: .normal)
         v.titleLabel?.font = UIFont.plusJakartaSansSemiBold16
         v.setTitleColor(.white, for: .normal)
         v.backgroundColor = .defaultBlue
         v.layer.cornerRadius = 8
-        v.addTarget(self, action: #selector(didTapSignInButton), for: .touchUpInside)
+        v.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
         return v
     }()
     
     private let orContinueLabel: UILabel = {
         let v = UILabel()
-        v.text = "Or sign in using your social profile"
+        v.text = "Or create account using your social profile"
         v.font = UIFont.plusJakartaSansRegular14
         v.textColor = .lightGrayPrimary
         v.textAlignment = .center
@@ -158,20 +160,20 @@ final class LoginViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    private let signUpLabel: UILabel = {
+    private let signInLabel: UILabel = {
         let v = UILabel()
-        v.text = "Don’t have account?"
+        v.text = "Already have an account?"
         v.font = UIFont.plusJakartaSansRegular14
         v.textColor = .lightGrayPrimary
         return v
     }()
     
-    private lazy var signUpButton: UIButton = {
+    private lazy var signInButton: UIButton = {
         let v = UIButton(type: .system)
-        v.setTitle("Create Account", for: .normal)
+        v.setTitle("Sign In", for: .normal)
         v.titleLabel?.font = UIFont.plusJakartaSansMedium14
         v.setTitleColor(.defaultBlue, for: .normal)
-        v.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
+        v.addTarget(self, action: #selector(didTapSignInButton), for: .touchUpInside)
         return v
     }()
     
@@ -179,6 +181,13 @@ final class LoginViewController: UIViewController, Keyboardable {
         let v = UIStackView()
         v.axis = .vertical
         v.spacing = 6
+        return v
+    }()
+    
+    private let nameStackView: UIStackView = {
+        let v = UIStackView()
+        v.axis = .vertical
+        v.spacing = 12
         return v
     }()
     
@@ -196,21 +205,14 @@ final class LoginViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    private let textFieldsStackView: UIStackView = {
+    private let middleStackView: UIStackView = {
         let v = UIStackView()
         v.axis = .vertical
         v.spacing = 32
         return v
     }()
     
-    private let middleStackView: UIStackView = {
-        let v = UIStackView()
-        v.axis = .vertical
-        v.spacing = 20
-        return v
-    }()
-    
-    private let signUpStackView: UIStackView = {
+    private let signInStackView: UIStackView = {
         let v = UIStackView()
         v.axis = .horizontal
         v.spacing = 2
@@ -272,6 +274,10 @@ final class LoginViewController: UIViewController, Keyboardable {
             topStackView.addArrangedSubview(v)
         }
         
+        [nameLabel, nameTextField].forEach { v in
+            nameStackView.addArrangedSubview(v)
+        }
+        
         [emailLabel, emailTextField].forEach { v in
             emailStackView.addArrangedSubview(v)
         }
@@ -280,16 +286,12 @@ final class LoginViewController: UIViewController, Keyboardable {
             passwordStackView.addArrangedSubview(v)
         }
         
-        [emailStackView, passwordStackView].forEach { v in
-            textFieldsStackView.addArrangedSubview(v)
-        }
-        
-        [textFieldsStackView, forgotPasswordLabel].forEach { v in
+        [nameStackView, emailStackView, passwordStackView].forEach { v in
             middleStackView.addArrangedSubview(v)
         }
         
-        [signUpLabel, signUpButton].forEach { v in
-            signUpStackView.addArrangedSubview(v)
+        [signInLabel, signInButton].forEach { v in
+            signInStackView.addArrangedSubview(v)
         }
         
         googleView.addSubview(googleImageView)
@@ -300,11 +302,11 @@ final class LoginViewController: UIViewController, Keyboardable {
             socialStackView.addArrangedSubview(v)
         }
         
-        [orContinueLabel, socialStackView, signUpStackView].forEach { v in
+        [orContinueLabel, socialStackView, signInStackView].forEach { v in
             downStackView.addArrangedSubview(v)
         }
         
-        [signInButton, downStackView].forEach { v in
+        [signUpButton, downStackView].forEach { v in
             bottomStackView.addArrangedSubview(v)
         }
         
@@ -332,7 +334,7 @@ final class LoginViewController: UIViewController, Keyboardable {
             make.edges.equalToSuperview().inset(4)
         }
         
-        signInButton.snp.makeConstraints { make in
+        signUpButton.snp.makeConstraints { make in
             make.height.equalTo(52)
         }
         
@@ -347,23 +349,18 @@ final class LoginViewController: UIViewController, Keyboardable {
         }
         
         bottomStackView.snp.makeConstraints { make in
-            make.top.equalTo(middleStackView.snp.bottom).offset(90)
+            make.top.equalTo(middleStackView.snp.bottom).offset(36)
             make.horizontalEdges.equalToSuperview().inset(24)
             self.targetConstraint = make.bottom.equalToSuperview().inset(24).constraint
         }
+        
     }
     
     @objc
     private func didTapSignInButton() {}
     
     @objc
-    private func didTapForgotPassword() {}
-    
-    @objc
-    private func didTapSignUpButton() {
-        let vc = SignupViewController()
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
+    private func didTapSignUpButton() {}
     
     @objc
     private func didTapGoogle() {
