@@ -70,17 +70,13 @@ final class LoginViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    private lazy var forgotPasswordLabel: UILabel = {
-        let v = UILabel()
-        v.text = "Forgot Password?"
-        v.font = UIFont.plusJakartaSansMedium14
-        v.textColor = .defaultBlue
-        v.textAlignment = .right
-        
-        v.isUserInteractionEnabled = true
-        let tapGesture = UITapGestureRecognizer(target: self, action:#selector(didTapForgotPassword))
-        v.addGestureRecognizer(tapGesture)
-        
+    private lazy var forgotPasswordButton: UIButton = {
+        let v = UIButton(type: .system)
+        v.setTitle("Forgot Password?", for: .normal)
+        v.titleLabel?.font = UIFont.plusJakartaSansMedium14
+        v.setTitleColor(.defaultBlue, for: .normal)
+        v.contentHorizontalAlignment = .trailing
+        v.addTarget(self, action: #selector(didTapForgotPasswordButton), for: .touchUpInside)
         return v
     }()
     
@@ -203,13 +199,6 @@ final class LoginViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    private let middleStackView: UIStackView = {
-        let v = UIStackView()
-        v.axis = .vertical
-        v.spacing = 20
-        return v
-    }()
-    
     private let signUpStackView: UIStackView = {
         let v = UIStackView()
         v.axis = .horizontal
@@ -264,7 +253,7 @@ final class LoginViewController: UIViewController, Keyboardable {
             make.width.equalToSuperview()
         }
         
-        [topStackView, middleStackView, bottomStackView].forEach { v in
+        [topStackView, textFieldsStackView, forgotPasswordButton, bottomStackView].forEach { v in
             contentView.addSubview(v)
         }
         
@@ -282,10 +271,6 @@ final class LoginViewController: UIViewController, Keyboardable {
         
         [emailStackView, passwordStackView].forEach { v in
             textFieldsStackView.addArrangedSubview(v)
-        }
-        
-        [textFieldsStackView, forgotPasswordLabel].forEach { v in
-            middleStackView.addArrangedSubview(v)
         }
         
         [signUpLabel, signUpButton].forEach { v in
@@ -341,13 +326,18 @@ final class LoginViewController: UIViewController, Keyboardable {
             make.horizontalEdges.equalToSuperview().inset(24)
         }
         
-        middleStackView.snp.makeConstraints { make in
+        textFieldsStackView.snp.makeConstraints { make in
             make.top.equalTo(topStackView.snp.bottom).offset(45)
             make.horizontalEdges.equalToSuperview().inset(24)
         }
         
+        forgotPasswordButton.snp.makeConstraints { make in
+            make.top.equalTo(textFieldsStackView.snp.bottom).offset(12)
+            make.trailing.equalToSuperview().inset(24)
+        }
+        
         bottomStackView.snp.makeConstraints { make in
-            make.top.equalTo(middleStackView.snp.bottom).offset(90)
+            make.top.equalTo(forgotPasswordButton.snp.bottom).offset(90)
             make.horizontalEdges.equalToSuperview().inset(24)
             self.targetConstraint = make.bottom.equalToSuperview().inset(24).constraint
         }
@@ -357,7 +347,10 @@ final class LoginViewController: UIViewController, Keyboardable {
     private func didTapSignInButton() {}
     
     @objc
-    private func didTapForgotPassword() {}
+    private func didTapForgotPasswordButton() {
+        let vc = ForgotPasswordViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
     
     @objc
     private func didTapSignUpButton() {
