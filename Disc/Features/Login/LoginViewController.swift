@@ -10,6 +10,8 @@ import SnapKit
 
 final class LoginViewController: UIViewController, Keyboardable {
     
+    private let authManager = FirebaseAuthManagerImpl()
+    
     var targetConstraint: Constraint? = nil
     
     private let scrollView: UIScrollView = {
@@ -233,9 +235,13 @@ final class LoginViewController: UIViewController, Keyboardable {
         super.viewDidLoad()
         setupUI()
         navigationController?.setNavigationBarHidden(false, animated: false)
+        
         startObserveKeyboard { _ in }
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         scrollView.addGestureRecognizer(tapGesture)
+        
+        authManager.view = self
     }
     
     private func setupUI() {
@@ -344,7 +350,9 @@ final class LoginViewController: UIViewController, Keyboardable {
     }
     
     @objc
-    private func didTapSignInButton() {}
+    private func didTapSignInButton() {
+        authManager.authWithMail(email: emailTextField.text ?? "", password: passwordTextField.text ?? "")
+    }
     
     @objc
     private func didTapForgotPasswordButton() {
@@ -360,14 +368,17 @@ final class LoginViewController: UIViewController, Keyboardable {
     
     @objc
     private func didTapGoogle() {
+        authManager.authWithGoogle()
     }
     
     @objc
     private func didTapFacebook() {
+        authManager.authWithFacebook()
     }
     
     @objc
     private func didTapApple() {
+        authManager.authWithApple()
     }
     
     @objc

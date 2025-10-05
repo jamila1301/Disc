@@ -7,8 +7,11 @@
 
 import UIKit
 import SnapKit
+import FirebaseAuth
 
 final class ForgotPasswordViewController: UIViewController, Keyboardable {
+    
+    private let authManager = FirebaseAuthManagerImpl()
     
     var targetConstraint: Constraint? = nil
     
@@ -73,9 +76,13 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
         super.viewDidLoad()
         setupUI()
         navigationController?.setNavigationBarHidden(false, animated: false)
+        
         startObserveKeyboard { _ in }
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
+        
+        authManager.view = self
     }
     
     private func setupUI() {
@@ -111,16 +118,10 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
         }
     }
     
-    private func showSuccessAlert() {
-        let vc = PasswordResetSuccessViewController()
-        vc.modalPresentationStyle = .overFullScreen
-        vc.modalTransitionStyle = .crossDissolve
-        present(vc, animated: true)
-    }
-    
     @objc
     private func didTapSendButton() {
-        showSuccessAlert()
+        guard let email = emailTextField.text, !email.isEmpty else { return }
+        authManager.sendPasswordReset(email: email)
     }
     
     @objc
