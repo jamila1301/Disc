@@ -7,7 +7,6 @@
 
 import UIKit
 import SnapKit
-import FirebaseAuth
 
 final class ForgotPasswordViewController: UIViewController, Keyboardable {
     
@@ -39,11 +38,12 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    private let emailTextField: CustomTextField = {
+    lazy var emailTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Enter Your Email"
         v.isSecureTextEntry = false
         v.showPasswordToggleButton(show: false)
+        v.textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         return v
     }()
     
@@ -120,12 +120,15 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
     
     @objc
     private func didTapSendButton() {
-        guard let email = emailTextField.text, !email.isEmpty else { return }
-        authManager.sendPasswordReset(email: email)
+        authManager.sendPasswordReset(email: emailTextField.text ?? "")
     }
     
     @objc
     private func dismissKeyboard() {
         view.endEditing(true)
+    }
+    
+    @objc private func textFieldDidChange() {
+        emailTextField.setError(nil)
     }
 }

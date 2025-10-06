@@ -48,11 +48,12 @@ final class LoginViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    private let emailTextField: CustomTextField = {
+     lazy var emailTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Enter Your Email"
         v.isSecureTextEntry = false
         v.showPasswordToggleButton(show: false)
+        v.textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         return v
     }()
     
@@ -64,11 +65,12 @@ final class LoginViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    private let passwordTextField: CustomTextField = {
+     lazy var passwordTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Password"
         v.isSecureTextEntry = true
         v.showPasswordToggleButton(show: true)
+        v.textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         return v
     }()
     
@@ -347,6 +349,11 @@ final class LoginViewController: UIViewController, Keyboardable {
             make.horizontalEdges.equalToSuperview().inset(24)
             self.targetConstraint = make.bottom.equalToSuperview().inset(24).constraint
         }
+    }
+    
+    @objc private func textFieldDidChange() {
+        emailTextField.setError(nil)
+        passwordTextField.setError(nil)
     }
     
     @objc

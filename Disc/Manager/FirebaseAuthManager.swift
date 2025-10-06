@@ -34,39 +34,85 @@ final class FirebaseAuthManagerImpl: NSObject, FirebaseAuthManager {
     fileprivate var currentNonce: String?
     
     func signupWithEmail(name: String, email: String, password: String) {
-        guard let view else { return }
-        guard !email.isEmpty, !password.isEmpty else {
-            print("Email və şifrə boş ola bilməz")
+        guard !name.isEmpty else {
+            (view as? SignupViewController)?.nameTextField.setError("Name cannot be empty")
+            return
+        }
+        guard !email.isEmpty else {
+            (view as? SignupViewController)?.emailTextField.setError("Email cannot be empty")
+            return
+        }
+        guard !password.isEmpty else {
+            (view as? SignupViewController)?.passwordTextField.setError("Password cannot be empty")
             return
         }
         
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            if let error {
-                print(error.localizedDescription)
+        Auth.auth().createUser(withEmail: email, password: password) { [weak self] result, error in
+            guard let self else { return }
+            if let error = error as NSError? {
+                guard let code = AuthErrorCode(rawValue: error.code) else { return }
+                switch code {
+                case .emailAlreadyInUse:
+                    (self.view as? SignupViewController)?.emailTextField.setError("This email is already in use")
+                case .invalidEmail:
+                    (self.view as? SignupViewController)?.emailTextField.setError("Email format is invalid")
+                case .weakPassword:
+                    (self.view as? SignupViewController)?.passwordTextField.setError("Password must be at least 6 characters")
+                default:
+                    (self.view as? SignupViewController)?.emailTextField.setError("An error occurred. Please try again.")
+                }
                 return
             }
             
-            if let userId = result?.user.uid {
-                self.db.collection("users").document(userId).setData([
-                    "name": name,
-                    "email": email
-                ])
-                let vc = HomeViewController()
-                view.navigationController?.setViewControllers([vc], animated: true)
+            guard let uid = result?.user.uid else { return }
+            
+            self.db.collection("users").document(uid).setData([
+                "name": name,
+                "email": email
+            ]) { err in
+                if let err = err {
+                    print("Firestore save error: \(err.localizedDescription)")
+                }
             }
+            
+            let vc = HomeViewController()
+            self.view?.navigationController?.setViewControllers([vc], animated: true)
         }
     }
     
     func authWithMail(email: String, password: String) {
-        guard let view else { return }
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if let error {
-                print(error.localizedDescription)
+        guard !email.isEmpty else {
+            (view as? LoginViewController)?.emailTextField.setError("Email cannot be empty")
+            return
+        }
+        guard !password.isEmpty else {
+            (view as? LoginViewController)?.passwordTextField.setError("Password cannot be empty")
+            return
+        }
+        
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
+            guard let self else { return }
+            if let error = error as NSError? {
+                guard let code = AuthErrorCode(rawValue: error.code) else { return }
+                switch code {
+                case .invalidEmail:
+                    (self.view as? LoginViewController)?.emailTextField.setError("Email format is invalid")
+                case .userNotFound:
+                    (self.view as? LoginViewController)?.emailTextField.setError("User not found")
+                case .wrongPassword:
+                    (self.view as? LoginViewController)?.passwordTextField.setError("Wrong password")
+                case .invalidCredential:
+                    (self.view as? LoginViewController)?.emailTextField.setError("Email or password is incorrect")
+                case .userDisabled:
+                    (self.view as? LoginViewController)?.emailTextField.setError("Account is disabled")
+                default:
+                    (self.view as? LoginViewController)?.emailTextField.setError("An error occurred. Please try again.")
+                }
                 return
             }
             
             let vc = HomeViewController()
-            view.navigationController?.setViewControllers([vc], animated: true)
+            self.view?.navigationController?.setViewControllers([vc], animated: true)
         }
     }
     
@@ -227,14 +273,24 @@ final class FirebaseAuthManagerImpl: NSObject, FirebaseAuthManager {
     }
     
     func sendPasswordReset(email: String) {
-        guard let view else { return }
+        guard let view  else { return }
+        guard !email.isEmpty else {
+            (view as? ForgotPasswordViewController)?.emailTextField.setError("Email cannot be empty")
+            return
+        }
+        
         Auth.auth().sendPasswordReset(withEmail: email) { [weak self] error in
-            guard let self = self else { return }
-            
-            if let error = error {
-                let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                view.present(alert, animated: true)
+            guard let self else { return }
+            if let error = error as NSError? {
+                guard let code = AuthErrorCode(rawValue: error.code) else { return }
+                switch code {
+                case .invalidEmail:
+                    (self.view as? ForgotPasswordViewController)?.emailTextField.setError("Email format is invalid")
+                case .userNotFound:
+                    (self.view as? ForgotPasswordViewController)?.emailTextField.setError("User not found")
+                default:
+                    (self.view as? ForgotPasswordViewController)?.emailTextField.setError(error.localizedDescription)
+                }
                 return
             }
             
@@ -243,9 +299,9 @@ final class FirebaseAuthManagerImpl: NSObject, FirebaseAuthManager {
             vc.modalTransitionStyle = .crossDissolve
             view.present(vc, animated: true)
         }
+        
     }
 
-    
 }
 
 extension FirebaseAuthManagerImpl: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {

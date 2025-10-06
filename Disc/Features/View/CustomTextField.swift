@@ -40,12 +40,13 @@ final class CustomTextField: UIView {
         }
     }
     
-    private let textField: UITextField = {
+    lazy var textField: UITextField = {
         let v = UITextField()
         v.borderStyle = .none
         v.backgroundColor = .clear
         v.isSecureTextEntry = true
         v.autocapitalizationType = .none
+        v.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         return v
     }()
     
@@ -54,6 +55,14 @@ final class CustomTextField: UIView {
         v.tintColor = .black
         v.isHidden = true
         v.addTarget(self, action: #selector(rightButtonTapped), for: .touchUpInside)
+        return v
+    }()
+    
+    private let errorLabel: UILabel = {
+        let v = UILabel()
+        v.textColor = .red
+        v.font = .plusJakartaSansMedium12
+        v.isHidden = true
         return v
     }()
     
@@ -71,8 +80,9 @@ final class CustomTextField: UIView {
         self.layer.borderWidth = 1
         self.layer.borderColor = UIColor.lightGrayTextfield.cgColor
         
-        addSubview(textField)
-        addSubview(rightButton)
+        [textField, rightButton, errorLabel].forEach { v in
+            addSubview(v)
+        }
         
         rightButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(16)
@@ -86,8 +96,24 @@ final class CustomTextField: UIView {
             make.trailing.equalTo(rightButton.snp.leading).offset(-8)
         }
         
+        errorLabel.snp.makeConstraints { make in
+            make.top.equalTo(textField.snp.bottom).offset(20)
+            make.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
         self.snp.makeConstraints { make in
             make.height.equalTo(50)
+        }
+    }
+    
+    func setError(_ message: String?) {
+        if let message = message, !message.isEmpty {
+            errorLabel.text = message
+            errorLabel.isHidden = false
+            layer.borderColor = UIColor.red.cgColor
+        } else {
+            errorLabel.isHidden = true
+            layer.borderColor = UIColor.lightGrayTextfield.cgColor
         }
     }
     
@@ -106,6 +132,10 @@ final class CustomTextField: UIView {
     @objc private func rightButtonTapped() {
         isSecureTextEntry.toggle()
         updateRightButtonIcon()
+    }
+    
+    @objc private func textDidChange() {
+        setError(nil)
     }
     
 }

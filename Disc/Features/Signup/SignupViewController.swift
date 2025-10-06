@@ -48,11 +48,12 @@ final class SignupViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    private let nameTextField: CustomTextField = {
+    lazy var nameTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Enter Your Name"
         v.isSecureTextEntry = false
         v.showPasswordToggleButton(show: false)
+        v.textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         return v
     }()
     
@@ -64,11 +65,12 @@ final class SignupViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    private let emailTextField: CustomTextField = {
+     lazy var emailTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Enter Your Email"
         v.isSecureTextEntry = false
         v.showPasswordToggleButton(show: false)
+        v.textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         return v
     }()
     
@@ -80,11 +82,12 @@ final class SignupViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    private let passwordTextField: CustomTextField = {
+     lazy var passwordTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Create Password"
         v.isSecureTextEntry = true
         v.showPasswordToggleButton(show: true)
+        v.textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         return v
     }()
     
@@ -362,6 +365,12 @@ final class SignupViewController: UIViewController, Keyboardable {
         
     }
     
+    @objc private func textFieldDidChange() {
+        nameTextField.setError(nil)
+        emailTextField.setError(nil)
+        passwordTextField.setError(nil)
+    }
+
     @objc
     private func didTapSignInButton() {
         self.navigationController?.popViewController(animated: true)
@@ -392,3 +401,4 @@ final class SignupViewController: UIViewController, Keyboardable {
         view.endEditing(true)
     }
 }
+
