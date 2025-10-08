@@ -44,8 +44,6 @@ final class GoogleAuthProviderImpl: SocialAuthProvider {
         
         try await db.collection("users").document(firebaseUser.uid).setData(userData)
         
-        let vc = HomeViewController()
-        view.navigationController?.setViewControllers([vc], animated: true)
     }
     
     func signOut() async {

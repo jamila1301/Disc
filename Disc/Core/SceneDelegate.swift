@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if Auth.auth().currentUser == nil {
             window?.rootViewController = UINavigationController(rootViewController: OnboardingBuilder().build())
         } else {
-            window?.rootViewController = UINavigationController(rootViewController: HomeViewController())
+            window?.rootViewController = UINavigationController(rootViewController: BaseTabBar())
         }
         window?.makeKeyAndVisible()
     }
