@@ -10,7 +10,7 @@ import SnapKit
 
 final class SignupViewController: UIViewController, Keyboardable {
     
-    private let authManager = FirebaseAuthManagerImpl()
+    private let viewModel: SignupViewModel
         
     var targetConstraint: Constraint? = nil
     
@@ -48,7 +48,7 @@ final class SignupViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    lazy var nameTextField: CustomTextField = {
+    private lazy var nameTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Enter Your Name"
         v.isSecureTextEntry = false
@@ -65,7 +65,7 @@ final class SignupViewController: UIViewController, Keyboardable {
         return v
     }()
     
-     lazy var emailTextField: CustomTextField = {
+    private lazy var emailTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Enter Your Email"
         v.isSecureTextEntry = false
@@ -82,7 +82,7 @@ final class SignupViewController: UIViewController, Keyboardable {
         return v
     }()
     
-     lazy var passwordTextField: CustomTextField = {
+    private lazy var passwordTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Create Password"
         v.isSecureTextEntry = true
@@ -247,6 +247,15 @@ final class SignupViewController: UIViewController, Keyboardable {
         return v
     }()
     
+    init(viewModel: SignupViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -257,7 +266,6 @@ final class SignupViewController: UIViewController, Keyboardable {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         scrollView.addGestureRecognizer(tapGesture)
         
-        authManager.view = self
     }
     
     private func setupUI() {
@@ -373,27 +381,65 @@ final class SignupViewController: UIViewController, Keyboardable {
 
     @objc
     private func didTapSignInButton() {
-        self.navigationController?.popViewController(animated: true)
+        viewModel.navigateToSignin()
     }
     
     @objc
-    private func didTapSignUpButton() {
-        authManager.signupWithEmail(name: nameTextField.text ?? "", email: emailTextField.text ?? "", password: passwordTextField.text ?? "")
+    private func didTapSignUpButton()  {
+        Task {
+            let name = nameTextField.text ?? ""
+            let email = emailTextField.text ?? ""
+            let password = passwordTextField.text ?? ""
+            do {
+                try await viewModel.signupWithEmail(name: name, email: email, password: password)
+            } catch let error as AuthError {
+                switch error {
+                case .emptyName:
+                    nameTextField.setError(error.localizedDescription)
+                case .emptyEmail, .invalidEmail, .emailAlreadyInUse:
+                    emailTextField.setError(error.localizedDescription)
+                case .emptyPassword, .weakPassword:
+                    passwordTextField.setError(error.localizedDescription)
+                default:
+                    print(error.localizedDescription)
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
     }
     
     @objc
     private func didTapGoogle() {
-        authManager.authWithGoogle()
+        Task {
+            do {
+                try await viewModel.loginWithGoogle()
+            } catch {
+                print("Google signup error: \(error)")
+            }
+        }
     }
     
     @objc
     private func didTapFacebook() {
-        authManager.authWithFacebook()
+        Task {
+            do {
+                try await viewModel.loginWithFacebook()
+            } catch {
+                print("Facebook signup error: \(error)")
+            }
+        }
     }
     
     @objc
     private func didTapApple() {
-        authManager.authWithApple()
+        Task {
+            do {
+                try await viewModel.loginWithApple()
+            } catch {
+                print("Apple signup error: \(error)")
+            }
+        }
     }
     
     @objc

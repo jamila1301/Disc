@@ -10,7 +10,7 @@ import SnapKit
 
 final class ForgotPasswordViewController: UIViewController, Keyboardable {
     
-    private let authManager = FirebaseAuthManagerImpl()
+    private let viewModel: ForgotPasswordViewModel
     
     var targetConstraint: Constraint? = nil
     
@@ -38,7 +38,7 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
         return v
     }()
     
-    lazy var emailTextField: CustomTextField = {
+    private lazy var emailTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Enter Your Email"
         v.isSecureTextEntry = false
@@ -72,6 +72,15 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
         return v
     }()
     
+    init(viewModel: ForgotPasswordViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -82,7 +91,6 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
         
-        authManager.view = self
     }
     
     private func setupUI() {
@@ -120,7 +128,21 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
     
     @objc
     private func didTapSendButton() {
-        authManager.sendPasswordReset(email: emailTextField.text ?? "")
+        Task {
+            let email = emailTextField.text ?? ""
+            do {
+                try await viewModel.sendPasswordReset(email: email)
+            } catch let error as AuthError {
+                switch error {
+                case .emptyEmail, .invalidEmail, .userNotFound:
+                    emailTextField.setError(error.localizedDescription)
+                default:
+                    print(error.localizedDescription)
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
     }
     
     @objc

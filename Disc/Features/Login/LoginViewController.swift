@@ -10,7 +10,7 @@ import SnapKit
 
 final class LoginViewController: UIViewController, Keyboardable {
     
-    private let authManager = FirebaseAuthManagerImpl()
+    private let viewModel: LoginViewModel
     
     var targetConstraint: Constraint? = nil
     
@@ -48,7 +48,7 @@ final class LoginViewController: UIViewController, Keyboardable {
         return v
     }()
     
-     lazy var emailTextField: CustomTextField = {
+    private lazy var emailTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Enter Your Email"
         v.isSecureTextEntry = false
@@ -65,7 +65,7 @@ final class LoginViewController: UIViewController, Keyboardable {
         return v
     }()
     
-     lazy var passwordTextField: CustomTextField = {
+    private lazy var passwordTextField: CustomTextField = {
         let v = CustomTextField()
         v.placeholder = "Password"
         v.isSecureTextEntry = true
@@ -233,6 +233,15 @@ final class LoginViewController: UIViewController, Keyboardable {
         return v
     }()
     
+    init(viewModel: LoginViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -243,7 +252,6 @@ final class LoginViewController: UIViewController, Keyboardable {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         scrollView.addGestureRecognizer(tapGesture)
         
-        authManager.view = self
     }
     
     private func setupUI() {
@@ -357,35 +365,68 @@ final class LoginViewController: UIViewController, Keyboardable {
     }
     
     @objc
-    private func didTapSignInButton() {
-        authManager.authWithMail(email: emailTextField.text ?? "", password: passwordTextField.text ?? "")
-    }
-    
-    @objc
     private func didTapForgotPasswordButton() {
-        let vc = ForgotPasswordViewController()
-        self.navigationController?.pushViewController(vc, animated: true)
+        viewModel.navigateToForgotPassword()
     }
     
     @objc
     private func didTapSignUpButton() {
-        let vc = SignupViewController()
-        self.navigationController?.pushViewController(vc, animated: true)
+        viewModel.navigateToSignup()
+    }
+    
+    @objc
+    private func didTapSignInButton() {
+        Task {
+            let email = emailTextField.text ?? ""
+            let password = passwordTextField.text ?? ""
+            do {
+                try await viewModel.loginWithEmail(email: email, password: password)
+            } catch let error as AuthError {
+                switch error {
+                case .emptyEmail, .invalidEmail, .userNotFound, .userDisabled:
+                    emailTextField.setError(error.localizedDescription)
+                case .emptyPassword, .wrongPassword, .invalidCredential:
+                    passwordTextField.setError(error.localizedDescription)
+                default:
+                    print(error.localizedDescription)
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
     }
     
     @objc
     private func didTapGoogle() {
-        authManager.authWithGoogle()
+        Task {
+            do {
+                try await viewModel.loginWithGoogle()
+            } catch {
+                print("Google login error: \(error)")
+            }
+        }
     }
     
     @objc
     private func didTapFacebook() {
-        authManager.authWithFacebook()
+        Task {
+            do {
+                try await viewModel.loginWithFacebook()
+            } catch {
+                print("Facebook login error: \(error)")
+            }
+        }
     }
     
     @objc
     private func didTapApple() {
-        authManager.authWithApple()
+        Task {
+            do {
+                try await viewModel.loginWithApple()
+            } catch {
+                print("Apple login error: \(error)")
+            }
+        }
     }
     
     @objc

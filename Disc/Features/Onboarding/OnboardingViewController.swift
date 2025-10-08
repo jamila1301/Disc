@@ -10,6 +10,8 @@ import SnapKit
 
 final class OnboardingViewController: UIViewController {
     
+    private let viewModel: OnboardingViewModel
+    
     private let mainImageView: UIImageView = {
         let v = UIImageView()
         v.image = .onboarding
@@ -63,6 +65,15 @@ final class OnboardingViewController: UIViewController {
         return v
     }()
     
+    init(viewModel: OnboardingViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -109,8 +120,7 @@ final class OnboardingViewController: UIViewController {
     
     @objc
     private func didTapStartButton() {
-        let vc = LoginViewController()
-        self.navigationController?.pushViewController(vc, animated: true)
+        viewModel.startExploring()
     }
 }
 
