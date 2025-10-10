@@ -5,6 +5,8 @@
 //  Created by Jamila Mahammadli on 08.10.25.
 //
 
+import Foundation
+
 protocol OnboardingViewModelProtocol {
     func startExploring()
 }

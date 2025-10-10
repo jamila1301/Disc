@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B11971B2E96E33C007D737D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 3B11971A2E96E33C007D737D /* Kingfisher */; };
 		3B7042FD2E8F013000CB8FFE /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3B7042FC2E8F013000CB8FFE /* SnapKit */; };
+		3BA934B22E99084E0099AE17 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 3BA934B12E99084E0099AE17 /* Lottie */; };
 		3BF3A0F32E92BF2D00A0D290 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3BF3A0F22E92BF2D00A0D290 /* FirebaseAuth */; };
 		3BF3A0F52E92BF2D00A0D290 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BF3A0F42E92BF2D00A0D290 /* FirebaseCore */; };
 		3BF3A0F72E92BF2D00A0D290 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3BF3A0F62E92BF2D00A0D290 /* FirebaseFirestore */; };
@@ -52,7 +54,9 @@
 				3BF3A0F72E92BF2D00A0D290 /* FirebaseFirestore in Frameworks */,
 				3BF3A1D62E92C79000A0D290 /* GoogleSignInSwift in Frameworks */,
 				3BF3A0F52E92BF2D00A0D290 /* FirebaseCore in Frameworks */,
+				3B11971B2E96E33C007D737D /* Kingfisher in Frameworks */,
 				3BF3A0F92E92BF2D00A0D290 /* FirebaseStorage in Frameworks */,
+				3BA934B22E99084E0099AE17 /* Lottie in Frameworks */,
 				3BF3A1DE2E92F0F300A0D290 /* FacebookLogin in Frameworks */,
 				3BF3A0F32E92BF2D00A0D290 /* FirebaseAuth in Frameworks */,
 				3BF3A1D42E92C79000A0D290 /* GoogleSignIn in Frameworks */,
@@ -108,6 +112,8 @@
 				3BF3A1D52E92C79000A0D290 /* GoogleSignInSwift */,
 				3BF3A1DB2E92F0F300A0D290 /* FacebookCore */,
 				3BF3A1DD2E92F0F300A0D290 /* FacebookLogin */,
+				3B11971A2E96E33C007D737D /* Kingfisher */,
+				3BA934B12E99084E0099AE17 /* Lottie */,
 			);
 			productName = Disc;
 			productReference = 3B7041732E8EEB1200CB8FFE /* Disc.app */;
@@ -142,6 +148,8 @@
 				3BF3A0F12E92BF2D00A0D290 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				3BF3A1D22E92C79000A0D290 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				3BF3A1DA2E92F0F300A0D290 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+				3B1197192E96E33C007D737D /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				3BA934B02E99084E0099AE17 /* XCRemoteSwiftPackageReference "lottie-spm" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3B7041742E8EEB1200CB8FFE /* Products */;
@@ -385,12 +393,28 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		3B1197192E96E33C007D737D /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.0;
+			};
+		};
 		3B7042FB2E8F013000CB8FFE /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.7.1;
+			};
+		};
+		3BA934B02E99084E0099AE17 /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
 			};
 		};
 		3BF3A0F12E92BF2D00A0D290 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
@@ -420,10 +444,20 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		3B11971A2E96E33C007D737D /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3B1197192E96E33C007D737D /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		3B7042FC2E8F013000CB8FFE /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3B7042FB2E8F013000CB8FFE /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		3BA934B12E99084E0099AE17 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3BA934B02E99084E0099AE17 /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			productName = Lottie;
 		};
 		3BF3A0F22E92BF2D00A0D290 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;

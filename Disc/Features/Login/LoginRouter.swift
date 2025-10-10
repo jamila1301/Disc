@@ -23,7 +23,7 @@ final class LoginRouter: LoginRouterProtocol {
     
     @MainActor
     func navigateHome() {
-        let tabBar = HomeViewController()
+        let tabBar = BaseTabBar()
         view?.navigationController?.setViewControllers([tabBar], animated: true)
     }
     

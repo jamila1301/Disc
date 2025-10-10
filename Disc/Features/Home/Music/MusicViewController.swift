@@ -1,0 +1,79 @@
+//
+//  MusicViewController.swift
+//  Disc
+//
+//  Created by Jamila Mahammadli on 10.10.25.
+//
+
+import UIKit
+import SnapKit
+
+final class MusicViewController: UIViewController {
+    
+    private let viewModel: MusicViewModel
+    
+    private lazy var tableView: UITableView = {
+        let v = UITableView()
+        v.backgroundColor = .screenBackground
+        v.showsHorizontalScrollIndicator = false
+        v.showsVerticalScrollIndicator = false
+        v.separatorStyle = .none
+        v.delegate = self
+        v.dataSource = self
+        v.register(MusicTableViewCell.self, forCellReuseIdentifier: MusicTableViewCell.identifier)
+        return v
+    }()
+    
+    init(viewModel: MusicViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.delegate = self
+        title = "Recommended Music"
+        setupUI()
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = .screenBackground
+        
+        view.addSubview(tableView)
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(5)
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(30)
+        }
+    }
+}
+
+extension MusicViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.cellTypes.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cellType = viewModel.cellTypes[indexPath.row]
+        switch cellType {
+        case .music(let model):
+            if let cell = tableView.dequeueReusableCell(withIdentifier: MusicTableViewCell.identifier, for: indexPath) as? MusicTableViewCell {
+                cell.configure(item: model)
+                return cell
+            }
+            return UITableViewCell()
+        }
+    }
+}
+
+extension MusicViewController: MusicViewModelDelegate {
+    func reloadTableView() {
+        tableView.reloadData()
+    }
+}

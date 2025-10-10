@@ -5,7 +5,7 @@
 //  Created by Jamila Mahammadli on 08.10.25.
 //
 
-import UIKit
+import Foundation
 
 protocol ForgotPasswordViewModelProtocol {
     func sendPasswordReset(email: String) async throws

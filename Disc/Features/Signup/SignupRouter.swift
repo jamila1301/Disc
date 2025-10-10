@@ -21,7 +21,7 @@ final class SignupRouter: SignupRouterProtocol {
     
     @MainActor
     func navigateHome() {
-        let tabBar = HomeViewController()
+        let tabBar = BaseTabBar()
         view?.navigationController?.setViewControllers([tabBar], animated: true)
     }
     
