@@ -22,6 +22,26 @@ final class BaseTabBar: UITabBarController {
     private func setupUI() {
         view.backgroundColor = .screenBackground
         
+        let navAppearance = UINavigationBarAppearance()
+        navAppearance.configureWithOpaqueBackground()
+        navAppearance.backgroundColor = .screenBackground
+        navAppearance.titleTextAttributes = [
+            .font: UIFont.plusJakartaSansSemiBold18!,
+            .foregroundColor: UIColor.black
+        ]
+        navAppearance.shadowColor = .clear
+        
+        let backButtonAppearance = UIBarButtonItemAppearance(style: .plain)
+        backButtonAppearance.normal.titleTextAttributes = [
+            .font: UIFont.plusJakartaSansRegular16!,
+            .foregroundColor: UIColor.black
+        ]
+        navAppearance.backButtonAppearance = backButtonAppearance
+
+        
+        UINavigationBar.appearance().standardAppearance = navAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
+        
         let tabAppearance = UITabBarAppearance()
         tabAppearance.configureWithOpaqueBackground()
         tabAppearance.backgroundColor = .screenBackground
@@ -31,7 +51,7 @@ final class BaseTabBar: UITabBarController {
         UITabBar.appearance().standardAppearance = tabAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabAppearance
         
-        let homeVC = HomeViewController()
+        let homeVC = HomeBuilder().build()
         let homeNavVC = UINavigationController(rootViewController: homeVC)
         homeNavVC.tabBarItem = UITabBarItem(
             title: nil,
