@@ -21,7 +21,7 @@ final class HomeViewController: UIViewController {
         return v
     }()
     
-    private let lottieView: LottieAnimationView = LottieAnimationView(name: "MusicDinosaur")
+    private let lottieView: LottieAnimationView = LottieAnimationView(name: "musicDinosaur")
     
     private let topStackView: UIStackView = {
         let v = UIStackView()
