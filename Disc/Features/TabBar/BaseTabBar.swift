@@ -59,7 +59,7 @@ final class BaseTabBar: UITabBarController {
             selectedImage: .homeFill
         )
         
-        let searchVC = SearchViewController()
+        let searchVC = SearchBuilder().build()
         let searchNavVC = UINavigationController(rootViewController: searchVC)
         searchNavVC.tabBarItem = UITabBarItem(
             title: nil,
