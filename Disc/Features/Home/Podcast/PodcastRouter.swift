@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol PodcastRouterProtocol: AnyObject {
+protocol PodcastRouterProtocol {
     var view: UIViewController? { get set }
     
     func navigateToEpisode(collectionId: Int)

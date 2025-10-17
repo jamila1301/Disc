@@ -15,7 +15,7 @@ final class SearchViewController: UIViewController, Keyboardable {
     
     private let viewModel: SearchViewModel
     
-    private let appNameLabel: UILabel = {
+    private let screenNameLabel: UILabel = {
         let v = UILabel()
         v.text = "Search"
         v.font = UIFont.plusJakartaSansSemiBold20
@@ -91,17 +91,17 @@ final class SearchViewController: UIViewController, Keyboardable {
     private func setupUI() {
         view.backgroundColor = .screenBackground
         
-        [appNameLabel, searchBar, tableView, lottieView, noDataLottieView].forEach { v in
+        [screenNameLabel, searchBar, tableView, lottieView, noDataLottieView].forEach { v in
             view.addSubview(v)
         }
         
-        appNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(5)
+        screenNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
         }
         
         searchBar.snp.makeConstraints { make in
-            make.top.equalTo(appNameLabel.snp.bottom).offset(24)
+            make.top.equalTo(screenNameLabel.snp.bottom).offset(24)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
         }
         

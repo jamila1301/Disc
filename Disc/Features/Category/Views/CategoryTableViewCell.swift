@@ -1,0 +1,86 @@
+//
+//  CategoryTableViewCell.swift
+//  Disc
+//
+//  Created by Jamila Mahammadli on 16.10.25.
+//
+
+import UIKit
+import SnapKit
+
+final class CategoryTableViewCell: UITableViewCell {
+        
+    private var nameList: [CategoryCollectionViewCell.Item] = []
+    private var colors: [CategoryColor] = []
+    
+    var onCategorySelected: ((String) -> ())?
+    
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.itemSize = .init(width: UIScreen.main.bounds.width / 2 - 34, height: 88)
+        layout.minimumLineSpacing = 17
+        layout.minimumInteritemSpacing = 17
+        
+        let v = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        v.backgroundColor = .screenBackground
+        v.showsHorizontalScrollIndicator = false
+        v.showsVerticalScrollIndicator = false
+        v.delegate = self
+        v.dataSource = self
+        v.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.identifier)
+        return v
+    }()
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupUI() {
+        contentView.backgroundColor = .screenBackground
+        contentView.addSubview(collectionView)
+        collectionView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.height.equalTo(760)
+        }
+    }
+}
+
+extension CategoryTableViewCell {
+    struct Item {
+        let nameList: [CategoryCollectionViewCell.Item]
+        let colors: [CategoryColor]
+    }
+    
+    func configure(item: Item) {
+        self.nameList = item.nameList
+        self.colors = item.colors
+        self.collectionView.reloadData()
+    }
+}
+
+extension CategoryTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return nameList.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell {
+            cell.configure(item: nameList[indexPath.row])
+            cell.setBackgroundColor(color: colors[indexPath.row].uiColor)
+            return cell
+        }
+        return UICollectionViewCell()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let category = nameList[indexPath.row].categoryName
+        onCategorySelected?(category)
+    }
+    
+}

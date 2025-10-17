@@ -67,7 +67,7 @@ final class BaseTabBar: UITabBarController {
             selectedImage: .searchFill
         )
         
-        let categoryVC = CategoryViewController()
+        let categoryVC = CategoryBuilder().build()
         let categoryNavVC = UINavigationController(rootViewController: categoryVC)
         categoryNavVC.tabBarItem = UITabBarItem(
             title: nil,

@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol SearchRouterProtocol: AnyObject {
+protocol SearchRouterProtocol {
     var view: UIViewController? { get set }
     func navigateToEpisode(collectionId: Int)
 }

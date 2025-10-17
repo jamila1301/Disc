@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol MusicRouterProtocol: AnyObject {
+protocol MusicRouterProtocol {
     var view: UIViewController? { get set }
 }
 

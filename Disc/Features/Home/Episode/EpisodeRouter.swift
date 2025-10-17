@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol EpisodeRouterProtocol: AnyObject {
+protocol EpisodeRouterProtocol {
     var view: UIViewController? { get set }
 }
 
