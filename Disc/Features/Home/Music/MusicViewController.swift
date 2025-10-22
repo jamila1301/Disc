@@ -70,6 +70,17 @@ extension MusicViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let cellType = viewModel.cellTypes[indexPath.row]
+        
+        switch cellType {
+        case .music(let item):
+            viewModel.didTapMusic(item: item)
+        }
+    }
+
 }
 
 extension MusicViewController: MusicViewModelDelegate {

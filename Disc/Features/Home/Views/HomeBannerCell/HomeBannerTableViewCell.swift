@@ -10,6 +10,8 @@ import SnapKit
 
 final class HomeBannerTableViewCell: UITableViewCell {
     
+    var onSelectBanner: ((HomeBannerCollectionViewCell.Item) -> Void)?
+    
     private var bannerList: [HomeBannerCollectionViewCell.Item] = []
     
     private lazy var collectionView: UICollectionView = {
@@ -72,4 +74,10 @@ extension HomeBannerTableViewCell: UICollectionViewDelegate, UICollectionViewDat
         }
         return UICollectionViewCell()
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selected = bannerList[indexPath.item]
+        onSelectBanner?(selected)
+    }
+
 }

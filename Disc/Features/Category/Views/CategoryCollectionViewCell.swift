@@ -13,7 +13,7 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
     private let categoryLabel: UILabel = {
         let v = UILabel()
         v.textColor = .white
-        v.font = UIFont.plusJakartaSansBold20
+        v.font = .plusJakartaSansBold20
         v.textAlignment = .center
         return v
     }()
@@ -62,4 +62,3 @@ extension CategoryCollectionViewCell {
         mainView.backgroundColor = color
     }
 }
-

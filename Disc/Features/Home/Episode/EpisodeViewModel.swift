@@ -33,21 +33,51 @@ final class EpisodeViewModel {
     func fetchData() async {
         do {
             let episodeTracks = try await ITunesService.shared.fetchEpisode(for: collectionId)
-            self.cellTypes = episodeTracks.compactMap { episode in
-                guard let trackName = episode.trackName ,
-                      let artworkUrl = episode.artworkUrl600 else {
-                    return nil
-                }
-                return .episode(.init(
-                    image: artworkUrl,
-                    episodeName: trackName,
+            self.cellTypes = episodeTracks.map { episode in
+                .episode(.init(
+                    image: episode.artworkUrl600,
+                    episodeName: episode.trackName,
                     collectionName: episode.collectionName,
-                    timeLabel: "\(episode.trackTimeMillis?.formattedDuration ?? "")  mins"
+                    timeLabel: "\(episode.trackTimeMillis?.formattedDuration ?? "")  mins",
+                    previewUrl: episode.previewUrl
                 ))
             }
             self.delegate?.reloadTableView()
         } catch {
             print(error.localizedDescription)
         }
+    }
+    
+    func didTapEpisode(item: EpisodeTableViewCell.Item) {
+        let episode = Episode(
+            trackId: nil,
+            trackName: item.episodeName,
+            artistName: item.collectionName,
+            episodeUrl: nil,
+            artworkUrl600: item.image,
+            trackTimeMillis: nil,
+            previewUrl: item.previewUrl,
+            description: nil,
+            collectionName: item.collectionName
+        )
+        
+        let episodes: [Episode] = cellTypes.compactMap {
+            if case .episode(let item) = $0 {
+                return Episode(
+                    trackId: nil,
+                    trackName: item.episodeName,
+                    artistName: item.collectionName,
+                    episodeUrl: nil,
+                    artworkUrl600: item.image,
+                    trackTimeMillis: nil,
+                    previewUrl: item.previewUrl,
+                    description: nil,
+                    collectionName: item.collectionName
+                )
+            }
+            return nil
+        }
+        
+        PlayerManager.shared.playEpisode(episode, episodeList: episodes)
     }
 }

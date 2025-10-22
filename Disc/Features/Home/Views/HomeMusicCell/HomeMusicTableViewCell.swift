@@ -10,12 +10,14 @@ import SnapKit
 
 final class HomeMusicTableViewCell: UITableViewCell {
     
+    var onSelectMusic: ((HomeMusicCollectionViewCell.Item) -> Void)?
+    
     var buttonAction: (() -> Void)?
     
     private let topLabel: UILabel = {
         let v = UILabel()
         v.text = "Recommended Music"
-        v.font = UIFont.plusJakartaSansSemiBold18
+        v.font = .plusJakartaSansSemiBold18
         v.numberOfLines = .zero
         v.textAlignment = .left
         return v
@@ -25,7 +27,7 @@ final class HomeMusicTableViewCell: UITableViewCell {
         let v = UIButton(type: .system)
         v.setTitle("Show more", for: .normal)
         v.setTitleColor(UIColor.defaultBlue, for: .normal)
-        v.titleLabel?.font = UIFont.plusJakartaSansSemiBold12
+        v.titleLabel?.font = .plusJakartaSansSemiBold12
         v.addTarget(self, action: #selector(didTapShowMore), for: .touchUpInside)
         return v
     }()
@@ -121,4 +123,10 @@ extension HomeMusicTableViewCell: UICollectionViewDelegate, UICollectionViewData
         }
         return UICollectionViewCell()
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selected = musicList[indexPath.item]
+        onSelectMusic?(selected)
+    }
+
 }

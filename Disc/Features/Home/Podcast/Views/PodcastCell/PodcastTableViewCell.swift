@@ -20,14 +20,14 @@ final class PodcastTableViewCell: UITableViewCell {
     
     private let podcastNameLabel: UILabel = {
         let v = UILabel()
-        v.font = UIFont.plusJakartaSansSemiBold14
+        v.font = .plusJakartaSansSemiBold14
         v.numberOfLines = 1
         return v
     }()
     
     private let artistNameLabel: UILabel = {
         let v = UILabel()
-        v.font = UIFont.plusJakartaSansMedium12
+        v.font = .plusJakartaSansMedium12
         v.textColor = .lightGrayPrimary
         v.numberOfLines = 1
         return v

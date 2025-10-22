@@ -1,14 +1,14 @@
 //
-//  MusicTableViewCell.swift
+//  HomePodcastCollectionViewCell.swift
 //  Disc
 //
-//  Created by Jamila Mahammadli on 10.10.25.
+//  Created by Jamila Mahammadli on 20.10.25.
 //
 
 import UIKit
 import SnapKit
 
-final class MusicTableViewCell: UITableViewCell {
+final class HomePodcastCollectionViewCell: UICollectionViewCell {
     
     private let topImageView: UIImageView = {
         let v = UIImageView()
@@ -42,14 +42,14 @@ final class MusicTableViewCell: UITableViewCell {
     
     private let mainStackView: UIStackView = {
         let v = UIStackView()
-        v.axis = .horizontal
-        v.spacing = 16
-        v.alignment = .center
+        v.axis = .vertical
+        v.spacing = 12
+        v.alignment = .leading
         return v
     }()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupUI()
     }
     
@@ -70,21 +70,22 @@ final class MusicTableViewCell: UITableViewCell {
         }
         
         topImageView.snp.makeConstraints { make in
-            make.size.equalTo(56)
+            make.size.equalTo(120)
         }
         
         mainStackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(8)
+            make.edges.equalToSuperview()
         }
     }
 }
 
-extension MusicTableViewCell {
+extension HomePodcastCollectionViewCell {
     struct Item {
         let image: String
         let musicName: String
         let artistName: String
         let previewUrl: String?
+        let collectionId: Int?
     }
     
     func configure(item: Item) {

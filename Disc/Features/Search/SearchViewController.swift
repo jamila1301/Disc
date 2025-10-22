@@ -18,7 +18,7 @@ final class SearchViewController: UIViewController, Keyboardable {
     private let screenNameLabel: UILabel = {
         let v = UILabel()
         v.text = "Search"
-        v.font = UIFont.plusJakartaSansSemiBold20
+        v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
         return v
     }()
@@ -195,16 +195,18 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard let sectionType = SearchViewModel.Section(rawValue: indexPath.section) else { return }
-        
         switch sectionType {
+        case .music:
+            if indexPath.row < viewModel.musicItems.count {
+                let item = viewModel.musicItems[indexPath.row]
+                viewModel.didTapMusic(item: item)
+            }
         case .podcast:
             if indexPath.row < viewModel.podcastItems.count {
                 let model = viewModel.podcastItems[indexPath.row]
                 guard let collectionId = model.collectionId else { return }
                 viewModel.didTapEpisode(collectionId: collectionId)
             }
-        case .music:
-            break
         }
     }
 }

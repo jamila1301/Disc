@@ -57,4 +57,3 @@ enum CategoryColor: CaseIterable {
         }
     }
 }
-

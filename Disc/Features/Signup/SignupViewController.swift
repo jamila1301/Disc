@@ -27,14 +27,14 @@ final class SignupViewController: UIViewController, Keyboardable {
     private let topLabel: UILabel = {
         let v = UILabel()
         v.text = "Create Account"
-        v.font = UIFont.plusJakartaSansSemibold24
+        v.font = .plusJakartaSansSemibold24
         return v
     }()
     
     private let topTitleLabel: UILabel = {
         let v = UILabel()
         v.text = "Please fill in to complete your account"
-        v.font = UIFont.plusJakartaSansRegular16
+        v.font = .plusJakartaSansRegular16
         v.textColor = .lightGrayPrimary
         v.numberOfLines = .zero
         return v
@@ -43,7 +43,7 @@ final class SignupViewController: UIViewController, Keyboardable {
     private let nameLabel: UILabel = {
         let v = UILabel()
         v.text = "Name"
-        v.font = UIFont.plusJakartaSansMedium16
+        v.font = .plusJakartaSansMedium16
         v.textColor = .lightBlueSecondinary
         return v
     }()
@@ -60,7 +60,7 @@ final class SignupViewController: UIViewController, Keyboardable {
     private let emailLabel: UILabel = {
         let v = UILabel()
         v.text = "Email"
-        v.font = UIFont.plusJakartaSansMedium16
+        v.font = .plusJakartaSansMedium16
         v.textColor = .lightBlueSecondinary
         return v
     }()
@@ -77,7 +77,7 @@ final class SignupViewController: UIViewController, Keyboardable {
     private let passwordLabel: UILabel = {
         let v = UILabel()
         v.text = "Password"
-        v.font = UIFont.plusJakartaSansMedium16
+        v.font = .plusJakartaSansMedium16
         v.textColor = .lightBlueSecondinary
         return v
     }()
@@ -94,7 +94,7 @@ final class SignupViewController: UIViewController, Keyboardable {
     private lazy var signUpButton: UIButton = {
         let v = UIButton(type: .system)
         v.setTitle("Sign Up", for: .normal)
-        v.titleLabel?.font = UIFont.plusJakartaSansSemiBold16
+        v.titleLabel?.font = .plusJakartaSansSemiBold16
         v.setTitleColor(.white, for: .normal)
         v.backgroundColor = .defaultBlue
         v.layer.cornerRadius = 8
@@ -105,7 +105,7 @@ final class SignupViewController: UIViewController, Keyboardable {
     private let orContinueLabel: UILabel = {
         let v = UILabel()
         v.text = "Or create account using your social profile"
-        v.font = UIFont.plusJakartaSansRegular14
+        v.font = .plusJakartaSansRegular14
         v.textColor = .lightGrayPrimary
         v.textAlignment = .center
         return v
@@ -168,7 +168,7 @@ final class SignupViewController: UIViewController, Keyboardable {
     private let signInLabel: UILabel = {
         let v = UILabel()
         v.text = "Already have an account?"
-        v.font = UIFont.plusJakartaSansRegular14
+        v.font = .plusJakartaSansRegular14
         v.textColor = .lightGrayPrimary
         return v
     }()
@@ -176,7 +176,7 @@ final class SignupViewController: UIViewController, Keyboardable {
     private lazy var signInButton: UIButton = {
         let v = UIButton(type: .system)
         v.setTitle("Sign In", for: .normal)
-        v.titleLabel?.font = UIFont.plusJakartaSansMedium14
+        v.titleLabel?.font = .plusJakartaSansMedium14
         v.setTitleColor(.defaultBlue, for: .normal)
         v.addTarget(self, action: #selector(didTapSignInButton), for: .touchUpInside)
         return v

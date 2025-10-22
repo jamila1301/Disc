@@ -20,7 +20,7 @@ final class HomeBannerCollectionViewCell: UICollectionViewCell {
     
     private let topLabel: UILabel = {
         let v = UILabel()
-        v.font = UIFont.plusJakartaSansMedium10
+        v.font = .plusJakartaSansMedium10
         v.textColor = UIColor.white.withAlphaComponent(0.6)
         v.numberOfLines = .zero
         return v
@@ -28,7 +28,7 @@ final class HomeBannerCollectionViewCell: UICollectionViewCell {
     
     private let nameLabel: UILabel = {
         let v = UILabel()
-        v.font = UIFont.plusJakartaSansSemiBold18
+        v.font = .plusJakartaSansSemiBold18
         v.textColor = .white
         v.numberOfLines = .zero
         return v
@@ -36,7 +36,7 @@ final class HomeBannerCollectionViewCell: UICollectionViewCell {
     
     private let artistNameLabel: UILabel = {
         let v = UILabel()
-        v.font = UIFont.plusJakartaSansMedium12
+        v.font = .plusJakartaSansMedium12
         v.textColor = UIColor.white.withAlphaComponent(0.7)
         v.numberOfLines = .zero
         return v
@@ -51,7 +51,7 @@ final class HomeBannerCollectionViewCell: UICollectionViewCell {
     
     private let timeLabel: UILabel = {
         let v = UILabel()
-        v.font = UIFont.plusJakartaSansMedium12
+        v.font = .plusJakartaSansMedium12
         v.textColor = UIColor.white.withAlphaComponent(0.7)
         v.numberOfLines = .zero
         return v
@@ -168,6 +168,7 @@ extension HomeBannerCollectionViewCell {
         let nameLabel: String
         let artistLabel: String
         let timeLabel: String
+        let previewUrl: String?
     }
     
     func configure(item: Item) {
