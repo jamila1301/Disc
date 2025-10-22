@@ -60,7 +60,8 @@ final class SearchViewModel {
                     .init(
                         image: track.artworkUrl100,
                         musicName: track.trackName,
-                        artistName: track.artistName
+                        artistName: track.artistName,
+                        previewUrl: track.previewUrl
                     )
             }
             
@@ -90,6 +91,28 @@ final class SearchViewModel {
         router.navigateToEpisode(collectionId: collectionId)
     }
     
+    func didTapMusic(item: MusicTableViewCell.Item) {
+        let track = Track(
+            trackName: item.musicName,
+            artistName: item.artistName,
+            artworkUrl100: item.image,
+            trackTimeMillis: nil,
+            previewUrl: item.previewUrl ?? ""
+        )
+        
+        let tracks: [Track] = musicItems.compactMap {
+            return Track(
+                trackName: $0.musicName,
+                artistName: $0.artistName,
+                artworkUrl100: $0.image,
+                trackTimeMillis: nil,
+                previewUrl: $0.previewUrl ?? ""
+            )
+        }
+        
+        PlayerManager.shared.playHomeMusic(track, trackList: tracks)
+    }
+
     func resetState() {
         musicItems = []
         podcastItems = []

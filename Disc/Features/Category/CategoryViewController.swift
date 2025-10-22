@@ -15,7 +15,7 @@ final class CategoryViewController: UIViewController {
     private let screenNameLabel: UILabel = {
         let v = UILabel()
         v.text = "Categories"
-        v.font = UIFont.plusJakartaSansSemiBold20
+        v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
         return v
     }()
@@ -94,4 +94,3 @@ extension CategoryViewController: CategoryViewModelDelegate {
         tableView.reloadData()
     }
 }
-

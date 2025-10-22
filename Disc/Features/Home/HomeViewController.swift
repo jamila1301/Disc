@@ -16,7 +16,7 @@ final class HomeViewController: UIViewController {
     private let appNameLabel: UILabel = {
         let v = UILabel()
         v.text = "Discover"
-        v.font = UIFont.plusJakartaSansSemiBold20
+        v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
         return v
     }()
@@ -107,6 +107,9 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         case .banner(let model):
             if let cell = tableView.dequeueReusableCell(withIdentifier: HomeBannerTableViewCell.identifier, for: indexPath) as? HomeBannerTableViewCell {
                 cell.configure(item: model)
+                cell.onSelectBanner = { [weak self] selected in
+                    Task { await self?.viewModel.playBannerTrack(item: selected) }
+                }
                 return cell
             }
             return UITableViewCell()
@@ -116,6 +119,9 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.buttonAction = { [weak self] in
                     self?.viewModel.didTapMusic()
                 }
+                cell.onSelectMusic = { [weak self] selected in
+                    Task { await self?.viewModel.playHomeMusic(item: selected) }
+                }
                 return cell
             }
             return UITableViewCell()
@@ -124,6 +130,9 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.configure(item: model)
                 cell.buttonAction = { [weak self] in
                     self?.viewModel.didTapPodcast()
+                }
+                cell.onSelectPodcast = { [weak self] collectionId in
+                    self?.viewModel.didTapEpisode(collectionId: collectionId)
                 }
                 return cell
             }

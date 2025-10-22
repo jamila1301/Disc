@@ -6,12 +6,17 @@
 //
 
 import UIKit
+import SnapKit
 
 final class BaseTabBar: UITabBarController {
+    
+    private let miniPlayer = MiniPlayerView()
         
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupMiniPlayer()
+        setupNotifications()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -94,5 +99,32 @@ final class BaseTabBar: UITabBarController {
         setViewControllers([homeNavVC, searchNavVC, categoryNavVC, favoriteNavVC, profileNavVC], animated: false)
     }
     
+    private func setupMiniPlayer() {
+        view.addSubview(miniPlayer)
+        miniPlayer.isHidden = true
+        
+        miniPlayer.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.bottom.equalTo(tabBar.snp.top).offset(-10)
+            make.height.equalTo(64)
+        }
+        
+        miniPlayer.onTapMiniPlayer = { [weak self] in
+            let vc = FullPlayerViewController()
+            self?.present(vc, animated: true)
+        }
+    }
+    
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(showMiniPlayer), name: .didStartPlaying, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(hideMiniPlayer), name: .didStopPlaying, object: nil)
+    }
+    
+    @objc private func showMiniPlayer() {
+        miniPlayer.isHidden = false
+    }
+    
+    @objc private func hideMiniPlayer() {
+        miniPlayer.isHidden = true
+    }
 }
-

@@ -37,10 +37,10 @@ struct EpisodeResponse: Decodable {
 
 struct Episode: Decodable {
     let trackId: Int?
-    let trackName: String?
+    let trackName: String
     let artistName: String?
     let episodeUrl: String?
-    let artworkUrl600: String?
+    let artworkUrl600: String
     let trackTimeMillis: Int?
     let previewUrl: String?
     let description: String?

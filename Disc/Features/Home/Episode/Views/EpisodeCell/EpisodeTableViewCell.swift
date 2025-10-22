@@ -20,14 +20,14 @@ final class EpisodeTableViewCell: UITableViewCell {
     
     private let episodeNameLabel: UILabel = {
         let v = UILabel()
-        v.font = UIFont.plusJakartaSansSemiBold14
+        v.font = .plusJakartaSansSemiBold14
         v.numberOfLines = .zero
         return v
     }()
     
     private let collectionNameLabel: UILabel = {
         let v = UILabel()
-        v.font = UIFont.plusJakartaSansMedium12
+        v.font = .plusJakartaSansMedium12
         v.textColor = .lightGrayPrimary
         v.numberOfLines = .zero
         return v
@@ -35,7 +35,7 @@ final class EpisodeTableViewCell: UITableViewCell {
     
     private let timeLabel: UILabel = {
         let v = UILabel()
-        v.font = UIFont.plusJakartaSansMedium12
+        v.font = .plusJakartaSansMedium12
         v.textColor = .lightGrayPrimary
         v.numberOfLines = .zero
         return v
@@ -104,6 +104,7 @@ extension EpisodeTableViewCell {
         let episodeName: String
         let collectionName: String
         let timeLabel: String
+        let previewUrl: String?
     }
     
     func configure(item: Item) {

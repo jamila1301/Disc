@@ -17,14 +17,14 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
     private let topLabel: UILabel = {
         let v = UILabel()
         v.text = "Forgot password"
-        v.font = UIFont.plusJakartaSansSemibold24
+        v.font = .plusJakartaSansSemibold24
         return v
     }()
     
     private let topTitleLabel: UILabel = {
         let v = UILabel()
         v.text = "We will send you an email for your password"
-        v.font = UIFont.plusJakartaSansRegular16
+        v.font = .plusJakartaSansRegular16
         v.textColor = .lightGrayPrimary
         v.numberOfLines = .zero
         return v
@@ -33,7 +33,7 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
     private let emailLabel: UILabel = {
         let v = UILabel()
         v.text = "Email"
-        v.font = UIFont.plusJakartaSansMedium16
+        v.font = .plusJakartaSansMedium16
         v.textColor = .lightBlueSecondinary
         return v
     }()
@@ -50,7 +50,7 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
     private lazy var sendButton: UIButton = {
         let v = UIButton(type: .system)
         v.setTitle("Send", for: .normal)
-        v.titleLabel?.font = UIFont.plusJakartaSansSemiBold16
+        v.titleLabel?.font = .plusJakartaSansSemiBold16
         v.setTitleColor(.white, for: .normal)
         v.backgroundColor = .defaultBlue
         v.layer.cornerRadius = 8

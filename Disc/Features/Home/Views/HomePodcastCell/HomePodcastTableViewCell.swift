@@ -11,11 +11,12 @@ import SnapKit
 final class HomePodcastTableViewCell: UITableViewCell {
     
     var buttonAction: (() -> Void)?
+    var onSelectPodcast: ((Int) -> Void)?
     
     private let topLabel: UILabel = {
         let v = UILabel()
         v.text = "Recommended Podcast"
-        v.font = UIFont.plusJakartaSansSemiBold18
+        v.font = .plusJakartaSansSemiBold18
         v.numberOfLines = .zero
         v.textAlignment = .left
         return v
@@ -25,7 +26,7 @@ final class HomePodcastTableViewCell: UITableViewCell {
         let v = UIButton(type: .system)
         v.setTitle("Show more", for: .normal)
         v.setTitleColor(UIColor.defaultBlue, for: .normal)
-        v.titleLabel?.font = UIFont.plusJakartaSansSemiBold12
+        v.titleLabel?.font = .plusJakartaSansSemiBold12
         v.addTarget(self, action: #selector(didTapShowMore), for: .touchUpInside)
         return v
     }()
@@ -38,7 +39,7 @@ final class HomePodcastTableViewCell: UITableViewCell {
         return v
     }()
     
-    private var musicList: [HomeMusicCollectionViewCell.Item] = []
+    private var musicList: [HomePodcastCollectionViewCell.Item] = []
     
     private lazy var collectionView: UICollectionView = {
         
@@ -53,7 +54,7 @@ final class HomePodcastTableViewCell: UITableViewCell {
         v.showsVerticalScrollIndicator = false
         v.delegate = self
         v.dataSource = self
-        v.register(HomeMusicCollectionViewCell.self, forCellWithReuseIdentifier: HomeMusicCollectionViewCell.identifier)
+        v.register(HomePodcastCollectionViewCell.self, forCellWithReuseIdentifier: HomePodcastCollectionViewCell.identifier)
         return v
     }()
     
@@ -100,7 +101,7 @@ final class HomePodcastTableViewCell: UITableViewCell {
 
 extension HomePodcastTableViewCell {
     struct Item {
-        let musicList: [HomeMusicCollectionViewCell.Item]
+        let musicList: [HomePodcastCollectionViewCell.Item]
     }
     
     func configure(item: Item) {
@@ -115,10 +116,16 @@ extension HomePodcastTableViewCell: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeMusicCollectionViewCell.identifier, for: indexPath) as? HomeMusicCollectionViewCell {
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePodcastCollectionViewCell.identifier, for: indexPath) as? HomePodcastCollectionViewCell {
             cell.configure(item: musicList[indexPath.row])
             return cell
         }
         return UICollectionViewCell()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let id = musicList[indexPath.row].collectionId {
+            onSelectPodcast?(id) 
+        }
     }
 }

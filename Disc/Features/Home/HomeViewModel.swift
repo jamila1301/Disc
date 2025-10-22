@@ -45,7 +45,8 @@ final class HomeViewModel {
                     topLabel: "Music",
                     nameLabel: track.trackName,
                     artistLabel: track.artistName,
-                    timeLabel: duration
+                    timeLabel: duration,
+                    previewUrl: track.previewUrl
                 ))
             }
             
@@ -54,16 +55,19 @@ final class HomeViewModel {
                     .init(
                         image: track.artworkUrl100,
                         musicName: track.trackName,
-                        artistName: track.artistName
+                        artistName: track.artistName,
+                        previewUrl: track.previewUrl
                     )
             }
             
             let podcastTracks = try await ITunesService.shared.fetchPodcast(term: "podcast", limit: 5)
-            let podcastItems: [HomeMusicCollectionViewCell.Item] = podcastTracks.map { podcast in
+            let podcastItems: [HomePodcastCollectionViewCell.Item] = podcastTracks.map { podcast in
                     .init(
                         image: podcast.artworkUrl100,
                         musicName: podcast.collectionName,
-                        artistName: podcast.artistName
+                        artistName: podcast.artistName,
+                        previewUrl: nil,
+                        collectionId: podcast.collectionId
                     )
             }
             
@@ -90,5 +94,53 @@ final class HomeViewModel {
     func didTapEpisode(collectionId: Int) {
         router.navigateToEpisode(collectionId: collectionId)
     }
-}
+    
+    func playBannerTrack(item: HomeBannerCollectionViewCell.Item) async {
+        guard let musicTracks = try? await ITunesService.shared.fetchMusic(term: "music", limit: 199) else { return }
+        
+        let track = Track(
+            trackName: item.nameLabel,
+            artistName: item.artistLabel,
+            artworkUrl100: item.leftImage,
+            trackTimeMillis: nil,
+            previewUrl: item.previewUrl
+        )
+        
+        let tracks: [Track] = musicTracks.compactMap {
+            return Track(
+                trackName: $0.trackName,
+                artistName: $0.artistName,
+                artworkUrl100: $0.artworkUrl100,
+                trackTimeMillis: nil,
+                previewUrl: $0.previewUrl
+            )
+        }
+        
+        PlayerManager.shared.playBannerTrack(track, trackList: tracks)
+    }
+    
+    func playHomeMusic(item: HomeMusicCollectionViewCell.Item) async {
+        guard let musicTracks = try? await ITunesService.shared.fetchMusic(term: "music", limit: 199) else { return }
+        
+        let track = Track(
+            trackName: item.musicName,
+            artistName: item.artistName,
+            artworkUrl100: item.image,
+            trackTimeMillis: nil,
+            previewUrl: item.previewUrl
+        )
+        
+        let tracks: [Track] = musicTracks.compactMap {
+            return Track(
+                trackName: $0.trackName,
+                artistName: $0.artistName,
+                artworkUrl100: $0.artworkUrl100,
+                trackTimeMillis: nil,
+                previewUrl: $0.previewUrl
+            )
+        }
+        
+        PlayerManager.shared.playHomeMusic(track, trackList: tracks)
+    }
 
+}

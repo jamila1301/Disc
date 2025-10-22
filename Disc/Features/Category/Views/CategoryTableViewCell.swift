@@ -82,5 +82,4 @@ extension CategoryTableViewCell: UICollectionViewDelegate, UICollectionViewDataS
         let category = nameList[indexPath.row].categoryName
         onCategorySelected?(category)
     }
-    
 }

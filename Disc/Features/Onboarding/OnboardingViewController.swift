@@ -23,7 +23,7 @@ final class OnboardingViewController: UIViewController {
         let v = UILabel()
         v.text = "Discover Latest Music and Podcast"
         v.numberOfLines = .zero
-        v.font = UIFont.plusJakartaSansSemiBold36
+        v.font = .plusJakartaSansSemiBold36
         v.textAlignment = .center
         return v
     }()
@@ -32,7 +32,7 @@ final class OnboardingViewController: UIViewController {
         let v = UILabel()
         v.text = "Listen to the latest music and podcast releases\nusing Disc. app"
         v.numberOfLines = .zero
-        v.font = UIFont.plusJakartaSansRegular14
+        v.font = .plusJakartaSansRegular14
         v.textAlignment = .center
         v.textColor = .lightGrayPrimary
         return v
@@ -41,7 +41,7 @@ final class OnboardingViewController: UIViewController {
     private lazy var startButton: UIButton = {
         let v = UIButton(type: .system)
         v.setTitle("Start Exploring", for: .normal)
-        v.titleLabel?.font = UIFont.plusJakartaSansSemiBold16
+        v.titleLabel?.font = .plusJakartaSansSemiBold16
         v.setTitleColor(.white, for: .normal)
         v.backgroundColor = .defaultBlue
         v.layer.cornerRadius = 8

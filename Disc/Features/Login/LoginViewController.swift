@@ -27,14 +27,14 @@ final class LoginViewController: UIViewController, Keyboardable {
     private let topLabel: UILabel = {
         let v = UILabel()
         v.text = "Sign In"
-        v.font = UIFont.plusJakartaSansSemibold24
+        v.font = .plusJakartaSansSemibold24
         return v
     }()
     
     private let topTitleLabel: UILabel = {
         let v = UILabel()
         v.text = "Please sign in to your account"
-        v.font = UIFont.plusJakartaSansRegular16
+        v.font = .plusJakartaSansRegular16
         v.textColor = .lightGrayPrimary
         v.numberOfLines = .zero
         return v
@@ -43,7 +43,7 @@ final class LoginViewController: UIViewController, Keyboardable {
     private let emailLabel: UILabel = {
         let v = UILabel()
         v.text = "Email"
-        v.font = UIFont.plusJakartaSansMedium16
+        v.font = .plusJakartaSansMedium16
         v.textColor = .lightBlueSecondinary
         return v
     }()
@@ -60,7 +60,7 @@ final class LoginViewController: UIViewController, Keyboardable {
     private let passwordLabel: UILabel = {
         let v = UILabel()
         v.text = "Password"
-        v.font = UIFont.plusJakartaSansMedium16
+        v.font = .plusJakartaSansMedium16
         v.textColor = .lightBlueSecondinary
         return v
     }()
@@ -77,7 +77,7 @@ final class LoginViewController: UIViewController, Keyboardable {
     private lazy var forgotPasswordButton: UIButton = {
         let v = UIButton(type: .system)
         v.setTitle("Forgot Password?", for: .normal)
-        v.titleLabel?.font = UIFont.plusJakartaSansMedium14
+        v.titleLabel?.font = .plusJakartaSansMedium14
         v.setTitleColor(.defaultBlue, for: .normal)
         v.contentHorizontalAlignment = .trailing
         v.addTarget(self, action: #selector(didTapForgotPasswordButton), for: .touchUpInside)
@@ -87,7 +87,7 @@ final class LoginViewController: UIViewController, Keyboardable {
     private lazy var signInButton: UIButton = {
         let v = UIButton(type: .system)
         v.setTitle("Sign In", for: .normal)
-        v.titleLabel?.font = UIFont.plusJakartaSansSemiBold16
+        v.titleLabel?.font = .plusJakartaSansSemiBold16
         v.setTitleColor(.white, for: .normal)
         v.backgroundColor = .defaultBlue
         v.layer.cornerRadius = 8
@@ -98,7 +98,7 @@ final class LoginViewController: UIViewController, Keyboardable {
     private let orContinueLabel: UILabel = {
         let v = UILabel()
         v.text = "Or sign in using your social profile"
-        v.font = UIFont.plusJakartaSansRegular14
+        v.font = .plusJakartaSansRegular14
         v.textColor = .lightGrayPrimary
         v.textAlignment = .center
         return v
@@ -161,7 +161,7 @@ final class LoginViewController: UIViewController, Keyboardable {
     private let signUpLabel: UILabel = {
         let v = UILabel()
         v.text = "Don’t have account?"
-        v.font = UIFont.plusJakartaSansRegular14
+        v.font = .plusJakartaSansRegular14
         v.textColor = .lightGrayPrimary
         return v
     }()
@@ -169,7 +169,7 @@ final class LoginViewController: UIViewController, Keyboardable {
     private lazy var signUpButton: UIButton = {
         let v = UIButton(type: .system)
         v.setTitle("Create Account", for: .normal)
-        v.titleLabel?.font = UIFont.plusJakartaSansMedium14
+        v.titleLabel?.font = .plusJakartaSansMedium14
         v.setTitleColor(.defaultBlue, for: .normal)
         v.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
         return v
