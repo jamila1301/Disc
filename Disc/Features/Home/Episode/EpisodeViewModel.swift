@@ -35,6 +35,7 @@ final class EpisodeViewModel {
             let episodeTracks = try await ITunesService.shared.fetchEpisode(for: collectionId)
             self.cellTypes = episodeTracks.map { episode in
                 .episode(.init(
+                    trackId: episode.trackId,
                     image: episode.artworkUrl600,
                     episodeName: episode.trackName,
                     collectionName: episode.collectionName,
@@ -50,7 +51,7 @@ final class EpisodeViewModel {
     
     func didTapEpisode(item: EpisodeTableViewCell.Item) {
         let episode = Episode(
-            trackId: nil,
+            trackId: item.trackId,
             trackName: item.episodeName,
             artistName: item.collectionName,
             episodeUrl: nil,
@@ -64,7 +65,7 @@ final class EpisodeViewModel {
         let episodes: [Episode] = cellTypes.compactMap {
             if case .episode(let item) = $0 {
                 return Episode(
-                    trackId: nil,
+                    trackId: item.trackId,
                     trackName: item.episodeName,
                     artistName: item.collectionName,
                     episodeUrl: nil,

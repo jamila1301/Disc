@@ -163,6 +163,7 @@ final class HomeBannerCollectionViewCell: UICollectionViewCell {
 
 extension HomeBannerCollectionViewCell {
     struct Item {
+        let trackId: Int?
         let leftImage: String
         let topLabel: String
         let nameLabel: String

@@ -1,14 +1,14 @@
 //
-//  EpisodeTableViewCell.swift
+//  LikedEpisodeTableViewCell.swift
 //  Disc
 //
-//  Created by Jamila Mahammadli on 10.10.25.
+//  Created by Jamila Mahammadli on 22.10.25.
 //
 
 import UIKit
 import SnapKit
 
-final class EpisodeTableViewCell: UITableViewCell {
+final class LikedEpisodeTableViewCell: UITableViewCell {
     
     private let topImageView: UIImageView = {
         let v = UIImageView()
@@ -21,37 +21,22 @@ final class EpisodeTableViewCell: UITableViewCell {
     private let episodeNameLabel: UILabel = {
         let v = UILabel()
         v.font = .plusJakartaSansSemiBold14
-        v.numberOfLines = .zero
+        v.numberOfLines = 1
         return v
     }()
     
-    private let collectionNameLabel: UILabel = {
+    private let artistNameLabel: UILabel = {
         let v = UILabel()
         v.font = .plusJakartaSansMedium12
         v.textColor = .lightGrayPrimary
-        v.numberOfLines = .zero
+        v.numberOfLines = 1
         return v
     }()
     
-    private let timeLabel: UILabel = {
-        let v = UILabel()
-        v.font = .plusJakartaSansMedium12
-        v.textColor = .lightGrayPrimary
-        v.numberOfLines = .zero
-        return v
-    }()
-    
-    private let topStackView: UIStackView = {
+    private let labelsStackView: UIStackView = {
         let v = UIStackView()
         v.axis = .vertical
-        v.spacing = 10
-        return v
-    }()
-    
-    private let bottomStackView: UIStackView = {
-        let v = UIStackView()
-        v.axis = .vertical
-        v.spacing = 3
+        v.spacing = 6
         return v
     }()
     
@@ -76,20 +61,16 @@ final class EpisodeTableViewCell: UITableViewCell {
         contentView.backgroundColor = .screenBackground
         contentView.addSubview(mainStackView)
         
-        [collectionNameLabel, timeLabel].forEach { v in
-            bottomStackView.addArrangedSubview(v)
+        [episodeNameLabel, artistNameLabel].forEach { v in
+            labelsStackView.addArrangedSubview(v)
         }
         
-        [episodeNameLabel, bottomStackView].forEach { v in
-            topStackView.addArrangedSubview(v)
-        }
-        
-        [topImageView, topStackView].forEach { v in
+        [topImageView, labelsStackView].forEach { v in
             mainStackView.addArrangedSubview(v)
         }
         
         topImageView.snp.makeConstraints { make in
-            make.size.equalTo(110)
+            make.size.equalTo(56)
         }
         
         mainStackView.snp.makeConstraints { make in
@@ -98,20 +79,18 @@ final class EpisodeTableViewCell: UITableViewCell {
     }
 }
 
-extension EpisodeTableViewCell {
+extension LikedEpisodeTableViewCell {
     struct Item {
-        let trackId: Int?
         let image: String
         let episodeName: String
-        let collectionName: String
-        let timeLabel: String
+        let artistName: String
         let previewUrl: String?
+        let collectionName: String
     }
     
     func configure(item: Item) {
         self.topImageView.downloadImage(from: item.image)
         self.episodeNameLabel.text = item.episodeName
-        self.collectionNameLabel.text = item.collectionName
-        self.timeLabel.text = item.timeLabel
+        self.artistNameLabel.text = item.artistName
     }
 }

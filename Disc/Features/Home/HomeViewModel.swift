@@ -41,6 +41,7 @@ final class HomeViewModel {
             for track in allTracks {
                 let duration = track.trackTimeMillis?.formattedDuration ?? "--:--"
                 bannerItems.append(.init(
+                    trackId: track.trackId,
                     leftImage: track.artworkUrl100,
                     topLabel: "Music",
                     nameLabel: track.trackName,
@@ -53,6 +54,7 @@ final class HomeViewModel {
             let musicTracks = try await ITunesService.shared.fetchMusic(term: "music", limit: 5)
             let musicItems: [HomeMusicCollectionViewCell.Item] = musicTracks.map { track in
                     .init(
+                        trackId: track.trackId,
                         image: track.artworkUrl100,
                         musicName: track.trackName,
                         artistName: track.artistName,
@@ -99,6 +101,7 @@ final class HomeViewModel {
         guard let musicTracks = try? await ITunesService.shared.fetchMusic(term: "music", limit: 199) else { return }
         
         let track = Track(
+            trackId: item.trackId,
             trackName: item.nameLabel,
             artistName: item.artistLabel,
             artworkUrl100: item.leftImage,
@@ -108,6 +111,7 @@ final class HomeViewModel {
         
         let tracks: [Track] = musicTracks.compactMap {
             return Track(
+                trackId: item.trackId,
                 trackName: $0.trackName,
                 artistName: $0.artistName,
                 artworkUrl100: $0.artworkUrl100,
@@ -123,6 +127,7 @@ final class HomeViewModel {
         guard let musicTracks = try? await ITunesService.shared.fetchMusic(term: "music", limit: 199) else { return }
         
         let track = Track(
+            trackId: item.trackId,
             trackName: item.musicName,
             artistName: item.artistName,
             artworkUrl100: item.image,
@@ -132,6 +137,7 @@ final class HomeViewModel {
         
         let tracks: [Track] = musicTracks.compactMap {
             return Track(
+                trackId: item.trackId,
                 trackName: $0.trackName,
                 artistName: $0.artistName,
                 artworkUrl100: $0.artworkUrl100,
