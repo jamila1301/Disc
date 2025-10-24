@@ -12,6 +12,7 @@ struct MusicResponse: Decodable {
 }
 
 struct Track: Decodable {
+    let trackId: Int?
     let trackName: String
     let artistName: String
     let artworkUrl100: String

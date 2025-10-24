@@ -151,4 +151,5 @@ extension Notification.Name {
     static let didStartPlaying = Notification.Name("didStartPlaying")
     static let didStopPlaying = Notification.Name("didStopPlaying")
     static let didUpdatePlayState = Notification.Name("didUpdatePlayState")
+    static let didUpdateLikedItems = Notification.Name("didUpdateLikedItems")
 }

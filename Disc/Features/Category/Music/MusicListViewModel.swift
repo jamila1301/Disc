@@ -35,6 +35,7 @@ final class MusicListViewModel {
             let musicTracks = try await ITunesService.shared.fetchMusic(term: category, limit: 200)
             self.cellTypes = musicTracks.map { track in
                     .music(.init(
+                        trackId: track.trackId,
                         image: track.artworkUrl100,
                         musicName: track.trackName,
                         artistName: track.artistName,
@@ -50,6 +51,7 @@ final class MusicListViewModel {
     
     func didTapMusic(item: MusicTableViewCell.Item) {
         let track = Track(
+            trackId: item.trackId,
             trackName: item.musicName,
             artistName: item.artistName,
             artworkUrl100: item.image,
@@ -60,6 +62,7 @@ final class MusicListViewModel {
         let tracks: [Track] = cellTypes.compactMap {
             if case .music(let item) = $0 {
                 return Track(
+                    trackId: track.trackId,
                     trackName: item.musicName ,
                     artistName: item.artistName ,
                     artworkUrl100: item.image ,

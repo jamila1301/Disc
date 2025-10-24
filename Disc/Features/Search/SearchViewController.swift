@@ -62,6 +62,14 @@ final class SearchViewController: UIViewController, Keyboardable {
         return v
     }()
     
+    private let loadingLottieView: LottieAnimationView = {
+        let v = LottieAnimationView(name: "ınsideLoading")
+        v.contentMode = .scaleAspectFit
+        v.loopMode = .loop
+        v.isHidden = true
+        return v
+    }()
+    
     init(viewModel: SearchViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -91,7 +99,7 @@ final class SearchViewController: UIViewController, Keyboardable {
     private func setupUI() {
         view.backgroundColor = .screenBackground
         
-        [screenNameLabel, searchBar, tableView, lottieView, noDataLottieView].forEach { v in
+        [screenNameLabel, searchBar, tableView, lottieView, noDataLottieView, loadingLottieView].forEach { v in
             view.addSubview(v)
         }
         
@@ -118,6 +126,12 @@ final class SearchViewController: UIViewController, Keyboardable {
         }
         
         noDataLottieView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(40)
+            make.size.equalTo(220)
+        }
+        
+        loadingLottieView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview().offset(40)
             make.size.equalTo(220)
@@ -218,6 +232,7 @@ extension SearchViewController: SearchViewModelDelegate {
         tableView.isHidden = false
         lottieView.isHidden = true
         noDataLottieView.isHidden = true
+        loadingLottieView.isHidden = true
         tableView.reloadData()
         
         if !viewModel.musicItems.isEmpty || !viewModel.podcastItems.isEmpty {
@@ -229,6 +244,7 @@ extension SearchViewController: SearchViewModelDelegate {
         tableView.isHidden = true
         lottieView.isHidden = true
         noDataLottieView.isHidden = false
+        loadingLottieView.isHidden = true
         noDataLottieView.play()
     }
     
@@ -236,13 +252,15 @@ extension SearchViewController: SearchViewModelDelegate {
         tableView.isHidden = true
         lottieView.isHidden = false
         noDataLottieView.isHidden = true
+        loadingLottieView.isHidden = true
         lottieView.play()
     }
     
     func showLoading() {
         tableView.isHidden = true
-        lottieView.isHidden = false
+        lottieView.isHidden = true
         noDataLottieView.isHidden = true
-        lottieView.play()
+        loadingLottieView.isHidden = false
+        loadingLottieView.play()
     }
 }

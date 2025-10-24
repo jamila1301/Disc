@@ -58,6 +58,7 @@ final class SearchViewModel {
             
             self.musicItems = musicTracks.map { track in
                     .init(
+                        trackId: track.trackId,
                         image: track.artworkUrl100,
                         musicName: track.trackName,
                         artistName: track.artistName,
@@ -93,6 +94,7 @@ final class SearchViewModel {
     
     func didTapMusic(item: MusicTableViewCell.Item) {
         let track = Track(
+            trackId: item.trackId,
             trackName: item.musicName,
             artistName: item.artistName,
             artworkUrl100: item.image,
@@ -102,6 +104,7 @@ final class SearchViewModel {
         
         let tracks: [Track] = musicItems.compactMap {
             return Track(
+                trackId: item.trackId,
                 trackName: $0.musicName,
                 artistName: $0.artistName,
                 artworkUrl100: $0.image,

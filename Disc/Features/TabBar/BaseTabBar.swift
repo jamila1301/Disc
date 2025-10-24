@@ -80,7 +80,7 @@ final class BaseTabBar: UITabBarController {
             selectedImage: .categoryFill
         )
         
-        let favoriteVC = FavoriteViewController()
+        let favoriteVC = FavoriteBuilder().build()
         let favoriteNavVC = UINavigationController(rootViewController: favoriteVC)
         favoriteNavVC.tabBarItem = UITabBarItem(
             title: nil,

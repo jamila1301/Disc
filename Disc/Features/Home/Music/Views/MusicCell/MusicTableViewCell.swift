@@ -81,6 +81,7 @@ final class MusicTableViewCell: UITableViewCell {
 
 extension MusicTableViewCell {
     struct Item {
+        let trackId: Int?
         let image: String
         let musicName: String
         let artistName: String

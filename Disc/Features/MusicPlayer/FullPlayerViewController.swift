@@ -8,9 +8,10 @@
 import UIKit
 import SnapKit
 import AVFoundation
+import FirebaseAuth
 
 final class FullPlayerViewController: UIViewController {
-        
+    
     private let albumImageView: UIImageView = {
         let v = UIImageView()
         v.contentMode = .scaleAspectFill
@@ -98,10 +99,11 @@ final class FullPlayerViewController: UIViewController {
         v.isUserInteractionEnabled = true
         return v
     }()
-        
+    
     private var timeObserverToken: Any?
     private weak var observedPlayer: AVPlayer?
-        
+    private var isLiked: Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -118,7 +120,7 @@ final class FullPlayerViewController: UIViewController {
         NotificationCenter.default.removeObserver(self)
         removePeriodicTimeObserver()
     }
-        
+    
     private func setupUI() {
         view.backgroundColor = .white
         
@@ -182,14 +184,14 @@ final class FullPlayerViewController: UIViewController {
             make.size.equalTo(40)
         }
     }
-        
+    
     private func setupNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: .didStartPlaying, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updatePlayPauseIcon), name: .didUpdatePlayState, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(resetUI), name: .didStopPlaying, object: nil)
     }
-        
-    @objc private func updateUI(_ notification: Notification? = nil) {
+    
+    @objc private func updateUI(notification: Notification? = nil) {
         let manager = PlayerManager.shared
         
         if manager.isEpisodeMode {
@@ -197,13 +199,14 @@ final class FullPlayerViewController: UIViewController {
                 songTitleLabel.text = episode.trackName
                 artistLabel.text = episode.collectionName
                 albumImageView.downloadImage(from: episode.artworkUrl600)
-                
+                checkIfEpisodeIsLiked(episode: episode)
             }
         } else {
             if let track = manager.currentTrack {
                 songTitleLabel.text = track.trackName
                 artistLabel.text = track.artistName
                 albumImageView.downloadImage(from: track.artworkUrl100)
+                checkIfTrackIsLiked(track: track)
             }
         }
         
@@ -219,6 +222,8 @@ final class FullPlayerViewController: UIViewController {
         currentTimeLabel.text = "0:00"
         remainingTimeLabel.text = "-0:00"
         playPauseImageView.image = .play1
+        heartButton.setImage(.heart, for: .normal)
+        isLiked = false
         removePeriodicTimeObserver()
     }
     
@@ -226,7 +231,7 @@ final class FullPlayerViewController: UIViewController {
         let icon = PlayerManager.shared.isPlaying ? UIImage.pause : UIImage.play1
         playPauseImageView.image = icon
     }
-        
+    
     @objc private func didTapPrevious() {
         PlayerManager.shared.previous()
     }
@@ -240,12 +245,79 @@ final class FullPlayerViewController: UIViewController {
     }
     
     @objc private func didTapHeart() {
-        let vc = AddToPlaylistViewController()
-        vc.modalPresentationStyle = .overFullScreen
-        vc.modalTransitionStyle = .crossDissolve
-        present(vc, animated: true)
-    }
+        let manager = PlayerManager.shared
+        guard let userId = Auth.auth().currentUser?.uid else { return }
         
+        Task {
+            do {
+                if manager.isEpisodeMode, let episode = manager.currentEpisode {
+                    if isLiked {
+                        try await FirestoreManager.shared.removeLikedEpisode(userId: userId, episode: episode)
+                        isLiked = false
+                        heartButton.setImage(.heart, for: .normal)
+                    } else {
+                        try await FirestoreManager.shared.saveLikedEpisode(userId: userId, episode: episode)
+                        isLiked = true
+                        heartButton.setImage(.heartFill, for: .normal)
+                    }
+                } else if let track = manager.currentTrack {
+                    if isLiked {
+                        try await FirestoreManager.shared.removeLikedMusic(userId: userId, track: track)
+                        isLiked = false
+                        heartButton.setImage(.heart, for: .normal)
+                    } else {
+                        try await FirestoreManager.shared.saveLikedMusic(userId: userId, track: track)
+                        isLiked = true
+                        heartButton.setImage(.heartFill, for: .normal)
+                    }
+                }
+                NotificationCenter.default.post(name: .didUpdateLikedItems, object: nil)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    private func checkIfTrackIsLiked(track: Track) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            isLiked = false
+            heartButton.setImage(.heart, for: .normal)
+            return
+        }
+        
+        Task {
+            do {
+                let likedTracks = try await FirestoreManager.shared.fetchLikedMusics(userId: userId)
+                isLiked = likedTracks.contains { $0.musicName == track.trackName && $0.artistName == track.artistName }
+                heartButton.setImage(isLiked ? .heartFill : .heart, for: .normal)
+            } catch {
+                print(error.localizedDescription)
+                isLiked = false
+                heartButton.setImage(.heart, for: .normal)
+            }
+        }
+    }
+    
+    private func checkIfEpisodeIsLiked(episode: Episode) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            isLiked = false
+            heartButton.setImage(.heart, for: .normal)
+            return
+        }
+        
+        Task {
+            do {
+                let likedEpisodes = try await FirestoreManager.shared.fetchLikedEpisodes(userId: userId)
+                isLiked = likedEpisodes.contains { $0.episodeName == episode.trackName }
+                heartButton.setImage(isLiked ? .heartFill : .heart, for: .normal)
+            } catch {
+                print(error.localizedDescription)
+                isLiked = false
+                heartButton.setImage(.heart, for: .normal)
+            }
+        }
+    }
+    
     private func addPeriodicTimeObserver() {
         guard let player = PlayerManager.shared.player else { return }
         removePeriodicTimeObserver()
@@ -269,7 +341,7 @@ final class FullPlayerViewController: UIViewController {
         timeObserverToken = nil
         observedPlayer = nil
     }
-        
+    
     private func formatTime(_ time: Double) -> String {
         guard !time.isNaN && !time.isInfinite else { return "0:00" }
         let totalSeconds = Int(round(time))

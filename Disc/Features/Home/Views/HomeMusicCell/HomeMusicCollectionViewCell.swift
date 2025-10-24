@@ -81,6 +81,7 @@ final class HomeMusicCollectionViewCell: UICollectionViewCell {
 
 extension HomeMusicCollectionViewCell {
     struct Item {
+        let trackId : Int?
         let image: String
         let musicName: String
         let artistName: String
