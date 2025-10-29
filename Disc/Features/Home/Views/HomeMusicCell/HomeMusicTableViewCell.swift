@@ -16,7 +16,7 @@ final class HomeMusicTableViewCell: UITableViewCell {
     
     private let topLabel: UILabel = {
         let v = UILabel()
-        v.text = "Recommended Music"
+        v.text = "home_recommended_music_title".localized()
         v.font = .plusJakartaSansSemiBold18
         v.numberOfLines = .zero
         v.textAlignment = .left
@@ -25,7 +25,7 @@ final class HomeMusicTableViewCell: UITableViewCell {
     
     private lazy var showButton: UIButton = {
         let v = UIButton(type: .system)
-        v.setTitle("Show more", for: .normal)
+        v.setTitle("home_show_more_button".localized(), for: .normal)
         v.setTitleColor(UIColor.defaultBlue, for: .normal)
         v.titleLabel?.font = .plusJakartaSansSemiBold12
         v.addTarget(self, action: #selector(didTapShowMore), for: .touchUpInside)
@@ -37,6 +37,7 @@ final class HomeMusicTableViewCell: UITableViewCell {
         v.axis = .horizontal
         v.spacing = 8
         v.alignment = .center
+        v.distribution = .equalSpacing
         return v
     }()
     
@@ -107,6 +108,8 @@ extension HomeMusicTableViewCell {
     
     func configure(item: Item) {
         self.musicList = item.musicList
+        topLabel.text = "home_recommended_music_title".localized()
+        showButton.setTitle("home_show_more_button".localized(), for: .normal)
         self.collectionView.reloadData()
     }
 }
@@ -129,4 +132,11 @@ extension HomeMusicTableViewCell: UICollectionViewDelegate, UICollectionViewData
         onSelectMusic?(selected)
     }
 
+}
+
+extension HomeMusicTableViewCell: LocalizeUpdateable {
+    func didChangeLanguage() {
+        topLabel.text = "home_recommended_music_title".localized()
+        showButton.setTitle("home_show_more_button".localized(), for: .normal)
+    }
 }

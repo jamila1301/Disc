@@ -22,16 +22,16 @@ enum AuthError: Error, LocalizedError {
     
     var errorDescription: String? {
         switch self {
-        case .emptyName: return "Name cannot be empty"
-        case .emptyEmail: return "Email cannot be empty"
-        case .emptyPassword: return "Password cannot be empty"
-        case .invalidEmail: return "Email format is invalid"
-        case .userNotFound: return "User not found"
-        case .wrongPassword: return "Wrong password"
-        case .invalidCredential: return "Email or password is incorrect"
-        case .userDisabled: return "Account is disabled"
-        case .emailAlreadyInUse: return "This email is already in use"
-        case .weakPassword: return "Password must be at least 6 characters"
+        case .emptyName: return "error_empty_name".localized()
+        case .emptyEmail: return "error_empty_email".localized()
+        case .emptyPassword: return "error_empty_password".localized()
+        case .invalidEmail: return "error_invalid_email".localized()
+        case .userNotFound: return "error_user_not_found".localized()
+        case .wrongPassword: return "error_wrong_password".localized()
+        case .invalidCredential: return "error_invalid_credential".localized()
+        case .userDisabled: return "error_user_disabled".localized()
+        case .emailAlreadyInUse: return "error_email_already_in_use".localized()
+        case .weakPassword: return "error_weak_password".localized()
         case .unknown(let message): return message
         }
     }

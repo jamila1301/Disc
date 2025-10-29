@@ -18,6 +18,7 @@ final class HomeViewController: UIViewController {
         v.text = "Discover"
         v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
+        v.numberOfLines = .zero
         return v
     }()
     

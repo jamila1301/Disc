@@ -1,0 +1,139 @@
+/* 
+  Localizable.strings
+  Disc
+
+  Created by Jamila Mahammadli on 27.10.25.
+  
+*/
+
+// Onboarding
+"onboarding_title" = "Discover Latest Music and Podcast";
+"onboarding_subtitle" = "Listen to the latest music and podcast releases using Disc. app";
+"onboarding_start_button" = "Start Exploring";
+
+// Sign In
+"signin_title" = "Sign In";
+"signin_subtitle" = "Please sign in to your account";
+"signin_email_label" = "Email";
+"signin_email_placeholder" = "Enter Your Email";
+"signin_password_label" = "Password";
+"signin_password_placeholder" = "Enter Your Password";
+"signin_forgot_password_button" = "Forgot Password?";
+"signin_button" = "Sign In";
+"signin_or_continue_label" = "Or sign in using your social profile";
+"signup_label" = "Don’t have account?";
+"signup_button" = "Create Account";
+"error_empty_name" = "Name cannot be empty";
+"error_empty_email" = "Email cannot be empty";
+"error_empty_password" = "Password cannot be empty";
+"error_invalid_email" = "Email format is invalid";
+"error_user_not_found" = "User not found";
+"error_wrong_password" = "Wrong password";
+"error_invalid_credential" = "Email or password is incorrect";
+"error_user_disabled" = "Account is disabled";
+"error_email_already_in_use" = "This email is already in use";
+"error_weak_password" = "Password must be at least 6 characters";
+
+// Forgot Password
+"forgot_password_title" = "Forgot password";
+"forgot_password_subtitle" = "We will send you an email for your password";
+"forgot_password_email_label" = "Email";
+"forgot_password_email_placeholder" = "Enter Your Email";
+"forgot_password_send_button" = "Send";
+
+// Password Reset
+"password_reset_title" = "Check Your Email";
+"password_reset_message" = "We already a link to your email to reset your password";
+
+// Facebook Login Error
+"facebook_error_title" = "Error";
+"facebook_error_button" = "Ok";
+"facebook_error_account_exists" = "This email is already registered with another provider.";
+
+// Register
+"register_title" = "Create Account";
+"register_subtitle" = "Please fill in to complete your account";
+"register_name_label" = "Name";
+"register_name_placeholder" = "Enter Your Name";
+"register_email_label" = "Email";
+"register_email_placeholder" = "Enter Your Email";
+"register_password_label" = "Password";
+"register_password_placeholder" = "Create Password";
+"register_signup_button" = "Sign Up";
+"register_or_continue_label" = "Or create account using your social profile";
+"register_signin_label" = "Already have an account?";
+"register_signin_button" = "Sign In";
+
+// Home
+"home_recommended_music_title" = "Recommended Music";
+"home_recommended_podcast_title" = "Recommended Podcast";
+"home_episodes_title" = "Episodes";
+"home_episodes_mins" = "mins";
+"home_show_more_button" = "Show more";
+"home_music_label" = "Music";
+
+// Search
+"search_title" = "Search";
+"search_placeholder" = "Search artist, music or podcast";
+"search_music_title" = "Music Tracks";
+"search_podcast_title" = "Podcast Tracks";
+
+// Categories
+"categories_title" = "Categories";
+"category_pop" = "Pop";
+"category_hip_hop" = "Hip-Hop";
+"category_rock" = "Rock";
+"category_jazz" = "Jazz";
+"category_metal" = "Metal";
+"category_k_pop" = "K-pop";
+"category_rap" = "Rap";
+"category_electronic" = "Electronic";
+"category_classical" = "Classical";
+"category_blues" = "Blues";
+"category_latin" = "Latin";
+"category_rnb_soul" = "R&B/Soul";
+"category_folk" = "Folk";
+"category_reggae" = "Reggae";
+
+// Collection
+"collection_title" = "Collection";
+"collection_liked_musics" = "Liked Musics";
+"collection_liked_episodes" = "Liked Episodes";
+
+// Profile
+"profile_logout_button" = "Log Out";
+"profile_account_title" = "Account";
+"profile_language_title" = "Language";
+"profile_about_title" = "About";
+"profile_terms_title" = "Terms and Conditions";
+"profile_add_photo_button" = "Add Photo";
+"profile_language_azerbaijani" = "Azerbaijani";
+"profile_language_english" = "English";
+"profile_language_russian" = "Russian";
+"profile_about_description" = "Welcome to Discover, your ultimate music and podcast streaming platform. With Discover, you can explore and enjoy millions of songs, thousands of podcasts, and countless episodes directly from the iTunes API. Whether you want to relax with your favorite music, discover new artists, or catch up on trending podcasts, Discover has everything you need in one place.";
+"profile_home" = "• Home:";
+"profile_search" = "• Search:";
+"profile_categories" = "• Categories:";
+"profile_favorites" = "• Favorites:";
+"profile_profile" = "• Profile:";
+"profile_home_description" = "Get personalized recommendations for music and podcasts based on your listening habits. Featured playlists and trending episodes are curated to match your taste, so you always have something new to explore.";
+"profile_search_description" = "Quickly find any song, podcast, or episode you love. Use filters, search by artist, genre, or topic, and discover hidden gems from the iTunes library.";
+"profile_categories_description" = "Browse music by genres, moods, or themes and discover new favorites easily. Explore curated playlists, top charts, and genre-specific collections for endless inspiration.";
+"profile_favorites_description" = "Save your favorite songs, albums, and podcast episodes in one place. Access your saved content anytime, offline or online, and create your personal library of must-listen content.";
+"profile_profile_description" = "Manage your account information, language preferences, and app settings. Keep your listening experience personalized and in sync across devices.";
+"profile_mission_description" = "Our mission is to make music and podcast listening simple, enjoyable, and accessible for everyone. With Discover, you can explore new sounds, stay updated with the latest episodes of your favorite podcasts, and never miss a beat. We are committed to providing a seamless and immersive listening experience that keeps you connected to the music and stories you love.";
+"profile_terms_intro" = "By using Discover, you agree to the following terms and conditions:";
+"profile_terms_content_ownership_header" = "1. Content Ownership:";
+"profile_terms_personal_use_header" = "2. Personal Use Only:";
+"profile_terms_account_security_header" = "3. Account Security:";
+"profile_terms_app_updates_header" = "4. App Updates:";
+"profile_terms_disclaimer_header" = "5. Disclaimer:";
+"profile_terms_liability_header" = "6. Limitation of Liability:";
+"profile_terms_governing_law_header" = "7. Governing Law:";
+"profile_terms_content_ownership" = "All music, podcasts, and episodes are provided via the iTunes API. Discover does not own the content, and all rights belong to the original creators, publishers, and copyright holders. You acknowledge that all intellectual property rights remain with the original content owners.";
+"profile_terms_personal_use" = "You may stream and save content solely for your personal, non-commercial use. Any redistribution, reproduction, or commercial use of the content is strictly prohibited. You agree not to copy, sell, or share the content outside of the app without proper authorization.";
+"profile_terms_account_security" = "You are responsible for maintaining the security and confidentiality of your account credentials. Any activity that occurs under your account is your responsibility. Please notify us immediately if you suspect unauthorized access to your account.";
+"profile_terms_app_updates" = "Discover may update features, content, functionality, or terms of use at any time. Continued use of the app after such updates constitutes acceptance of the changes. We recommend keeping the app updated to enjoy the latest features and security improvements.";
+"profile_terms_disclaimer" = "Discover provides access to third-party content and is not responsible for the accuracy, availability, legality, or reliability of any music, podcast, or episode. Technical issues may occur, and the app is provided “as is” without warranties of any kind. Your use of the app is at your own risk.";
+"profile_terms_liability" = "Discover shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of the app, including loss of data, income, or content.";
+"profile_terms_governing_law" = "These terms are governed by the applicable laws of your country. By using the app, you agree to comply with all local regulations regarding the use of digital content.";

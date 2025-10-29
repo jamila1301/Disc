@@ -15,7 +15,7 @@ final class HomePodcastTableViewCell: UITableViewCell {
     
     private let topLabel: UILabel = {
         let v = UILabel()
-        v.text = "Recommended Podcast"
+        v.text = "home_recommended_podcast_title".localized()
         v.font = .plusJakartaSansSemiBold18
         v.numberOfLines = .zero
         v.textAlignment = .left
@@ -24,7 +24,7 @@ final class HomePodcastTableViewCell: UITableViewCell {
     
     private lazy var showButton: UIButton = {
         let v = UIButton(type: .system)
-        v.setTitle("Show more", for: .normal)
+        v.setTitle("home_show_more_button".localized(), for: .normal)
         v.setTitleColor(UIColor.defaultBlue, for: .normal)
         v.titleLabel?.font = .plusJakartaSansSemiBold12
         v.addTarget(self, action: #selector(didTapShowMore), for: .touchUpInside)
@@ -36,6 +36,7 @@ final class HomePodcastTableViewCell: UITableViewCell {
         v.axis = .horizontal
         v.spacing = 8
         v.alignment = .center
+        v.distribution = .equalSpacing
         return v
     }()
     
@@ -106,6 +107,8 @@ extension HomePodcastTableViewCell {
     
     func configure(item: Item) {
         self.musicList = item.musicList
+        topLabel.text = "home_recommended_podcast_title".localized()
+        showButton.setTitle("home_show_more_button".localized(), for: .normal)
         self.collectionView.reloadData()
     }
 }
@@ -127,5 +130,12 @@ extension HomePodcastTableViewCell: UICollectionViewDelegate, UICollectionViewDa
         if let id = musicList[indexPath.row].collectionId {
             onSelectPodcast?(id) 
         }
+    }
+}
+
+extension HomePodcastTableViewCell: LocalizeUpdateable {
+    func didChangeLanguage() {
+        topLabel.text = "home_recommended_podcast_title".localized()
+        showButton.setTitle("home_show_more_button".localized(), for: .normal)
     }
 }

@@ -36,9 +36,13 @@ final class PodcastViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.delegate = self
-        title = "Recommended Podcast"
+        title = "home_recommended_podcast_title".localized()
         setupUI()
         navigationController?.setNavigationBarHidden(false, animated: false)
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
     }
     
     private func setupUI() {
@@ -84,6 +88,13 @@ extension PodcastViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension PodcastViewController: PodcastViewModelDelegate {
     func reloadTableView() {
+        tableView.reloadData()
+    }
+}
+
+extension PodcastViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        title = "home_recommended_podcast_title".localized()
         tableView.reloadData()
     }
 }

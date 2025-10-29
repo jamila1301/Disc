@@ -17,15 +17,16 @@ final class SearchViewController: UIViewController, Keyboardable {
     
     private let screenNameLabel: UILabel = {
         let v = UILabel()
-        v.text = "Search"
+        v.text = "search_title".localized()
         v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
+        v.numberOfLines = .zero
         return v
     }()
     
     private lazy var searchBar: UISearchBar = {
         let v = UISearchBar()
-        v.placeholder = "Search artist, music or podcast"
+        v.placeholder = "search_placeholder".localized()
         v.returnKeyType = .search
         v.autocapitalizationType = .none
         v.searchBarStyle = .minimal
@@ -89,11 +90,16 @@ final class SearchViewController: UIViewController, Keyboardable {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
+        didChangeLanguage()
     }
     
     private func setupUI() {
@@ -262,5 +268,13 @@ extension SearchViewController: SearchViewModelDelegate {
         noDataLottieView.isHidden = true
         loadingLottieView.isHidden = false
         loadingLottieView.play()
+    }
+}
+
+extension SearchViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        screenNameLabel.text = "search_title".localized()
+        searchBar.placeholder = "search_placeholder".localized()
+        tableView.reloadData()
     }
 }

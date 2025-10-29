@@ -36,9 +36,13 @@ final class EpisodeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.delegate = self
-        title = "Episodes"
+        title = "home_episodes_title".localized()
         setupUI()
         navigationController?.setNavigationBarHidden(false, animated: false)
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
     }
     
     private func setupUI() {
@@ -85,6 +89,13 @@ extension EpisodeViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension EpisodeViewController: EpisodeViewModelDelegate {
     func reloadTableView() {
+        tableView.reloadData()
+    }
+}
+
+extension EpisodeViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        title = "home_episodes_title".localized()
         tableView.reloadData()
     }
 }

@@ -63,6 +63,7 @@ final class CustomTextField: UIView {
         v.textColor = .red
         v.font = .plusJakartaSansMedium12
         v.isHidden = true
+        v.numberOfLines = .zero
         return v
     }()
     

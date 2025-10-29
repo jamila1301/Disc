@@ -16,20 +16,25 @@ final class FavoriteViewModel {
     init(router: FavoriteRouterProtocol) {
         self.router = router
         setupFavorites()
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.setupFavorites()
+        }
+
     }
     
     private func setupFavorites() {
         self.favoriteList = [
-            .init(image: .frame, title: "Liked Musics"),
-            .init(image: .frame, title: "Liked Episodes")
+            .init(image: .frame, title: "collection_liked_musics".localized()),
+            .init(image: .frame, title: "collection_liked_episodes".localized())
         ]
     }
     
     func didSelectFavoriteItem(item: FavoriteCollectionViewCell.Item) {
         switch item.title {
-        case "Liked Musics":
+        case "collection_liked_musics".localized():
             router.navigateToLikedMusics()
-        case "Liked Episodes":
+        case "collection_liked_episodes".localized():
             router.navigateToLikedEpisodes()
         default:
             break

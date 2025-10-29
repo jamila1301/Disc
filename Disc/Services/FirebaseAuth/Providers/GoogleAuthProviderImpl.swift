@@ -42,7 +42,7 @@ final class GoogleAuthProviderImpl: SocialAuthProvider {
             "email": firebaseUser.email ?? ""
         ]
         
-        try await db.collection("users").document(firebaseUser.uid).setData(userData)
+        try await db.collection("users").document(firebaseUser.uid).setData(userData, merge: true)
         
     }
     

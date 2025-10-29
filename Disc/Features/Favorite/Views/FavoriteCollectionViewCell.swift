@@ -20,6 +20,7 @@ final class FavoriteCollectionViewCell: UICollectionViewCell {
     private let titleLabel: UILabel = {
         let v = UILabel()
         v.font = .plusJakartaSansSemiBold14
+        v.numberOfLines = .zero
         return v
     }()
     

@@ -15,9 +15,10 @@ final class FavoriteViewController: UIViewController {
     
     private let screenNameLabel: UILabel = {
         let v = UILabel()
-        v.text = "Collection"
+        v.text = "collection_title".localized()
         v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
+        v.numberOfLines = .zero
         return v
     }()
     
@@ -55,11 +56,16 @@ final class FavoriteViewController: UIViewController {
         setupUI()
         lottieView.play()
         lottieView.loopMode = .loop
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
+        didChangeLanguage()
     }
     
     private func setupUI() {
@@ -76,7 +82,7 @@ final class FavoriteViewController: UIViewController {
         tableView.snp.makeConstraints { make in
             make.top.equalTo(screenNameLabel.snp.bottom).offset(24)
             make.horizontalEdges.equalToSuperview().inset(24)
-            make.height.equalTo(300)
+            make.height.equalTo(220)
         }
         
         lottieView.snp.makeConstraints { make in
@@ -107,5 +113,12 @@ extension FavoriteViewController: UITableViewDataSource, UITableViewDelegate {
 extension FavoriteViewController: FavoriteTableViewCellDelegate {
     func didSelectFavoriteItem(item: FavoriteCollectionViewCell.Item) {
         viewModel.didSelectFavoriteItem(item: item)
+    }
+}
+
+extension FavoriteViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        screenNameLabel.text = "collection_title".localized()
+        tableView.reloadData()
     }
 }

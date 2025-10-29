@@ -17,15 +17,24 @@ final class CategoryViewModel {
     weak var delegate: CategoryViewModelDelegate? = nil
     private let router: CategoryRouterProtocol
     
-    let categories: [CategoryCollectionViewCell.Item] = [
-        "Pop","Hip-Hop","Rock","Jazz","Metal","K-pop","Rap",
-        "Electronic","Classical","Blues","Latin","R&B/Soul","Folk","Reggae"
-    ].map { CategoryCollectionViewCell.Item(categoryName: $0) }
+    private let categoryKeys: [String] = [
+        "category_pop","category_hip_hop","category_rock","category_jazz","category_metal",
+        "category_k_pop","category_rap", "category_electronic","category_classical",
+        "category_blues","category_latin","category_rnb_soul","category_folk","category_reggae"
+    ]
+    
+    var categories: [CategoryCollectionViewCell.Item] {
+        categoryKeys.map { CategoryCollectionViewCell.Item(categoryName: $0.localized()) }
+    }
     
     let colors: [CategoryColor] = CategoryColor.allCases
     
     init(router: CategoryRouterProtocol) {
         self.router = router
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.delegate?.reloadTableView()
+        }
     }
     
     func didSelectCategory(index: Int) {

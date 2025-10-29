@@ -28,6 +28,10 @@ final class HomeViewModel {
         Task {
             await fetchData()
         }
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            Task { await self?.fetchData() }
+        }
     }
     
     func fetchData() async {
@@ -43,7 +47,7 @@ final class HomeViewModel {
                 bannerItems.append(.init(
                     trackId: track.trackId,
                     leftImage: track.artworkUrl100,
-                    topLabel: "Music",
+                    topLabel: "home_music_label".localized(),
                     nameLabel: track.trackName,
                     artistLabel: track.artistName,
                     timeLabel: duration,

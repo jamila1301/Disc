@@ -14,9 +14,10 @@ final class CategoryViewController: UIViewController {
     
     private let screenNameLabel: UILabel = {
         let v = UILabel()
-        v.text = "Categories"
+        v.text = "categories_title".localized()
         v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
+        v.numberOfLines = .zero
         return v
     }()
     
@@ -44,11 +45,16 @@ final class CategoryViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         viewModel.delegate = self
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
+        didChangeLanguage()
     }
     
     private func setupUI() {
@@ -91,6 +97,13 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
 
 extension CategoryViewController: CategoryViewModelDelegate {
     func reloadTableView() {
+        tableView.reloadData()
+    }
+}
+
+extension CategoryViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        screenNameLabel.text = "categories_title".localized()
         tableView.reloadData()
     }
 }

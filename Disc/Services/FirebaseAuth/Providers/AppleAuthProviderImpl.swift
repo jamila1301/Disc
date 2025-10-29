@@ -117,7 +117,7 @@ extension AppleAuthProviderImpl: ASAuthorizationControllerDelegate, ASAuthorizat
                         "email": firebaseUser.email ?? ""
                     ]
                     
-                    self.db.collection("users").document(firebaseUser.uid).setData(userData) { error in
+                    self.db.collection("users").document(firebaseUser.uid).setData(userData, merge: true) { error in
                         if let error {
                             print("Firestore error: \(error.localizedDescription)")
                             return

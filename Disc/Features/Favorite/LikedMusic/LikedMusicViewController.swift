@@ -35,10 +35,14 @@ final class LikedMusicViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Liked Musics"
+        title = "collection_liked_musics".localized()
         setupUI()
         viewModel.delegate = self
         navigationController?.setNavigationBarHidden(false, animated: false)
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
     }
     
     private func setupUI() {
@@ -75,6 +79,13 @@ extension LikedMusicViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension LikedMusicViewController: LikedMusicViewModelDelegate {
     func reloadTableView() {
+        tableView.reloadData()
+    }
+}
+
+extension LikedMusicViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        title = "collection_liked_musics".localized()
         tableView.reloadData()
     }
 }

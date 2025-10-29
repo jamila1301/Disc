@@ -16,31 +16,34 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
     
     private let topLabel: UILabel = {
         let v = UILabel()
-        v.text = "Forgot password"
+        v.text = "forgot_password_title".localized()
         v.font = .plusJakartaSansSemibold24
+        v.numberOfLines = .zero
         return v
     }()
     
     private let topTitleLabel: UILabel = {
         let v = UILabel()
-        v.text = "We will send you an email for your password"
-        v.font = .plusJakartaSansRegular16
+        v.text = "forgot_password_subtitle".localized()
+        v.font = .plusJakartaSansRegular14
         v.textColor = .lightGrayPrimary
+        v.numberOfLines = .zero
         v.numberOfLines = .zero
         return v
     }()
     
     private let emailLabel: UILabel = {
         let v = UILabel()
-        v.text = "Email"
+        v.text = "forgot_password_email_label".localized()
         v.font = .plusJakartaSansMedium16
         v.textColor = .lightBlueSecondinary
+        v.numberOfLines = .zero
         return v
     }()
     
     private lazy var emailTextField: CustomTextField = {
         let v = CustomTextField()
-        v.placeholder = "Enter Your Email"
+        v.placeholder = "forgot_password_email_placeholder".localized()
         v.isSecureTextEntry = false
         v.showPasswordToggleButton(show: false)
         v.textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
@@ -49,7 +52,7 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
     
     private lazy var sendButton: UIButton = {
         let v = UIButton(type: .system)
-        v.setTitle("Send", for: .normal)
+        v.setTitle("forgot_password_send_button".localized(), for: .normal)
         v.titleLabel?.font = .plusJakartaSansSemiBold16
         v.setTitleColor(.white, for: .normal)
         v.backgroundColor = .defaultBlue
@@ -90,6 +93,10 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
         
     }
     
@@ -152,5 +159,15 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
     
     @objc private func textFieldDidChange() {
         emailTextField.setError(nil)
+    }
+}
+
+extension ForgotPasswordViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        topLabel.text = "forgot_password_title".localized()
+        topTitleLabel.text = "forgot_password_subtitle".localized()
+        emailLabel.text = "forgot_password_email_label".localized()
+        emailTextField.placeholder = "forgot_password_email_placeholder".localized()
+        sendButton.setTitle("forgot_password_send_button".localized(), for: .normal)
     }
 }

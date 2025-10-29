@@ -15,6 +15,7 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
         v.textColor = .white
         v.font = .plusJakartaSansBold20
         v.textAlignment = .center
+        v.numberOfLines = .zero
         return v
     }()
     

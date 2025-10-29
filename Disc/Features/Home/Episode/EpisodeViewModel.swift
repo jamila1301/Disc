@@ -28,6 +28,10 @@ final class EpisodeViewModel {
         Task {
             await fetchData()
         }
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            Task { await self?.fetchData() }
+        }
     }
     
     func fetchData() async {
@@ -39,7 +43,7 @@ final class EpisodeViewModel {
                     image: episode.artworkUrl600,
                     episodeName: episode.trackName,
                     collectionName: episode.collectionName,
-                    timeLabel: "\(episode.trackTimeMillis?.formattedDuration ?? "")  mins",
+                    timeLabel: "\(episode.trackTimeMillis?.formattedDuration ?? "")  " + "home_episodes_mins".localized(),
                     previewUrl: episode.previewUrl
                 ))
             }

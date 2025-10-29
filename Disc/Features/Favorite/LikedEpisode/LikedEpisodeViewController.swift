@@ -35,10 +35,14 @@ final class LikedEpisodeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Liked Episodes"
+        title = "collection_liked_episodes".localized()
         setupUI()
         viewModel.delegate = self
         navigationController?.setNavigationBarHidden(false, animated: false)
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
     }
     
     private func setupUI() {
@@ -75,6 +79,13 @@ extension LikedEpisodeViewController: UITableViewDelegate, UITableViewDataSource
 
 extension LikedEpisodeViewController: LikedEpisodeViewModelDelegate {
     func reloadTableView() {
+        tableView.reloadData()
+    }
+}
+
+extension LikedEpisodeViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        title = "collection_liked_episodes".localized()
         tableView.reloadData()
     }
 }

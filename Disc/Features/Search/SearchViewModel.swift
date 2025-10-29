@@ -23,8 +23,8 @@ final class SearchViewModel {
         
         var title: String {
             switch self {
-            case .music: return "Music Tracks"
-            case .podcast: return "Podcast Tracks"
+            case .music: return "search_music_title".localized()
+            case .podcast: return "search_podcast_title".localized()
             }
         }
     }

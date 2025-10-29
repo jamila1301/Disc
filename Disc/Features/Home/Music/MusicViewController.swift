@@ -36,9 +36,13 @@ final class MusicViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.delegate = self
-        title = "Recommended Music"
+        title = "home_recommended_music_title".localized()
         setupUI()
         navigationController?.setNavigationBarHidden(false, animated: false)
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
     }
     
     private func setupUI() {
@@ -85,6 +89,13 @@ extension MusicViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension MusicViewController: MusicViewModelDelegate {
     func reloadTableView() {
+        tableView.reloadData()
+    }
+}
+
+extension MusicViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        title = "home_recommended_music_title".localized()
         tableView.reloadData()
     }
 }
