@@ -7,10 +7,19 @@
 
 import UIKit
 import SnapKit
+import Lottie
 
 final class MusicListViewController: UIViewController {
     
     private let viewModel: MusicListViewModel
+    
+    private let loadingLottieView: LottieAnimationView = {
+        let v = LottieAnimationView(name: "ınsideLoading")
+        v.contentMode = .scaleAspectFit
+        v.loopMode = .loop
+        v.isHidden = true
+        return v
+    }()
     
     private lazy var tableView: UITableView = {
         let v = UITableView()
@@ -38,6 +47,11 @@ final class MusicListViewController: UIViewController {
         title = viewModel.category
         viewModel.delegate = self
         setupUI()
+        showLoading(true)
+        Task {
+            await viewModel.fetchData()
+            showLoading(false)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,11 +62,26 @@ final class MusicListViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .screenBackground
         view.addSubview(tableView)
+        view.addSubview(loadingLottieView)
         
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(5)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(30)
+        }
+        
+        loadingLottieView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.size.equalTo(220)
+        }
+    }
+    
+    private func showLoading(_ show: Bool) {
+        loadingLottieView.isHidden = !show
+        if show {
+            loadingLottieView.play()
+        } else {
+            loadingLottieView.stop()
         }
     }
 }

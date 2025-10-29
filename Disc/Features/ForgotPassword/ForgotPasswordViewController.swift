@@ -7,12 +7,28 @@
 
 import UIKit
 import SnapKit
+import Lottie
 
 final class ForgotPasswordViewController: UIViewController, Keyboardable {
     
     private let viewModel: ForgotPasswordViewModel
     
     var targetConstraint: Constraint? = nil
+    
+    private lazy var loadingBackgroundView: UIView = {
+        let v = UIView()
+        v.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        v.isHidden = true
+        return v
+    }()
+    
+    private let loadingLottieView: LottieAnimationView = {
+        let v = LottieAnimationView(name: "ınsideLoading")
+        v.contentMode = .scaleAspectFit
+        v.loopMode = .loop
+        v.isHidden = true
+        return v
+    }()
     
     private let topLabel: UILabel = {
         let v = UILabel()
@@ -101,12 +117,12 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .screenBackground
         
         [topStackView, emailStackView, sendButton].forEach { v in
             view.addSubview(v)
         }
-        
+                
         [topLabel, topTitleLabel].forEach { v in
             topStackView.addArrangedSubview(v)
         }
@@ -129,17 +145,49 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
             make.height.equalTo(52)
             make.horizontalEdges.equalToSuperview().inset(24)
             self.targetConstraint = make.bottom.equalTo(view.safeAreaLayoutGuide).inset(60).constraint
-
+        }
+    }
+    
+    private func showLoading(_ show: Bool) {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap({ $0.windows })
+            .first(where: { $0.isKeyWindow }) else { return }
+        
+        if show {
+            if loadingBackgroundView.superview == nil {
+                window.addSubview(loadingBackgroundView)
+                loadingBackgroundView.snp.makeConstraints { make in
+                    make.edges.equalToSuperview()
+                }
+                
+                loadingBackgroundView.addSubview(loadingLottieView)
+                loadingLottieView.snp.makeConstraints { make in
+                    make.center.equalToSuperview()
+                    make.size.equalTo(220)
+                }
+            }
+            
+            loadingBackgroundView.isHidden = false
+            loadingLottieView.isHidden = false
+            loadingLottieView.play()
+        } else {
+            loadingBackgroundView.isHidden = true
+            loadingLottieView.isHidden = true
+            loadingLottieView.stop()
         }
     }
     
     @objc
     private func didTapSendButton() {
         Task {
+            showLoading(true)
             let email = emailTextField.text ?? ""
             do {
                 try await viewModel.sendPasswordReset(email: email)
+                showLoading(false)
             } catch let error as AuthError {
+                showLoading(false)
                 switch error {
                 case .emptyEmail, .invalidEmail, .userNotFound:
                     emailTextField.setError(error.localizedDescription)
@@ -147,6 +195,7 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
                     print(error.localizedDescription)
                 }
             } catch {
+                showLoading(false)
                 print(error.localizedDescription)
             }
         }

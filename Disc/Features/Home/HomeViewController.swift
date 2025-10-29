@@ -24,6 +24,14 @@ final class HomeViewController: UIViewController {
     
     private let lottieView: LottieAnimationView = LottieAnimationView(name: "musicDinosaur")
     
+    private let loadingLottieView: LottieAnimationView = {
+        let v = LottieAnimationView(name: "ınsideLoading")
+        v.contentMode = .scaleAspectFit
+        v.loopMode = .loop
+        v.isHidden = true
+        return v
+    }()
+    
     private let topStackView: UIStackView = {
         let v = UIStackView()
         v.axis = .horizontal
@@ -62,6 +70,11 @@ final class HomeViewController: UIViewController {
         setupUI()
         lottieView.play()
         lottieView.loopMode = .loop
+        showLoading(true)
+        Task {
+            await viewModel.fetchData()
+            showLoading(false)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -72,7 +85,7 @@ final class HomeViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .screenBackground
         
-        [topStackView, tableView].forEach { v in
+        [topStackView, tableView, loadingLottieView].forEach { v in
             view.addSubview(v)
         }
         
@@ -93,6 +106,20 @@ final class HomeViewController: UIViewController {
         
         lottieView.snp.makeConstraints { make in
             make.size.equalTo(55)
+        }
+        
+        loadingLottieView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.size.equalTo(220)
+        }
+    }
+    
+    private func showLoading(_ show: Bool) {
+        loadingLottieView.isHidden = !show
+        if show {
+            loadingLottieView.play()
+        } else {
+            loadingLottieView.stop()
         }
     }
 }

@@ -7,12 +7,28 @@
 
 import UIKit
 import SnapKit
+import Lottie
 
 final class SignupViewController: UIViewController, Keyboardable {
     
     private let viewModel: SignupViewModel
         
     var targetConstraint: Constraint? = nil
+    
+    private lazy var loadingBackgroundView: UIView = {
+        let v = UIView()
+        v.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        v.isHidden = true
+        return v
+    }()
+    
+    private let loadingLottieView: LottieAnimationView = {
+        let v = LottieAnimationView(name: "ınsideLoading")
+        v.contentMode = .scaleAspectFit
+        v.loopMode = .loop
+        v.isHidden = true
+        return v
+    }()
     
     private let scrollView: UIScrollView = {
         let v = UIScrollView()
@@ -279,7 +295,7 @@ final class SignupViewController: UIViewController, Keyboardable {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .screenBackground
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -292,7 +308,7 @@ final class SignupViewController: UIViewController, Keyboardable {
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
         }
-        
+                
         [topStackView, middleStackView, bottomStackView].forEach { v in
             contentView.addSubview(v)
         }
@@ -383,6 +399,36 @@ final class SignupViewController: UIViewController, Keyboardable {
         
     }
     
+    private func showLoading(_ show: Bool) {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap({ $0.windows })
+            .first(where: { $0.isKeyWindow }) else { return }
+        
+        if show {
+            if loadingBackgroundView.superview == nil {
+                window.addSubview(loadingBackgroundView)
+                loadingBackgroundView.snp.makeConstraints { make in
+                    make.edges.equalToSuperview()
+                }
+                
+                loadingBackgroundView.addSubview(loadingLottieView)
+                loadingLottieView.snp.makeConstraints { make in
+                    make.center.equalToSuperview()
+                    make.size.equalTo(220)
+                }
+            }
+            
+            loadingBackgroundView.isHidden = false
+            loadingLottieView.isHidden = false
+            loadingLottieView.play()
+        } else {
+            loadingBackgroundView.isHidden = true
+            loadingLottieView.isHidden = true
+            loadingLottieView.stop()
+        }
+    }
+    
     @objc private func textFieldDidChange() {
         nameTextField.setError(nil)
         emailTextField.setError(nil)
@@ -397,12 +443,15 @@ final class SignupViewController: UIViewController, Keyboardable {
     @objc
     private func didTapSignUpButton()  {
         Task {
+            showLoading(true)
             let name = nameTextField.text ?? ""
             let email = emailTextField.text ?? ""
             let password = passwordTextField.text ?? ""
             do {
                 try await viewModel.signupWithEmail(name: name, email: email, password: password)
+                showLoading(false)
             } catch let error as AuthError {
+                showLoading(false)
                 switch error {
                 case .emptyName:
                     nameTextField.setError(error.localizedDescription)
@@ -414,6 +463,7 @@ final class SignupViewController: UIViewController, Keyboardable {
                     print(error.localizedDescription)
                 }
             } catch {
+                showLoading(false)
                 print(error.localizedDescription)
             }
         }
@@ -422,33 +472,39 @@ final class SignupViewController: UIViewController, Keyboardable {
     @objc
     private func didTapGoogle() {
         Task {
+            showLoading(true)
             do {
                 try await viewModel.loginWithGoogle()
             } catch {
                 print("Google signup error: \(error)")
             }
+            showLoading(false)
         }
     }
     
     @objc
     private func didTapFacebook() {
         Task {
+            showLoading(true)
             do {
                 try await viewModel.loginWithFacebook()
             } catch {
                 print("Facebook signup error: \(error)")
             }
+            showLoading(false)
         }
     }
     
     @objc
     private func didTapApple() {
         Task {
+            showLoading(true)
             do {
                 try await viewModel.loginWithApple()
             } catch {
                 print("Apple signup error: \(error)")
             }
+            showLoading(false)
         }
     }
     
