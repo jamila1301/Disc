@@ -32,7 +32,7 @@ final class EpisodeViewModel {
     
     func fetchData() async {
         do {
-            let episodeTracks = try await ITunesService.shared.fetchEpisode(for: collectionId)
+            let episodeTracks = try await ITunesService.shared.fetchEpisode(collectionId: collectionId)
             self.items = episodeTracks.map { episode in
                 EpisodeTableViewCell.Item(
                     trackId: episode.trackId,
