@@ -58,9 +58,14 @@ final class LanguageTableViewCell: UITableViewCell {
 }
 
 extension LanguageTableViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let image: UIImage
         let title: String
+        let language: Language
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(language)
+        }
     }
     
     func configure(item: Item) {

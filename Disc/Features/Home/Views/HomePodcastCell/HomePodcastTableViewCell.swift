@@ -8,10 +8,20 @@
 import UIKit
 import SnapKit
 
+nonisolated enum HomePodcastCollectionSection {
+    case main
+}
+
+typealias HomePodcastCollectionDataSource = UICollectionViewDiffableDataSource<HomePodcastCollectionSection, HomePodcastCollectionViewCell.Item>
+typealias HomePodcastCollectionSnapshot = NSDiffableDataSourceSnapshot<HomePodcastCollectionSection, HomePodcastCollectionViewCell.Item>
+
 final class HomePodcastTableViewCell: UITableViewCell {
     
     var buttonAction: (() -> Void)?
     var onSelectPodcast: ((Int) -> Void)?
+    
+    private var musicList: [HomePodcastCollectionViewCell.Item] = []
+    private var dataSource: HomePodcastCollectionDataSource?
     
     private let topLabel: UILabel = {
         let v = UILabel()
@@ -40,8 +50,6 @@ final class HomePodcastTableViewCell: UITableViewCell {
         return v
     }()
     
-    private var musicList: [HomePodcastCollectionViewCell.Item] = []
-    
     private lazy var collectionView: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
@@ -54,13 +62,14 @@ final class HomePodcastTableViewCell: UITableViewCell {
         v.showsHorizontalScrollIndicator = false
         v.showsVerticalScrollIndicator = false
         v.delegate = self
-        v.dataSource = self
+        v.dataSource = dataSource
         v.register(HomePodcastCollectionViewCell.self, forCellWithReuseIdentifier: HomePodcastCollectionViewCell.identifier)
         return v
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        createDiffableDataSource()
         setupUI()
     }
     
@@ -98,37 +107,46 @@ final class HomePodcastTableViewCell: UITableViewCell {
     @objc private func didTapShowMore() {
         buttonAction?()
     }
+    
+    private func createDiffableDataSource() {
+        dataSource = HomePodcastCollectionDataSource(collectionView: collectionView) { collectionView, indexPath, item in
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePodcastCollectionViewCell.identifier, for: indexPath) as? HomePodcastCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(item: item)
+            return cell
+        }
+    }
+    
+    private func applySnapshot(items: [HomePodcastCollectionViewCell.Item]) {
+        var snapshot = HomePodcastCollectionSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(items, toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
 }
 
 extension HomePodcastTableViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let musicList: [HomePodcastCollectionViewCell.Item]
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(musicList)
+        }
     }
     
     func configure(item: Item) {
         self.musicList = item.musicList
         topLabel.text = "home_recommended_podcast_title".localized()
         showButton.setTitle("home_show_more_button".localized(), for: .normal)
-        self.collectionView.reloadData()
+        applySnapshot(items: item.musicList)
     }
 }
 
-extension HomePodcastTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return musicList.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomePodcastCollectionViewCell.identifier, for: indexPath) as? HomePodcastCollectionViewCell {
-            cell.configure(item: musicList[indexPath.row])
-            return cell
-        }
-        return UICollectionViewCell()
-    }
-    
+extension HomePodcastTableViewCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let id = musicList[indexPath.row].collectionId {
-            onSelectPodcast?(id) 
+            onSelectPodcast?(id)
         }
     }
 }

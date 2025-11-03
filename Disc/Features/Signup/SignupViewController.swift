@@ -498,13 +498,11 @@ final class SignupViewController: UIViewController, Keyboardable {
     @objc
     private func didTapApple() {
         Task {
-            showLoading(true)
             do {
                 try await viewModel.loginWithApple()
             } catch {
                 print("Apple signup error: \(error)")
             }
-            showLoading(false)
         }
     }
     

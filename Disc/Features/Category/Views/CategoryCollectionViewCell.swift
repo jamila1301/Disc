@@ -51,8 +51,12 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
 }
 
 extension CategoryCollectionViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let categoryName: String
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(categoryName)
+        }
     }
     
     func configure(item: Item) {

@@ -9,9 +9,17 @@ import UIKit
 import SnapKit
 import Lottie
 
+nonisolated enum LikedEpisodeSection {
+    case main
+}
+
+typealias LikedEpisodeDataSource = UITableViewDiffableDataSource<LikedEpisodeSection, LikedEpisodeTableViewCell.Item>
+typealias LikedEpisodeSnapshot = NSDiffableDataSourceSnapshot<LikedEpisodeSection, LikedEpisodeTableViewCell.Item>
+
 final class LikedEpisodeViewController: UIViewController {
     
     private let viewModel: LikedEpisodeViewModel
+    private var dataSource: LikedEpisodeDataSource?
     
     private let loadingLottieView: LottieAnimationView = {
         let v = LottieAnimationView(name: "ınsideLoading")
@@ -28,7 +36,7 @@ final class LikedEpisodeViewController: UIViewController {
         v.showsVerticalScrollIndicator = false
         v.separatorStyle = .none
         v.delegate = self
-        v.dataSource = self
+        v.dataSource = dataSource
         v.register(LikedEpisodeTableViewCell.self, forCellReuseIdentifier: LikedEpisodeTableViewCell.identifier)
         return v
     }()
@@ -45,13 +53,13 @@ final class LikedEpisodeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "collection_liked_episodes".localized()
+        createDiffableDataSource()
         setupUI()
         viewModel.delegate = self
         navigationController?.setNavigationBarHidden(false, animated: false)
         showLoading(true)
         Task {
             await viewModel.fetchLikedEpisodes()
-            showLoading(false)
         }
         LanguageManager.shared.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
@@ -84,36 +92,44 @@ final class LikedEpisodeViewController: UIViewController {
             loadingLottieView.stop()
         }
     }
-}
-
-extension LikedEpisodeViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.likedEpisodeList.count
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: LikedEpisodeTableViewCell.identifier, for: indexPath) as? LikedEpisodeTableViewCell {
-            cell.configure(item: viewModel.likedEpisodeList[indexPath.row])
+    private func createDiffableDataSource() {
+        dataSource = LikedEpisodeDataSource(tableView: tableView) { tableView, indexPath, item in
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: LikedEpisodeTableViewCell.identifier, for: indexPath) as? LikedEpisodeTableViewCell else {
+                return UITableViewCell()
+            }
+            cell.configure(item: item)
             return cell
         }
-        return UITableViewCell()
     }
     
+    private func applySnapshot(items: [LikedEpisodeTableViewCell.Item]) {
+        var snapshot = LikedEpisodeSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(items, toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
+}
+
+extension LikedEpisodeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        viewModel.didSelectEpisode(index: indexPath.row)
+        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
+        if let index = viewModel.likedEpisodeList.firstIndex(where: { $0.episodeName == item.episodeName && $0.artistName == item.artistName }) {
+            viewModel.didSelectEpisode(index: index)
+        }
     }
 }
 
 extension LikedEpisodeViewController: LikedEpisodeViewModelDelegate {
     func reloadTableView() {
-        tableView.reloadData()
+        showLoading(false)
+        applySnapshot(items: viewModel.likedEpisodeList)
     }
 }
 
 extension LikedEpisodeViewController: LocalizeUpdateable {
     func didChangeLanguage() {
         title = "collection_liked_episodes".localized()
-        tableView.reloadData()
     }
 }

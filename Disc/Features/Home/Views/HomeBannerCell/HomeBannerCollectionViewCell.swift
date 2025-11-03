@@ -162,7 +162,7 @@ final class HomeBannerCollectionViewCell: UICollectionViewCell {
 }
 
 extension HomeBannerCollectionViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let trackId: Int?
         let leftImage: String
         let topLabel: String
@@ -170,6 +170,13 @@ extension HomeBannerCollectionViewCell {
         let artistLabel: String
         let timeLabel: String
         let previewUrl: String?
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(trackId)
+            hasher.combine(leftImage)
+            hasher.combine(nameLabel)
+            hasher.combine(artistLabel)
+        }
     }
     
     func configure(item: Item) {

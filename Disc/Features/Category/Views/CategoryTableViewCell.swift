@@ -8,10 +8,18 @@
 import UIKit
 import SnapKit
 
+nonisolated enum CategoryCollectionSection {
+    case main
+}
+
+typealias CategoryCollectionDataSource = UICollectionViewDiffableDataSource<CategoryCollectionSection, CategoryCollectionViewCell.Item>
+typealias CategoryCollectionSnapshot = NSDiffableDataSourceSnapshot<CategoryCollectionSection, CategoryCollectionViewCell.Item>
+
 final class CategoryTableViewCell: UITableViewCell {
         
     private var nameList: [CategoryCollectionViewCell.Item] = []
     private var colors: [CategoryColor] = []
+    private var dataSource: CategoryCollectionDataSource?
     
     var onCategorySelected: ((String) -> ())?
     
@@ -27,13 +35,14 @@ final class CategoryTableViewCell: UITableViewCell {
         v.showsHorizontalScrollIndicator = false
         v.showsVerticalScrollIndicator = false
         v.delegate = self
-        v.dataSource = self
+        v.dataSource = dataSource
         v.register(CategoryCollectionViewCell.self, forCellWithReuseIdentifier: CategoryCollectionViewCell.identifier)
         return v
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        createDiffableDataSource()
         setupUI()
     }
     
@@ -49,35 +58,45 @@ final class CategoryTableViewCell: UITableViewCell {
             make.height.equalTo(760)
         }
     }
+    
+    private func createDiffableDataSource() {
+        dataSource = CategoryCollectionDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, item in
+            guard let self else { return UICollectionViewCell() }
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(item: item)
+            cell.setBackgroundColor(color: self.colors[indexPath.row].uiColor)
+            return cell
+        }
+    }
+    
+    private func applySnapshot(items: [CategoryCollectionViewCell.Item]) {
+        var snapshot = CategoryCollectionSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(items, toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
 }
 
 extension CategoryTableViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let nameList: [CategoryCollectionViewCell.Item]
         let colors: [CategoryColor]
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(nameList)
+        }
     }
     
     func configure(item: Item) {
         self.nameList = item.nameList
         self.colors = item.colors
-        self.collectionView.reloadData()
+        applySnapshot(items: item.nameList)
     }
 }
 
-extension CategoryTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return nameList.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell {
-            cell.configure(item: nameList[indexPath.row])
-            cell.setBackgroundColor(color: colors[indexPath.row].uiColor)
-            return cell
-        }
-        return UICollectionViewCell()
-    }
-    
+extension CategoryTableViewCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let category = nameList[indexPath.row].categoryName
         onCategorySelected?(category)

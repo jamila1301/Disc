@@ -50,14 +50,14 @@ final class LikedMusicViewModel {
     func didSelectMusic(index: Int) {
         guard index < likedMusicList.count else { return }
         
-        let trackList: [Track] = likedMusicList.compactMap {
-            return Track(
+        let trackList: [Track] = likedMusicList.map { item in
+            Track(
                 trackId: nil,
-                trackName: $0.musicName,
-                artistName: $0.artistName,
-                artworkUrl100: $0.image,
+                trackName: item.musicName,
+                artistName: item.artistName,
+                artworkUrl100: item.image,
                 trackTimeMillis: nil,
-                previewUrl: $0.previewUrl
+                previewUrl: item.previewUrl
             )
         }
         

@@ -11,15 +11,11 @@ protocol PodcastViewModelDelegate: AnyObject {
     func reloadTableView()
 }
 
-enum PodcastCellType {
-    case podcast(PodcastTableViewCell.Item)
-}
-
 @MainActor
 final class PodcastViewModel {
     private var router: PodcastRouterProtocol
     weak var delegate: PodcastViewModelDelegate? = nil
-    private(set) var cellTypes: [PodcastCellType] = []
+    private(set) var items: [PodcastTableViewCell.Item] = []
     
     init(router: PodcastRouterProtocol) {
         self.router = router
@@ -31,13 +27,13 @@ final class PodcastViewModel {
     func fetchData() async {
         do {
             let podcastTracks = try await ITunesService.shared.fetchPodcast(term: "podcast", limit: 200)
-            self.cellTypes = podcastTracks.map { podcast in
-                    .podcast(.init(
-                        image: podcast.artworkUrl100,
-                        podcastName: podcast.collectionName,
-                        artistName: podcast.artistName,
-                        collectionId: podcast.collectionId
-                    ))
+            self.items = podcastTracks.map { podcast in
+                PodcastTableViewCell.Item(
+                    image: podcast.artworkUrl100,
+                    podcastName: podcast.collectionName,
+                    artistName: podcast.artistName,
+                    collectionId: podcast.collectionId
+                )
             }
             self.delegate?.reloadTableView()
             

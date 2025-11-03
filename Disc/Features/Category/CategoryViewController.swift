@@ -8,9 +8,17 @@
 import UIKit
 import SnapKit
 
+nonisolated enum CategorySection {
+    case main
+}
+
+typealias CategoryDataSource = UITableViewDiffableDataSource<CategorySection, CategoryTableViewCell.Item>
+typealias CategorySnapshot = NSDiffableDataSourceSnapshot<CategorySection, CategoryTableViewCell.Item>
+
 final class CategoryViewController: UIViewController {
     
     private let viewModel: CategoryViewModel
+    private var dataSource: CategoryDataSource?
     
     private let screenNameLabel: UILabel = {
         let v = UILabel()
@@ -26,8 +34,7 @@ final class CategoryViewController: UIViewController {
         v.backgroundColor = .screenBackground
         v.separatorStyle = .none
         v.showsVerticalScrollIndicator = false
-        v.dataSource = self
-        v.delegate = self
+        v.dataSource = dataSource
         v.register(CategoryTableViewCell.self, forCellReuseIdentifier: CategoryTableViewCell.identifier)
         return v
     }()
@@ -43,6 +50,8 @@ final class CategoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        createDiffableDataSource()
+        applySnapshot()
         setupUI()
         viewModel.delegate = self
         
@@ -73,16 +82,14 @@ final class CategoryViewController: UIViewController {
             make.horizontalEdges.bottom.equalToSuperview().inset(24)
         }
     }
-}
-
-extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell( withIdentifier: CategoryTableViewCell.identifier, for: indexPath) as? CategoryTableViewCell {
-            cell.configure(item: .init(nameList: viewModel.categories, colors: viewModel.colors))
+    private func createDiffableDataSource() {
+        dataSource = CategoryDataSource(tableView: tableView) { [weak self] tableView, indexPath, item in
+            guard let self = self else { return UITableViewCell() }
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.identifier, for: indexPath) as? CategoryTableViewCell else {
+                return UITableViewCell()
+            }
+            cell.configure(item: item)
             cell.onCategorySelected = { [weak self] category in
                 guard let self else { return }
                 if let index = self.viewModel.categories.firstIndex(where: { $0.categoryName == category }) {
@@ -91,19 +98,25 @@ extension CategoryViewController: UITableViewDataSource, UITableViewDelegate {
             }
             return cell
         }
-        return UITableViewCell()
+    }
+    
+    private func applySnapshot() {
+        var snapshot = CategorySnapshot()
+        snapshot.appendSections([.main])
+        let item = CategoryTableViewCell.Item(nameList: viewModel.categories, colors: viewModel.colors)
+        snapshot.appendItems([item], toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
     }
 }
 
 extension CategoryViewController: CategoryViewModelDelegate {
     func reloadTableView() {
-        tableView.reloadData()
+        applySnapshot()
     }
 }
 
 extension CategoryViewController: LocalizeUpdateable {
     func didChangeLanguage() {
         screenNameLabel.text = "categories_title".localized()
-        tableView.reloadData()
     }
 }

@@ -9,9 +9,17 @@ import UIKit
 import SnapKit
 import Lottie
 
+nonisolated enum PodcastSection {
+    case main
+}
+
+typealias PodcastDataSource = UITableViewDiffableDataSource<PodcastSection, PodcastTableViewCell.Item>
+typealias PodcastSnapshot = NSDiffableDataSourceSnapshot<PodcastSection, PodcastTableViewCell.Item>
+
 final class PodcastViewController: UIViewController {
     
     private let viewModel: PodcastViewModel
+    private var dataSource: PodcastDataSource?
     
     private let loadingLottieView: LottieAnimationView = {
         let v = LottieAnimationView(name: "ınsideLoading")
@@ -28,7 +36,7 @@ final class PodcastViewController: UIViewController {
         v.showsVerticalScrollIndicator = false
         v.separatorStyle = .none
         v.delegate = self
-        v.dataSource = self
+        v.dataSource = dataSource
         v.register(PodcastTableViewCell.self, forCellReuseIdentifier: PodcastTableViewCell.identifier)
         return v
     }()
@@ -46,12 +54,12 @@ final class PodcastViewController: UIViewController {
         super.viewDidLoad()
         viewModel.delegate = self
         title = "home_recommended_podcast_title".localized()
+        createDiffableDataSource()
         setupUI()
         navigationController?.setNavigationBarHidden(false, animated: false)
         showLoading(true)
         Task {
             await viewModel.fetchData()
-            showLoading(false)
         }
         LanguageManager.shared.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
@@ -84,45 +92,44 @@ final class PodcastViewController: UIViewController {
             loadingLottieView.stop()
         }
     }
+    
+    private func createDiffableDataSource() {
+        dataSource = PodcastDataSource(tableView: tableView) { tableView, indexPath, item in
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: PodcastTableViewCell.identifier, for: indexPath) as? PodcastTableViewCell else {
+                return UITableViewCell()
+            }
+            cell.configure(item: item)
+            return cell
+        }
+    }
+    
+    private func applySnapshot(items: [PodcastTableViewCell.Item]) {
+        var snapshot = PodcastSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(items, toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
 }
 
-extension PodcastViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.cellTypes.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellType = viewModel.cellTypes[indexPath.row]
-        switch cellType {
-        case .podcast(let model):
-            if let cell = tableView.dequeueReusableCell(withIdentifier: PodcastTableViewCell.identifier, for: indexPath) as? PodcastTableViewCell {
-                cell.configure(item: model)
-                return cell
-            }
-            return UITableViewCell()
-        }
-    }
-    
+extension PodcastViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let cellType = viewModel.cellTypes[indexPath.row]
-        switch cellType {
-        case .podcast(let model):
-            guard let collectionId = model.collectionId else { return }
-            viewModel.didSelectPodcast(collectionId: collectionId)
-        }
+        
+        guard let item = dataSource?.itemIdentifier(for: indexPath),
+              let collectionId = item.collectionId else { return }
+        viewModel.didSelectPodcast(collectionId: collectionId)
     }
 }
 
 extension PodcastViewController: PodcastViewModelDelegate {
     func reloadTableView() {
-        tableView.reloadData()
+        showLoading(false)
+        applySnapshot(items: viewModel.items)
     }
 }
 
 extension PodcastViewController: LocalizeUpdateable {
     func didChangeLanguage() {
         title = "home_recommended_podcast_title".localized()
-        tableView.reloadData()
     }
 }

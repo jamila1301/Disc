@@ -99,13 +99,17 @@ final class EpisodeTableViewCell: UITableViewCell {
 }
 
 extension EpisodeTableViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let trackId: Int?
         let image: String
         let episodeName: String
         let collectionName: String
         let timeLabel: String
         let previewUrl: String?
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(trackId)
+        }
     }
     
     func configure(item: Item) {

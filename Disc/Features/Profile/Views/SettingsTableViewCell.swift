@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-enum SettingsItemType {
+nonisolated enum SettingsItemType: Hashable {
     case account
     case language
     case about
@@ -96,11 +96,16 @@ final class SettingsTableViewCell: UITableViewCell {
 }
 
 extension SettingsTableViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let type: SettingsItemType
         let leftImage: UIImage
         let title: String
         let rightImage: UIImage
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(type)
+            hasher.combine(title)
+        }
     }
     
     func configure(item:Item) {

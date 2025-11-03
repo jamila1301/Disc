@@ -9,17 +9,24 @@ import Foundation
 import FirebaseAuth
 import FirebaseFirestore
 
-enum ProfileCellType {
-    case profileDetail(AccountDetailTableViewCell.Item)
-    case settingsDetail(SettingsTableViewCell.Item)
-}
-
-struct ProfileSection {
-    let type: [ProfileCellType]
-}
-
 protocol ProfileViewModelDelegate: AnyObject {
     func reloadTableView()
+}
+
+nonisolated enum ProfileCellType: Hashable {
+    case profileDetail(AccountDetailTableViewCell.Item)
+    case settingsDetail(SettingsTableViewCell.Item)
+    
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case .profileDetail(let item):
+            hasher.combine(0)
+            hasher.combine(item)
+        case .settingsDetail(let item):
+            hasher.combine(1)
+            hasher.combine(item)
+        }
+    }
 }
 
 final class ProfileViewModel {
@@ -28,6 +35,7 @@ final class ProfileViewModel {
     private var profileListener: ListenerRegistration?
     private var router: ProfileRouterProtocol
     weak var delegate: ProfileViewModelDelegate? = nil
+    private(set) var cellTypes: [ProfileCellType] = []
     
     init(router: ProfileRouterProtocol) {
         self.router = router
@@ -36,8 +44,6 @@ final class ProfileViewModel {
             Task { self?.startListeningProfile() }
         }
     }
-    
-    private(set) var sections: [ProfileSection] = []
     
     @MainActor
     func startListeningProfile() {
@@ -70,14 +76,12 @@ final class ProfileViewModel {
                     return nil
                 }()
                 
-                self.sections = [
-                    .init(type: [.profileDetail(.init(image: finalProfileURL, name: name, email: email))]),
-                    .init(type: [
-                        .settingsDetail(.init(type: .account, leftImage: .profile2, title: "profile_account_title".localized(), rightImage: .arrowRight)),
-                        .settingsDetail(.init(type: .language, leftImage: .language, title: "profile_language_title".localized(), rightImage: .arrowRight)),
-                        .settingsDetail(.init(type: .about, leftImage: .about, title: "profile_about_title".localized(), rightImage: .arrowRight)),
-                        .settingsDetail(.init(type: .termsAndConditions, leftImage: .terms, title: "profile_terms_title".localized(), rightImage: .arrowRight))
-                    ])
+                self.cellTypes = [
+                    .profileDetail(.init(image: finalProfileURL, name: name, email: email)),
+                    .settingsDetail(.init(type: .account, leftImage: .profile2, title: "profile_account_title".localized(), rightImage: .arrowRight)),
+                    .settingsDetail(.init(type: .language, leftImage: .language, title: "profile_language_title".localized(), rightImage: .arrowRight)),
+                    .settingsDetail(.init(type: .about, leftImage: .about, title: "profile_about_title".localized(), rightImage: .arrowRight)),
+                    .settingsDetail(.init(type: .termsAndConditions, leftImage: .terms, title: "profile_terms_title".localized(), rightImage: .arrowRight))
                 ]
                 
                 self.delegate?.reloadTableView()

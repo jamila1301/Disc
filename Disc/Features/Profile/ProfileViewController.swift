@@ -8,9 +8,17 @@
 import UIKit
 import SnapKit
 
+nonisolated enum ProfileSection {
+    case main
+}
+
+typealias ProfileDataSource = UITableViewDiffableDataSource<ProfileSection, ProfileCellType>
+typealias ProfileSnapshot = NSDiffableDataSourceSnapshot<ProfileSection, ProfileCellType>
+
 final class ProfileViewController: UIViewController {
         
     private var viewModel: ProfileViewModel
+    private var dataSource: ProfileDataSource?
     
     private let authManager = FirebaseAuthManagerImpl()
     
@@ -21,7 +29,7 @@ final class ProfileViewController: UIViewController {
         v.showsHorizontalScrollIndicator = false
         v.showsVerticalScrollIndicator = false
         v.delegate = self
-        v.dataSource = self
+        v.dataSource = dataSource
         v.isScrollEnabled = false
         v.register(AccountDetailTableViewCell.self, forCellReuseIdentifier: AccountDetailTableViewCell.identifier)
         v.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.identifier)
@@ -51,6 +59,7 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        createDiffableDataSource()
         setupUI()
         viewModel.delegate = self
         LanguageManager.shared.addLanguageChangeListener { [weak self] in
@@ -87,6 +96,34 @@ final class ProfileViewController: UIViewController {
         }
     }
     
+    private func createDiffableDataSource() {
+        dataSource = ProfileDataSource(tableView: tableView) { tableView, indexPath, item in
+            switch item {
+            case .profileDetail(let model):
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: AccountDetailTableViewCell.identifier, for: indexPath) as? AccountDetailTableViewCell else {
+                    return UITableViewCell()
+                }
+                cell.configure(item: model)
+                return cell
+                
+            case .settingsDetail(let model):
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.identifier, for: indexPath) as? SettingsTableViewCell else {
+                    return UITableViewCell()
+                }
+                cell.configure(item: model)
+                cell.selectionStyle = .none
+                return cell
+            }
+        }
+    }
+    
+    private func applySnapshot() {
+        var snapshot = ProfileSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(viewModel.cellTypes, toSection: .main) 
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
+    
     @objc private func didTapLogout() {
         Task {
             await authManager.logoutAll()
@@ -101,39 +138,13 @@ final class ProfileViewController: UIViewController {
     }
 }
 
-extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return viewModel.sections.count
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.sections[section].type.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let section = viewModel.sections[indexPath.section].type[indexPath.row]
-        switch section {
-        case .profileDetail(let model):
-            if let cell = tableView.dequeueReusableCell(withIdentifier: AccountDetailTableViewCell.identifier, for: indexPath) as? AccountDetailTableViewCell {
-                cell.configure(item: model)
-                return cell
-            }
-            return UITableViewCell()
-        case .settingsDetail(let model):
-            if let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.identifier, for: indexPath) as? SettingsTableViewCell {
-                cell.configure(item: model)
-                cell.selectionStyle = .none
-                return cell
-            }
-            return UITableViewCell()
-        }
-    }
-    
+extension ProfileViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let section = viewModel.sections[indexPath.section].type[indexPath.row]
-        switch section {
-        case .settingsDetail(let item):
-            switch item.type {
+        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
+        
+        switch item {
+        case .settingsDetail(let settingsItem):
+            switch settingsItem.type {
             case .account:
                 viewModel.didTapAccount()
             case .language:
@@ -143,21 +154,20 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
             case .termsAndConditions:
                 viewModel.didTapTerms()
             }
-        case .profileDetail(_):
-            print()
+        case .profileDetail:
+            break
         }
     }
 }
 
 extension ProfileViewController: ProfileViewModelDelegate {
     func reloadTableView() {
-        tableView.reloadData()
+        applySnapshot()
     }
 }
 
 extension ProfileViewController: LocalizeUpdateable {
     func didChangeLanguage() {
         logoutButton.setTitle("profile_logout_button".localized(), for: .normal)
-        tableView.reloadData()
     }
 }

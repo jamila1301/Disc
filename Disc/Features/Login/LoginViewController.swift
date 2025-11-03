@@ -485,13 +485,11 @@ final class LoginViewController: UIViewController, Keyboardable {
     @objc
     private func didTapApple() {
         Task {
-            showLoading(true)
             do {
                 try await viewModel.loginWithApple()
             } catch {
                 print("Apple login error: \(error)")
             }
-            showLoading(false)
         }
     }
     

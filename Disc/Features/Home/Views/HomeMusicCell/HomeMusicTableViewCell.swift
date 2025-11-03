@@ -8,11 +8,21 @@
 import UIKit
 import SnapKit
 
+nonisolated enum HomeMusicCollectionSection {
+    case main
+}
+
+typealias HomeMusicCollectionDataSource = UICollectionViewDiffableDataSource<HomeMusicCollectionSection, HomeMusicCollectionViewCell.Item>
+typealias HomeMusicCollectionSnapshot = NSDiffableDataSourceSnapshot<HomeMusicCollectionSection, HomeMusicCollectionViewCell.Item>
+
 final class HomeMusicTableViewCell: UITableViewCell {
     
     var onSelectMusic: ((HomeMusicCollectionViewCell.Item) -> Void)?
     
     var buttonAction: (() -> Void)?
+    
+    private var musicList: [HomeMusicCollectionViewCell.Item] = []
+    private var dataSource: HomeMusicCollectionDataSource?
     
     private let topLabel: UILabel = {
         let v = UILabel()
@@ -40,9 +50,7 @@ final class HomeMusicTableViewCell: UITableViewCell {
         v.distribution = .equalSpacing
         return v
     }()
-    
-    private var musicList: [HomeMusicCollectionViewCell.Item] = []
-    
+        
     private lazy var collectionView: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
@@ -55,13 +63,14 @@ final class HomeMusicTableViewCell: UITableViewCell {
         v.showsHorizontalScrollIndicator = false
         v.showsVerticalScrollIndicator = false
         v.delegate = self
-        v.dataSource = self
+        v.dataSource = dataSource
         v.register(HomeMusicCollectionViewCell.self, forCellWithReuseIdentifier: HomeMusicCollectionViewCell.identifier)
         return v
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        createDiffableDataSource()
         setupUI()
     }
     
@@ -99,39 +108,47 @@ final class HomeMusicTableViewCell: UITableViewCell {
     @objc private func didTapShowMore() {
         buttonAction?()
     }
+    
+    private func createDiffableDataSource() {
+        dataSource = HomeMusicCollectionDataSource(collectionView: collectionView) { collectionView, indexPath, item in
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeMusicCollectionViewCell.identifier, for: indexPath) as? HomeMusicCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(item: item)
+            return cell
+        }
+    }
+    
+    private func applySnapshot(items: [HomeMusicCollectionViewCell.Item]) {
+        var snapshot = HomeMusicCollectionSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(items, toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
 }
 
 extension HomeMusicTableViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let musicList: [HomeMusicCollectionViewCell.Item]
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(musicList)
+        }
     }
     
     func configure(item: Item) {
         self.musicList = item.musicList
         topLabel.text = "home_recommended_music_title".localized()
         showButton.setTitle("home_show_more_button".localized(), for: .normal)
-        self.collectionView.reloadData()
+        applySnapshot(items: item.musicList)
     }
 }
 
-extension HomeMusicTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return musicList.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeMusicCollectionViewCell.identifier, for: indexPath) as? HomeMusicCollectionViewCell {
-            cell.configure(item: musicList[indexPath.row])
-            return cell
-        }
-        return UICollectionViewCell()
-    }
-    
+extension HomeMusicTableViewCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selected = musicList[indexPath.item]
         onSelectMusic?(selected)
     }
-
 }
 
 extension HomeMusicTableViewCell: LocalizeUpdateable {

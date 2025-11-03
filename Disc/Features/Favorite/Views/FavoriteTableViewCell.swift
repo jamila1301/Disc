@@ -8,6 +8,13 @@
 import UIKit
 import SnapKit
 
+nonisolated enum FavoriteCollectionSection {
+    case main
+}
+
+typealias FavoriteCollectionDataSource = UICollectionViewDiffableDataSource<FavoriteCollectionSection, FavoriteCollectionViewCell.Item>
+typealias FavoriteCollectionSnapshot = NSDiffableDataSourceSnapshot<FavoriteCollectionSection, FavoriteCollectionViewCell.Item>
+
 protocol FavoriteTableViewCellDelegate: AnyObject {
     func didSelectFavoriteItem(item: FavoriteCollectionViewCell.Item)
 }
@@ -17,6 +24,7 @@ final class FavoriteTableViewCell: UITableViewCell {
     weak var delegate: FavoriteTableViewCellDelegate?
     
     private var likedList: [FavoriteCollectionViewCell.Item] = []
+    private var dataSource: FavoriteCollectionDataSource?
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -31,13 +39,14 @@ final class FavoriteTableViewCell: UITableViewCell {
         v.showsVerticalScrollIndicator = false
         v.isScrollEnabled = false
         v.delegate = self
-        v.dataSource = self
+        v.dataSource = dataSource
         v.register(FavoriteCollectionViewCell.self, forCellWithReuseIdentifier: FavoriteCollectionViewCell.identifier)
         return v
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        createDiffableDataSource()
         setupUI()
     }
     
@@ -53,35 +62,43 @@ final class FavoriteTableViewCell: UITableViewCell {
             make.height.equalTo(500)
         }
     }
+    
+    private func createDiffableDataSource() {
+        dataSource = FavoriteCollectionDataSource(collectionView: collectionView) { collectionView, indexPath, item in
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteCollectionViewCell.identifier, for: indexPath) as? FavoriteCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(item: item)
+            return cell
+        }
+    }
+    
+    private func applySnapshot(items: [FavoriteCollectionViewCell.Item]) {
+        var snapshot = FavoriteCollectionSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(items, toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
 }
 
 extension FavoriteTableViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let likedList: [FavoriteCollectionViewCell.Item]
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(likedList)
+        }
     }
     
     func configure(item: Item) {
         self.likedList = item.likedList
-        self.collectionView.reloadData()
+        applySnapshot(items: item.likedList)
     }
 }
 
-extension FavoriteTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return likedList.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavoriteCollectionViewCell.identifier, for: indexPath) as? FavoriteCollectionViewCell {
-            cell.configure(item: likedList[indexPath.row])
-            return cell
-        }
-        return UICollectionViewCell()
-    }
-
+extension FavoriteTableViewCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedItem = likedList[indexPath.row]
         delegate?.didSelectFavoriteItem(item: selectedItem)
     }
-
 }

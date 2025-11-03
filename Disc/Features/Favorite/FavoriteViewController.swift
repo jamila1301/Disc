@@ -9,9 +9,17 @@ import UIKit
 import SnapKit
 import Lottie
 
+nonisolated enum FavoriteSection {
+    case main
+}
+
+typealias FavoriteDataSource = UITableViewDiffableDataSource<FavoriteSection, FavoriteTableViewCell.Item>
+typealias FavoriteSnapshot = NSDiffableDataSourceSnapshot<FavoriteSection, FavoriteTableViewCell.Item>
+
 final class FavoriteViewController: UIViewController {
     
     private let viewModel: FavoriteViewModel
+    private var dataSource: FavoriteDataSource?
     
     private let screenNameLabel: UILabel = {
         let v = UILabel()
@@ -29,8 +37,7 @@ final class FavoriteViewController: UIViewController {
         v.showsHorizontalScrollIndicator = false
         v.showsVerticalScrollIndicator = false
         v.isScrollEnabled = false
-        v.dataSource = self
-        v.delegate = self
+        v.dataSource = dataSource
         v.register(FavoriteTableViewCell.self, forCellReuseIdentifier: FavoriteTableViewCell.identifier)
         return v
     }()
@@ -53,6 +60,8 @@ final class FavoriteViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        createDiffableDataSource()
+        applySnapshot()
         setupUI()
         lottieView.play()
         lottieView.loopMode = .loop
@@ -92,22 +101,26 @@ final class FavoriteViewController: UIViewController {
             make.bottom.lessThanOrEqualTo(view.safeAreaLayoutGuide).inset(20)
         }
     }
-}
-
-extension FavoriteViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell( withIdentifier: FavoriteTableViewCell.identifier, for: indexPath) as? FavoriteTableViewCell {
-            cell.configure(item: .init(likedList: viewModel.favoriteList))
+    private func createDiffableDataSource() {
+        dataSource = FavoriteDataSource(tableView: tableView) { [weak self] tableView, indexPath, item in
+            guard let self else { return UITableViewCell() }
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: FavoriteTableViewCell.identifier, for: indexPath) as? FavoriteTableViewCell else {
+                return UITableViewCell()
+            }
+            cell.configure(item: item)
             cell.delegate = self
             return cell
         }
-        return UITableViewCell()
     }
     
+    private func applySnapshot() {
+        var snapshot = FavoriteSnapshot()
+        snapshot.appendSections([.main])
+        let item = FavoriteTableViewCell.Item(likedList: viewModel.favoriteList)
+        snapshot.appendItems([item], toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
 }
 
 extension FavoriteViewController: FavoriteTableViewCellDelegate {
@@ -119,6 +132,6 @@ extension FavoriteViewController: FavoriteTableViewCellDelegate {
 extension FavoriteViewController: LocalizeUpdateable {
     func didChangeLanguage() {
         screenNameLabel.text = "collection_title".localized()
-        tableView.reloadData()
+        applySnapshot()
     }
 }

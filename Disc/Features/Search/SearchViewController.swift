@@ -9,11 +9,32 @@ import UIKit
 import SnapKit
 import Lottie
 
+enum SearchSection: Int, CaseIterable {
+    case music
+    case podcast
+    
+    var title: String {
+        switch self {
+        case .music: return "search_music_title".localized()
+        case .podcast: return "search_podcast_title".localized()
+        }
+    }
+}
+
+nonisolated enum SearchItem: Hashable {
+    case music(MusicTableViewCell.Item)
+    case podcast(PodcastTableViewCell.Item)
+}
+
+typealias SearchDataSource = UITableViewDiffableDataSource<SearchSection, SearchItem>
+typealias SearchSnapshot = NSDiffableDataSourceSnapshot<SearchSection, SearchItem>
+
 final class SearchViewController: UIViewController, Keyboardable {
     
     var targetConstraint: Constraint? = nil
     
     private let viewModel: SearchViewModel
+    private var dataSource: SearchDataSource?
     
     private let screenNameLabel: UILabel = {
         let v = UILabel()
@@ -35,14 +56,14 @@ final class SearchViewController: UIViewController, Keyboardable {
     }()
     
     private lazy var tableView: UITableView = {
-        let v = UITableView()
+        let v = UITableView(frame: .zero, style: .grouped)
         v.backgroundColor = .screenBackground
         v.showsHorizontalScrollIndicator = false
         v.showsVerticalScrollIndicator = false
         v.separatorStyle = .none
         v.isHidden = true
         v.delegate = self
-        v.dataSource = self
+        v.dataSource = dataSource
         v.register(MusicTableViewCell.self, forCellReuseIdentifier: MusicTableViewCell.identifier)
         v.register(PodcastTableViewCell.self, forCellReuseIdentifier: PodcastTableViewCell.identifier)
         return v
@@ -83,6 +104,7 @@ final class SearchViewController: UIViewController, Keyboardable {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.delegate = self
+        createDiffableDataSource()
         setupUI()
         lottieView.play()
         startObserveKeyboard { _ in }
@@ -144,6 +166,40 @@ final class SearchViewController: UIViewController, Keyboardable {
         }
     }
     
+    private func createDiffableDataSource() {
+        dataSource = SearchDataSource(tableView: tableView) { tableView, indexPath, item in
+            switch item {
+            case .music(let musicItem):
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: MusicTableViewCell.identifier, for: indexPath) as? MusicTableViewCell else {
+                    return UITableViewCell()
+                }
+                cell.configure(item: musicItem)
+                return cell
+                
+            case .podcast(let podcastItem):
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: PodcastTableViewCell.identifier, for: indexPath) as? PodcastTableViewCell else {
+                    return UITableViewCell()
+                }
+                cell.configure(item: podcastItem)
+                return cell
+            }
+        }
+    }
+    
+    private func applySnapshot() {
+        var snapshot = SearchSnapshot()
+        
+        snapshot.appendSections(SearchSection.allCases)
+        
+        let musicItems = viewModel.musicItems.map { SearchItem.music($0) }
+        let podcastItems = viewModel.podcastItems.map { SearchItem.podcast($0) }
+        
+        snapshot.appendItems(musicItems, toSection: .music)
+        snapshot.appendItems(podcastItems, toSection: .podcast)
+        
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
+    
     @objc
     private func dismissKeyboard() {
         view.endEditing(true)
@@ -166,67 +222,46 @@ extension SearchViewController: UISearchBarDelegate {
     }
 }
 
-extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
+extension SearchViewController: UITableViewDelegate {
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return SearchViewModel.Section.allCases.count
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let sectionType = SearchViewModel.Section(rawValue: section) else { return 0 }
-        switch sectionType {
-        case .music:
-            return viewModel.musicItems.count
-        case .podcast:
-            return viewModel.podcastItems.count
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard let sectionType = SearchViewModel.Section(rawValue: section) else { return nil }
-        return viewModel.musicItems.isEmpty && viewModel.podcastItems.isEmpty ? nil : sectionType.title
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let sectionType = SearchViewModel.Section(rawValue: indexPath.section) else {
-            return UITableViewCell()
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let snapshot = dataSource?.snapshot(),
+                snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[section]) > 0 else { return nil }
+        
+        let label = UILabel()
+        label.text = snapshot.sectionIdentifiers[section].title
+        label.font = .plusJakartaSansSemiBold16
+        label.textColor = .black
+        
+        let headerView = UIView()
+        headerView.backgroundColor = .screenBackground
+        headerView.addSubview(label)
+        
+        label.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview().offset(-8)
         }
         
-        switch sectionType {
-        case .music:
-            if indexPath.row < viewModel.musicItems.count {
-                if let cell = tableView.dequeueReusableCell(withIdentifier: MusicTableViewCell.identifier, for: indexPath) as? MusicTableViewCell {
-                    cell.configure(item: viewModel.musicItems[indexPath.row])
-                    return cell
-                }
-            }
-        case .podcast:
-            if indexPath.row < viewModel.podcastItems.count {
-                if let cell = tableView.dequeueReusableCell(withIdentifier: PodcastTableViewCell.identifier, for: indexPath) as? PodcastTableViewCell {
-                    cell.configure(item: viewModel.podcastItems[indexPath.row])
-                    return cell
-                }
-            }
-        }
-        return UITableViewCell()
+        return headerView
     }
-
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        guard let snapshot = dataSource?.snapshot(),
+            snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[section]) > 0 else { return 0 }
+        return 44
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let sectionType = SearchViewModel.Section(rawValue: indexPath.section) else { return }
-        switch sectionType {
-        case .music:
-            if indexPath.row < viewModel.musicItems.count {
-                let item = viewModel.musicItems[indexPath.row]
-                viewModel.didTapMusic(item: item)
-            }
-        case .podcast:
-            if indexPath.row < viewModel.podcastItems.count {
-                let model = viewModel.podcastItems[indexPath.row]
-                guard let collectionId = model.collectionId else { return }
-                viewModel.didTapEpisode(collectionId: collectionId)
-            }
+        
+        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
+        
+        switch item {
+        case .music(let musicItem):
+            viewModel.didTapMusic(item: musicItem)
+        case .podcast(let podcastItem):
+            guard let collectionId = podcastItem.collectionId else { return }
+            viewModel.didTapEpisode(collectionId: collectionId)
         }
     }
 }
@@ -239,7 +274,8 @@ extension SearchViewController: SearchViewModelDelegate {
         lottieView.isHidden = true
         noDataLottieView.isHidden = true
         loadingLottieView.isHidden = true
-        tableView.reloadData()
+        
+        applySnapshot()
         
         if !viewModel.musicItems.isEmpty || !viewModel.podcastItems.isEmpty {
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
@@ -275,6 +311,6 @@ extension SearchViewController: LocalizeUpdateable {
     func didChangeLanguage() {
         screenNameLabel.text = "search_title".localized()
         searchBar.placeholder = "search_placeholder".localized()
-        tableView.reloadData()
+        applySnapshot()
     }
 }

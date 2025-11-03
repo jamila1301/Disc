@@ -50,17 +50,17 @@ final class LikedEpisodeViewModel {
     func didSelectEpisode(index: Int) {
         guard index < likedEpisodeList.count else { return }
         
-        let episodeList: [Episode] = likedEpisodeList.compactMap {
-            return Episode(
+        let episodeList: [Episode] = likedEpisodeList.map { item in
+            Episode(
                 trackId: nil,
-                trackName: $0.episodeName,
+                trackName: item.episodeName,
                 artistName: nil,
                 episodeUrl: nil,
-                artworkUrl600: $0.image,
+                artworkUrl600: item.image,
                 trackTimeMillis: nil,
-                previewUrl: $0.previewUrl,
+                previewUrl: item.previewUrl,
                 description: nil,
-                collectionName: $0.collectionName
+                collectionName: item.collectionName
             )
         }
         

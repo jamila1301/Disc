@@ -80,12 +80,19 @@ final class HomePodcastCollectionViewCell: UICollectionViewCell {
 }
 
 extension HomePodcastCollectionViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let image: String
         let musicName: String
         let artistName: String
         let previewUrl: String?
         let collectionId: Int?
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(collectionId)
+            hasher.combine(image)
+            hasher.combine(musicName)
+            hasher.combine(artistName)
+        }
     }
     
     func configure(item: Item) {

@@ -83,10 +83,15 @@ final class AccountDetailTableViewCell: UITableViewCell {
 }
 
 extension AccountDetailTableViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let image: String?
         let name: String
         let email: String
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(name)
+            hasher.combine(email)
+        }
     }
     
     func configure(item: Item) {

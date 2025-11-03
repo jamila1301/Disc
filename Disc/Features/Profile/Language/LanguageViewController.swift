@@ -8,14 +8,22 @@
 import UIKit
 import SnapKit
 
+nonisolated enum LanguageSection {
+    case main
+}
+
+typealias LanguageDataSource = UITableViewDiffableDataSource<LanguageSection, LanguageTableViewCell.Item>
+typealias LanguageSnapshot = NSDiffableDataSourceSnapshot<LanguageSection, LanguageTableViewCell.Item>
+
 final class LanguageViewController: UIViewController {
     
     private let languageManager = LanguageManager.shared
+    private var dataSource: LanguageDataSource?
     
-    private let languageList: [(language: Language, item: LanguageTableViewCell.Item)] = [
-        (language: .az, item: .init(image: .AZ, title: "profile_language_azerbaijani".localized())),
-        (language: .en, item: .init(image: .GB, title: "profile_language_english".localized())),
-        (language: .ru, item: .init(image: .RU, title: "profile_language_russian".localized()))
+    private let languageItems: [LanguageTableViewCell.Item] = [
+        .init(image: .AZ, title: "profile_language_azerbaijani".localized(), language: .az),
+        .init(image: .GB, title: "profile_language_english".localized(), language: .en),
+        .init(image: .RU, title: "profile_language_russian".localized(), language: .ru)
     ]
     
     private let backgroundView: UIVisualEffectView = {
@@ -48,7 +56,7 @@ final class LanguageViewController: UIViewController {
         v.showsVerticalScrollIndicator = false
         v.separatorStyle = .none
         v.delegate = self
-        v.dataSource = self
+        v.dataSource = dataSource
         v.isScrollEnabled = false
         v.register(LanguageTableViewCell.self, forCellReuseIdentifier: LanguageTableViewCell.identifier)
         return v
@@ -56,7 +64,9 @@ final class LanguageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        createDiffableDataSource()
         setupUI()
+        applySnapshot()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissView))
         backgroundView.addGestureRecognizer(tapGesture)
@@ -105,33 +115,46 @@ final class LanguageViewController: UIViewController {
         self.dismiss(animated: true)
         
     }
-}
-
-extension LanguageViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return languageList.count
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: LanguageTableViewCell.identifier, for: indexPath) as? LanguageTableViewCell {
-            cell.configure(item: languageList[indexPath.row].item)
+    private func createDiffableDataSource() {
+        dataSource = LanguageDataSource(tableView: tableView) { tableView, indexPath, item in
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: LanguageTableViewCell.identifier, for: indexPath) as? LanguageTableViewCell else {
+                return UITableViewCell()
+            }
+            cell.configure(item: item)
             return cell
         }
-        return UITableViewCell()
     }
     
+    private func applySnapshot() {
+        var snapshot = LanguageSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(languageItems, toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
+}
+
+extension LanguageViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedLanguage = languageList[indexPath.row].language
-        languageManager.set(language: selectedLanguage)
-        
+        let selectedItem = languageItems[indexPath.row]
+        languageManager.set(language: selectedItem.language)
         dismiss(animated: true)
     }
-
 }
 
 extension LanguageViewController: LocalizeUpdateable {
     func didChangeLanguage() {
         titleLabel.text = "profile_language_title".localized()
-        tableView.reloadData()
+        let updatedItems = [
+            LanguageTableViewCell.Item(image: .AZ, title: "profile_language_azerbaijani".localized(), language: .az),
+            LanguageTableViewCell.Item(image: .GB, title: "profile_language_english".localized(), language: .en),
+            LanguageTableViewCell.Item(image: .RU, title: "profile_language_russian".localized(), language: .ru)
+        ]
+        
+        var snapshot = LanguageSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(updatedItems, toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
     }
+    
 }

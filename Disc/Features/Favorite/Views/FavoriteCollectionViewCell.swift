@@ -67,9 +67,13 @@ final class FavoriteCollectionViewCell: UICollectionViewCell {
 }
 
 extension FavoriteCollectionViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let image: UIImage
         let title: String
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(title)
+        }
     }
     
     func configure(item: Item) {

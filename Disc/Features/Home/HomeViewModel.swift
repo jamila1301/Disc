@@ -11,10 +11,24 @@ protocol HomeViewModelDelegate: AnyObject {
     func reloadTableView()
 }
 
-enum HomeCellType {
+nonisolated enum HomeCellType: Hashable {
     case banner(HomeBannerTableViewCell.Item)
     case music(HomeMusicTableViewCell.Item)
     case podcast(HomePodcastTableViewCell.Item)
+    
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case .banner(let item):
+            hasher.combine(0)
+            hasher.combine(item)
+        case .music(let item):
+            hasher.combine(1)
+            hasher.combine(item)
+        case .podcast(let item):
+            hasher.combine(2)
+            hasher.combine(item)
+        }
+    }
 }
 
 @MainActor
@@ -113,14 +127,14 @@ final class HomeViewModel {
             previewUrl: item.previewUrl
         )
         
-        let tracks: [Track] = musicTracks.compactMap {
-            return Track(
+        let tracks: [Track] = musicTracks.map { item in
+            Track(
                 trackId: item.trackId,
-                trackName: $0.trackName,
-                artistName: $0.artistName,
-                artworkUrl100: $0.artworkUrl100,
+                trackName: item.trackName,
+                artistName: item.artistName,
+                artworkUrl100: item.artworkUrl100,
                 trackTimeMillis: nil,
-                previewUrl: $0.previewUrl
+                previewUrl: item.previewUrl
             )
         }
         
@@ -139,14 +153,14 @@ final class HomeViewModel {
             previewUrl: item.previewUrl
         )
         
-        let tracks: [Track] = musicTracks.compactMap {
-            return Track(
+        let tracks: [Track] = musicTracks.map { item in
+            Track(
                 trackId: item.trackId,
-                trackName: $0.trackName,
-                artistName: $0.artistName,
-                artworkUrl100: $0.artworkUrl100,
+                trackName: item.trackName,
+                artistName: item.artistName,
+                artworkUrl100: item.artworkUrl100,
                 trackTimeMillis: nil,
-                previewUrl: $0.previewUrl
+                previewUrl: item.previewUrl
             )
         }
         
