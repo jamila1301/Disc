@@ -59,6 +59,7 @@ final class FullPlayerViewController: UIViewController {
         v.text = "0:00"
         v.font = .plusJakartaSansMedium12
         v.textColor = .black
+        v.numberOfLines = .zero
         return v
     }()
     
@@ -67,6 +68,7 @@ final class FullPlayerViewController: UIViewController {
         v.text = "-0:00"
         v.font = .plusJakartaSansMedium12
         v.textColor = .black
+        v.numberOfLines = .zero
         return v
     }()
     

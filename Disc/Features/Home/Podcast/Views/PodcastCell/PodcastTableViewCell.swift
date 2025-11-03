@@ -80,11 +80,15 @@ final class PodcastTableViewCell: UITableViewCell {
 }
 
 extension PodcastTableViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let image: String
         let podcastName: String
         let artistName: String
         let collectionId: Int?
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(collectionId)
+        }
     }
     
     func configure(item: Item) {

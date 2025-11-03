@@ -20,6 +20,7 @@ final class FavoriteCollectionViewCell: UICollectionViewCell {
     private let titleLabel: UILabel = {
         let v = UILabel()
         v.font = .plusJakartaSansSemiBold14
+        v.numberOfLines = .zero
         return v
     }()
     
@@ -66,9 +67,13 @@ final class FavoriteCollectionViewCell: UICollectionViewCell {
 }
 
 extension FavoriteCollectionViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let image: UIImage
         let title: String
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(title)
+        }
     }
     
     func configure(item: Item) {

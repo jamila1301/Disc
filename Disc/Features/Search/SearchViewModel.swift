@@ -17,18 +17,6 @@ protocol SearchViewModelDelegate: AnyObject {
 @MainActor
 final class SearchViewModel {
     
-    enum Section: Int, CaseIterable {
-        case music
-        case podcast
-        
-        var title: String {
-            switch self {
-            case .music: return "Music Tracks"
-            case .podcast: return "Podcast Tracks"
-            }
-        }
-    }
-    
     private var router: SearchRouterProtocol
     weak var delegate: SearchViewModelDelegate? = nil
     
@@ -102,14 +90,14 @@ final class SearchViewModel {
             previewUrl: item.previewUrl ?? ""
         )
         
-        let tracks: [Track] = musicItems.compactMap {
-            return Track(
+        let tracks: [Track] = musicItems.map { item in
+            Track(
                 trackId: item.trackId,
-                trackName: $0.musicName,
-                artistName: $0.artistName,
-                artworkUrl100: $0.image,
+                trackName: item.musicName,
+                artistName: item.artistName,
+                artworkUrl100: item.image,
                 trackTimeMillis: nil,
-                previewUrl: $0.previewUrl ?? ""
+                previewUrl: item.previewUrl ?? ""
             )
         }
         

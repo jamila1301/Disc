@@ -1,0 +1,139 @@
+/* 
+  Localizable.strings
+  Disc
+
+  Created by Jamila Mahammadli on 27.10.25.
+  
+*/
+
+// Onboarding
+"onboarding_title" = "Ən Son Musiqi və Podkastı Kəşf Edin";
+"onboarding_subtitle" = "Disc. tətbiqi ilə ən son musiqi və podkast buraxılışlarını dinləyin";
+"onboarding_start_button" = "Kəşfə Başla";
+
+// Sign In
+"signin_title" = "Daxil Ol";
+"signin_subtitle" = "Xahiş edirik, hesabınıza daxil olun";
+"signin_email_label" = "E-poçt";
+"signin_email_placeholder" = "E-poçtunuzu Daxil Edin";
+"signin_password_label" = "Şifrə";
+"signin_password_placeholder" = "Şifrənizi Daxil Edin";
+"signin_forgot_password_button" = "Şifrəni Unutdunuz?";
+"signin_button" = "Daxil Ol";
+"signin_or_continue_label" = "Və ya sosial profilinizlə daxil olun";
+"signup_label" = "Hesabınız yoxdur?";
+"signup_button" = "Hesab Yarat";
+"error_empty_name" = "Ad boş ola bilməz";
+"error_empty_email" = "E-poçt boş ola bilməz";
+"error_empty_password" = "Şifrə boş ola bilməz";
+"error_invalid_email" = "E-poçt formatı yanlışdır";
+"error_user_not_found" = "İstifadəçi tapılmadı";
+"error_wrong_password" = "Yanlış şifrə";
+"error_invalid_credential" = "E-poçt və ya şifrə yanlışdır";
+"error_user_disabled" = "Hesab deaktiv edilib";
+"error_email_already_in_use" = "Bu e-poçt artıq istifadə olunur";
+"error_weak_password" = "Şifrə ən azı 6 simvoldan ibarət olmalıdır";
+
+// Forgot Password
+"forgot_password_title" = "Şifrəni Unutdum";
+"forgot_password_subtitle" = "Şifrəniz üçün sizə e-poçt göndərəcəyik";
+"forgot_password_email_label" = "E-poçt";
+"forgot_password_email_placeholder" = "E-poçtunuzu Daxil Edin";
+"forgot_password_send_button" = "Göndər";
+
+// Password Reset
+"password_reset_title" = "E-poçtunuzu Yoxlayın";
+"password_reset_message" = "Şifrənizi sıfırlamaq üçün e-poçtunuza artıq bir link göndərmişik";
+
+// Facebook Login Error
+"facebook_error_title" = "Xəta";
+"facebook_error_button" = "Oldu";
+"facebook_error_account_exists" = "Bu e-poçt artıq başqa bir provayder ilə qeydiyyatdan keçib.";
+
+// Register
+"register_title" = "Hesab Yarat";
+"register_subtitle" = "Hesabınızı tamamlamaq üçün xahiş edirik doldurun";
+"register_name_label" = "Ad";
+"register_name_placeholder" = "Adınızı Daxil Edin";
+"register_email_label" = "E-poçt";
+"register_email_placeholder" = "E-poçtunuzu Daxil Edin";
+"register_password_label" = "Şifrə";
+"register_password_placeholder" = "Şifrə Yarat";
+"register_signup_button" = "Qeydiyyat";
+"register_or_continue_label" = "Və ya sosial profilinizlə hesab yaradın";
+"register_signin_label" = "Artıq hesabınız var?";
+"register_signin_button" = "Daxil Ol";
+
+// Home
+"home_recommended_music_title" = "Tövsiyə Olunan Musiqi";
+"home_recommended_podcast_title" = "Tövsiyə Olunan Podkast";
+"home_episodes_title" = "Epizodlar";
+"home_episodes_mins" = "dəq";
+"home_show_more_button" = "Daha Çox Göstər";
+"home_music_label" = "Musiqi";
+
+// Search
+"search_title" = "Axtarış";
+"search_placeholder" = "Sənətçi, musiqi və ya podkast axtarın";
+"search_music_title" = "Musiqi Trekləri";
+"search_podcast_title" = "Podkast Trekləri";
+
+// Categories
+"categories_title" = "Kateqoriyalar";
+"category_pop" = "Pop";
+"category_hip_hop" = "Hip-Hop";
+"category_rock" = "Rok";
+"category_jazz" = "Caz";
+"category_metal" = "Metal";
+"category_k_pop" = "K-pop";
+"category_rap" = "Rap";
+"category_electronic" = "Elektronik";
+"category_classical" = "Klassik";
+"category_blues" = "Blyuz";
+"category_latin" = "Latın";
+"category_rnb_soul" = "R&B/Soul";
+"category_folk" = "Folk";
+"category_reggae" = "Reqqi";
+
+// Collection
+"collection_title" = "Kolleksiya";
+"collection_liked_musics" = "Bəyənilən Musiqilər";
+"collection_liked_episodes" = "Bəyənilən Epizodlar";
+
+// Profile
+"profile_logout_button" = "Çıxış";
+"profile_account_title" = "Hesab";
+"profile_language_title" = "Dil";
+"profile_about_title" = "Haqqında";
+"profile_terms_title" = "Şərtlər və Qaydalar";
+"profile_add_photo_button" = "Şəkil Əlavə Et";
+"profile_language_azerbaijani" = "Azərbaycan";
+"profile_language_english" = "İngilis";
+"profile_language_russian" = "Rus";
+"profile_about_description" = "Discover-a xoş gəlmisiniz, sizin musiqi və podkast yayım platformanız. Discover ilə siz iTunes API-dən milyonlarla mahnı, minlərlə podkast və saysız-hesabsız epizodları kəşf edə və həzz ala bilərsiniz. Sevimli musiqinizlə dincəlmək, yeni sənətçiləri kəşf etmək və ya trend podkastları ilə ayaqlaşmaq istəsəniz, Discover sizin üçün hər şeyi bir yerdə təqdim edir.";
+"profile_home" = "• Ana Səhifə:";
+"profile_search" = "• Axtarış:";
+"profile_categories" = "• Kateqoriyalar:";
+"profile_favorites" = "• Favoritlər:";
+"profile_profile" = "• Profil:";
+"profile_home_description" = "Dinləmə vərdişlərinizə əsasən musiqi və podkastlar üçün fərdi tövsiyələr alın. Seçilmiş pleylistlər və trend epizodlar zövqünüzə uyğunlaşdırılıb, beləliklə hər zaman kəşf edəcəyiniz yeni bir şey var.";
+"profile_search_description" = "Sevdiyiniz hər hansı mahnı, podkast və ya epizodu tez tapın. Filtrlərdən istifadə edin, sənətçi, janr və ya mövzu ilə axtarın və iTunes kitabxanasından gizli inciləri kəşf edin.";
+"profile_categories_description" = "Janr, əhval və ya mövzular üzrə musiqiyə baxın və yeni sevimliləri asanlıqla kəşf edin. Seçilmiş pleylistlər, top siyahılar və janra xas kolleksiyaları araşdırın ki, sonsuz ilham alasınız.";
+"profile_favorites_description" = "Sevimli mahnılarınızı, albomlarınızı və podkast epizodlarınızı bir yerdə saxlayın. Saxlanılan məzmununuza istənilən vaxt, onlayn və ya oflayn daxil olun və mütləq dinləməli şəxsi kitabxananızı yaradın.";
+"profile_profile_description" = "Hesab məlumatlarınızı, dil seçimlərinizi və tətbiq parametrlərini idarə edin. Dinləmə təcrübənizi fərdiləşdirilmiş və cihazlar arasında sinxronlaşdırılmış saxlayın.";
+"profile_mission_description" = "Missiyamız musiqini və podkast dinləməsini hər kəs üçün sadə, zövqlü və əlçatan etməkdir. Discover ilə yeni səsləri kəşf edə, sevimli podkastlarınızın ən son epizodları ilə yenilənə və heç vaxt ritmi qaçırmaya bilərsiniz. Biz sizi sevdiyiniz musiqi və hekayələrlə bağlı saxlayan qüsursuz və immersiv dinləmə təcrübəsi təqdim etməyə sadiqik.";
+"profile_terms_intro" = "Discover-dan istifadə etməklə, aşağıdakı şərtlər və qaydaları qəbul edirsiniz:";
+"profile_terms_content_ownership_header" = "1. Məzmunun Mülkiyyəti:";
+"profile_terms_personal_use_header" = "2. Yalnız Şəxsi İstifadə:";
+"profile_terms_account_security_header" = "3. Hesab Təhlükəsizliyi:";
+"profile_terms_app_updates_header" = "4. Tətbiq Yeniləmələri:";
+"profile_terms_disclaimer_header" = "5. Məsuliyyətin İmtinası:";
+"profile_terms_liability_header" = "6. Məsuliyyətin Məhdudlaşdırılması:";
+"profile_terms_governing_law_header" = "7. Tənzimləyici Qanun:";
+"profile_terms_content_ownership" = "Bütün musiqi, podkastlar və epizodlar iTunes API vasitəsilə təqdim olunur. Discover məzmuna sahib deyil və bütün hüquqlar orijinal yaradıcılara, naşirlərə və müəllif hüquqları sahiblərinə məxsusdur. Siz bütün əqli mülkiyyət hüquqlarının orijinal məzmun sahiblərində qaldığını qəbul edirsiniz.";
+"profile_terms_personal_use" = "Məzmunu yalnız şəxsi, qeyri-kommersiya istifadəsi üçün yayımlaya və saxlaya bilərsiniz. Məzmunun hər hansı yenidən paylanması, çoxaldılması və ya kommersiya məqsədli istifadəsi qəti qadağandır. Siz məzmunu tətbiqdən kənarda kopyalamamağa, satmamağa və ya paylaşmamağa razılaşırsınız.";
+"profile_terms_account_security" = "Hesab məlumatlarınızın təhlükəsizliyini və məxfiliyini qorumaq sizin məsuliyyətinizdir. Hesabınız altında baş verən hər hansı fəaliyyət sizin məsuliyyətinizdir. Hesabınıza icazəsiz girişdən şübhələnirsinizsə, dərhal bizə məlumat verin.";
+"profile_terms_app_updates" = "Discover xüsusiyyətləri, məzmunu, funksionallığı və ya istifadə şərtlərini istənilən vaxt yeniləyə bilər. Yeniləmələrdən sonra tətbiqin davamlı istifadəsi dəyişiklikləri qəbul etmək deməkdir. Ən son xüsusiyyətlərdən və təhlükəsizlik təkmilləşdirmələrindən istifadə etmək üçün tətbiqi yeniləməyi tövsiyə edirik.";
+"profile_terms_disclaimer" = "Discover üçüncü tərəf məzmununa giriş təmin edir və hər hansı musiqi, podkast və ya epizodun dəqiqliyinə, əlçatanlığına, qanuniliyinə və ya etibarlılığına görə məsuliyyət daşımır. Texniki problemlər yarana bilər və tətbiq heç bir zəmanət olmadan “olduğu kimi” təqdim olunur. Tətbiqdən istifadəniz öz riskinizlədir.";
+"profile_terms_liability" = "Discover tətbiqin istifadəsindən yaranan hər hansı birbaşa, dolayısı, təsadüfi və ya nəticəli zərərlərə, o cümlədən məlumat, gəlir və ya məzmun itkisinə görə məsuliyyət daşımır.";
+"profile_terms_governing_law" = "Bu şərtlər ölkənizin tətbiq olunan qanunlarına tabedir. Tətbiqdən istifadə etməklə, rəqəmsal məzmunun istifadəsi ilə bağlı bütün yerli qaydalara riayət etməyə razılaşırsınız.";

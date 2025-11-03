@@ -32,15 +32,16 @@ final class PasswordResetSuccessViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let v = UILabel()
-        v.text = "Check Your Email"
+        v.text = "password_reset_title".localized()
         v.font = .plusJakartaSansSemibold24
         v.textAlignment = .center
+        v.numberOfLines = .zero
         return v
     }()
     
     private let messageLabel: UILabel = {
         let v = UILabel()
-        v.text = "We already a link to your email to reset\nyour password"
+        v.text = "password_reset_message".localized()
         v.font = .plusJakartaSansRegular14
         v.textColor = .lightGrayPrimary
         v.textAlignment = .center
@@ -68,6 +69,10 @@ final class PasswordResetSuccessViewController: UIViewController {
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissView))
         backgroundView.addGestureRecognizer(tapGesture)
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
     }
     
     private func setupUI() {
@@ -112,5 +117,12 @@ final class PasswordResetSuccessViewController: UIViewController {
     private func dismissView() {
         self.dismiss(animated: true)
         
+    }
+}
+
+extension PasswordResetSuccessViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        titleLabel.text = "password_reset_title".localized()
+        messageLabel.text = "password_reset_message".localized()
     }
 }

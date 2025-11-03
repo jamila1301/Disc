@@ -88,7 +88,7 @@ final class BaseTabBar: UITabBarController {
             selectedImage: .favoriteFill
         )
         
-        let profileVC = ProfileViewController()
+        let profileVC = ProfileBuilder().build()
         let profileNavVC = UINavigationController(rootViewController: profileVC)
         profileNavVC.tabBarItem = UITabBarItem(
             title: nil,

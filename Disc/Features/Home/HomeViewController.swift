@@ -9,19 +9,36 @@ import UIKit
 import SnapKit
 import Lottie
 
+nonisolated enum HomeSection {
+    case main
+}
+
+typealias HomeDataSource = UITableViewDiffableDataSource<HomeSection, HomeCellType>
+typealias HomeSnapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeCellType>
+
 final class HomeViewController: UIViewController {
     
     private let viewModel: HomeViewModel
+    private var dataSource: HomeDataSource?
     
     private let appNameLabel: UILabel = {
         let v = UILabel()
         v.text = "Discover"
         v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
+        v.numberOfLines = .zero
         return v
     }()
     
     private let lottieView: LottieAnimationView = LottieAnimationView(name: "musicDinosaur")
+    
+    private let loadingLottieView: LottieAnimationView = {
+        let v = LottieAnimationView(name: "ınsideLoading")
+        v.contentMode = .scaleAspectFit
+        v.loopMode = .loop
+        v.isHidden = true
+        return v
+    }()
     
     private let topStackView: UIStackView = {
         let v = UIStackView()
@@ -38,8 +55,7 @@ final class HomeViewController: UIViewController {
         v.showsHorizontalScrollIndicator = false
         v.showsVerticalScrollIndicator = false
         v.separatorStyle = .none
-        v.delegate = self
-        v.dataSource = self
+        v.dataSource = dataSource
         v.register(HomeBannerTableViewCell.self, forCellReuseIdentifier: HomeBannerTableViewCell.identifier)
         v.register(HomeMusicTableViewCell.self, forCellReuseIdentifier: HomeMusicTableViewCell.identifier)
         v.register(HomePodcastTableViewCell.self, forCellReuseIdentifier: HomePodcastTableViewCell.identifier)
@@ -58,9 +74,14 @@ final class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.delegate = self
+        createDiffableDataSource()
         setupUI()
         lottieView.play()
         lottieView.loopMode = .loop
+        showLoading(true)
+        Task {
+            await viewModel.fetchData()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -71,7 +92,7 @@ final class HomeViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .screenBackground
         
-        [topStackView, tableView].forEach { v in
+        [topStackView, tableView, loadingLottieView].forEach { v in
             view.addSubview(v)
         }
         
@@ -93,28 +114,41 @@ final class HomeViewController: UIViewController {
         lottieView.snp.makeConstraints { make in
             make.size.equalTo(55)
         }
-    }
-}
-
-extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.cellTypes.count
+        
+        loadingLottieView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.size.equalTo(220)
+        }
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellType = viewModel.cellTypes[indexPath.row]
-        switch cellType {
-        case .banner(let model):
-            if let cell = tableView.dequeueReusableCell(withIdentifier: HomeBannerTableViewCell.identifier, for: indexPath) as? HomeBannerTableViewCell {
+    private func showLoading(_ show: Bool) {
+        loadingLottieView.isHidden = !show
+        if show {
+            loadingLottieView.play()
+        } else {
+            loadingLottieView.stop()
+        }
+    }
+    
+    private func createDiffableDataSource() {
+        dataSource = HomeDataSource(tableView: tableView) { [weak self] tableView, indexPath, item in
+            guard let self = self else { return UITableViewCell() }
+            
+            switch item {
+            case .banner(let model):
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: HomeBannerTableViewCell.identifier, for: indexPath) as? HomeBannerTableViewCell else {
+                    return UITableViewCell()
+                }
                 cell.configure(item: model)
                 cell.onSelectBanner = { [weak self] selected in
                     Task { await self?.viewModel.playBannerTrack(item: selected) }
                 }
                 return cell
-            }
-            return UITableViewCell()
-        case .music(let model):
-            if let cell = tableView.dequeueReusableCell(withIdentifier: HomeMusicTableViewCell.identifier, for: indexPath) as? HomeMusicTableViewCell {
+                
+            case .music(let model):
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: HomeMusicTableViewCell.identifier, for: indexPath) as? HomeMusicTableViewCell else {
+                    return UITableViewCell()
+                }
                 cell.configure(item: model)
                 cell.buttonAction = { [weak self] in
                     self?.viewModel.didTapMusic()
@@ -123,10 +157,11 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                     Task { await self?.viewModel.playHomeMusic(item: selected) }
                 }
                 return cell
-            }
-            return UITableViewCell()
-        case .podcast(let model):
-            if let cell = tableView.dequeueReusableCell(withIdentifier: HomePodcastTableViewCell.identifier, for: indexPath) as? HomePodcastTableViewCell {
+                
+            case .podcast(let model):
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: HomePodcastTableViewCell.identifier, for: indexPath) as? HomePodcastTableViewCell else {
+                    return UITableViewCell()
+                }
                 cell.configure(item: model)
                 cell.buttonAction = { [weak self] in
                     self?.viewModel.didTapPodcast()
@@ -136,13 +171,20 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 }
                 return cell
             }
-            return UITableViewCell()
         }
+    }
+    
+    private func applySnapshot() {
+        var snapshot = HomeSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(viewModel.cellTypes, toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
     }
 }
 
 extension HomeViewController: HomeViewModelDelegate {
     func reloadTableView() {
-        tableView.reloadData()
+        showLoading(false)
+        applySnapshot()
     }
 }

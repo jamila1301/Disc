@@ -7,12 +7,28 @@
 
 import UIKit
 import SnapKit
+import Lottie
 
 final class LoginViewController: UIViewController, Keyboardable {
     
     private let viewModel: LoginViewModel
     
     var targetConstraint: Constraint? = nil
+    
+    private lazy var loadingBackgroundView: UIView = {
+        let v = UIView()
+        v.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        v.isHidden = true
+        return v
+    }()
+    
+    private let loadingLottieView: LottieAnimationView = {
+        let v = LottieAnimationView(name: "ınsideLoading")
+        v.contentMode = .scaleAspectFit
+        v.loopMode = .loop
+        v.isHidden = true
+        return v
+    }()
     
     private let scrollView: UIScrollView = {
         let v = UIScrollView()
@@ -26,15 +42,16 @@ final class LoginViewController: UIViewController, Keyboardable {
     
     private let topLabel: UILabel = {
         let v = UILabel()
-        v.text = "Sign In"
+        v.text = "signin_title".localized()
         v.font = .plusJakartaSansSemibold24
+        v.numberOfLines = .zero
         return v
     }()
     
     private let topTitleLabel: UILabel = {
         let v = UILabel()
-        v.text = "Please sign in to your account"
-        v.font = .plusJakartaSansRegular16
+        v.text = "signin_subtitle".localized()
+        v.font = .plusJakartaSansRegular14
         v.textColor = .lightGrayPrimary
         v.numberOfLines = .zero
         return v
@@ -42,15 +59,16 @@ final class LoginViewController: UIViewController, Keyboardable {
     
     private let emailLabel: UILabel = {
         let v = UILabel()
-        v.text = "Email"
+        v.text = "signin_email_label".localized()
         v.font = .plusJakartaSansMedium16
         v.textColor = .lightBlueSecondinary
+        v.numberOfLines = .zero
         return v
     }()
     
     private lazy var emailTextField: CustomTextField = {
         let v = CustomTextField()
-        v.placeholder = "Enter Your Email"
+        v.placeholder = "signin_email_placeholder".localized()
         v.isSecureTextEntry = false
         v.showPasswordToggleButton(show: false)
         v.textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
@@ -59,15 +77,16 @@ final class LoginViewController: UIViewController, Keyboardable {
     
     private let passwordLabel: UILabel = {
         let v = UILabel()
-        v.text = "Password"
+        v.text = "signin_password_label".localized()
         v.font = .plusJakartaSansMedium16
         v.textColor = .lightBlueSecondinary
+        v.numberOfLines = .zero
         return v
     }()
     
     private lazy var passwordTextField: CustomTextField = {
         let v = CustomTextField()
-        v.placeholder = "Password"
+        v.placeholder = "signin_password_placeholder".localized()
         v.isSecureTextEntry = true
         v.showPasswordToggleButton(show: true)
         v.textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
@@ -76,7 +95,7 @@ final class LoginViewController: UIViewController, Keyboardable {
     
     private lazy var forgotPasswordButton: UIButton = {
         let v = UIButton(type: .system)
-        v.setTitle("Forgot Password?", for: .normal)
+        v.setTitle("signin_forgot_password_button".localized(), for: .normal)
         v.titleLabel?.font = .plusJakartaSansMedium14
         v.setTitleColor(.defaultBlue, for: .normal)
         v.contentHorizontalAlignment = .trailing
@@ -86,7 +105,7 @@ final class LoginViewController: UIViewController, Keyboardable {
     
     private lazy var signInButton: UIButton = {
         let v = UIButton(type: .system)
-        v.setTitle("Sign In", for: .normal)
+        v.setTitle("signin_button".localized(), for: .normal)
         v.titleLabel?.font = .plusJakartaSansSemiBold16
         v.setTitleColor(.white, for: .normal)
         v.backgroundColor = .defaultBlue
@@ -97,10 +116,11 @@ final class LoginViewController: UIViewController, Keyboardable {
     
     private let orContinueLabel: UILabel = {
         let v = UILabel()
-        v.text = "Or sign in using your social profile"
+        v.text = "signin_or_continue_label".localized()
         v.font = .plusJakartaSansRegular14
         v.textColor = .lightGrayPrimary
         v.textAlignment = .center
+        v.numberOfLines = .zero
         return v
     }()
     
@@ -160,15 +180,16 @@ final class LoginViewController: UIViewController, Keyboardable {
     
     private let signUpLabel: UILabel = {
         let v = UILabel()
-        v.text = "Don’t have account?"
+        v.text = "signup_label".localized()
         v.font = .plusJakartaSansRegular14
         v.textColor = .lightGrayPrimary
+        v.numberOfLines = .zero
         return v
     }()
     
     private lazy var signUpButton: UIButton = {
         let v = UIButton(type: .system)
-        v.setTitle("Create Account", for: .normal)
+        v.setTitle("signup_button".localized(), for: .normal)
         v.titleLabel?.font = .plusJakartaSansMedium14
         v.setTitleColor(.defaultBlue, for: .normal)
         v.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
@@ -252,10 +273,14 @@ final class LoginViewController: UIViewController, Keyboardable {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         scrollView.addGestureRecognizer(tapGesture)
         
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
+        
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .screenBackground
         
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -268,7 +293,7 @@ final class LoginViewController: UIViewController, Keyboardable {
             make.edges.equalToSuperview()
             make.width.equalToSuperview()
         }
-        
+                
         [topStackView, textFieldsStackView, forgotPasswordButton, bottomStackView].forEach { v in
             contentView.addSubview(v)
         }
@@ -357,6 +382,37 @@ final class LoginViewController: UIViewController, Keyboardable {
             make.horizontalEdges.equalToSuperview().inset(24)
             self.targetConstraint = make.bottom.equalToSuperview().inset(24).constraint
         }
+        
+    }
+    
+    private func showLoading(_ show: Bool) {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap({ $0.windows })
+            .first(where: { $0.isKeyWindow }) else { return }
+        
+        if show {
+            if loadingBackgroundView.superview == nil {
+                window.addSubview(loadingBackgroundView)
+                loadingBackgroundView.snp.makeConstraints { make in
+                    make.edges.equalToSuperview()
+                }
+                
+                loadingBackgroundView.addSubview(loadingLottieView)
+                loadingLottieView.snp.makeConstraints { make in
+                    make.center.equalToSuperview()
+                    make.size.equalTo(220)
+                }
+            }
+            
+            loadingBackgroundView.isHidden = false
+            loadingLottieView.isHidden = false
+            loadingLottieView.play()
+        } else {
+            loadingBackgroundView.isHidden = true
+            loadingLottieView.isHidden = true
+            loadingLottieView.stop()
+        }
     }
     
     @objc private func textFieldDidChange() {
@@ -377,11 +433,14 @@ final class LoginViewController: UIViewController, Keyboardable {
     @objc
     private func didTapSignInButton() {
         Task {
+            showLoading(true)
             let email = emailTextField.text ?? ""
             let password = passwordTextField.text ?? ""
             do {
                 try await viewModel.loginWithEmail(email: email, password: password)
+                showLoading(false)
             } catch let error as AuthError {
+                showLoading(false)
                 switch error {
                 case .emptyEmail, .invalidEmail, .userNotFound, .userDisabled:
                     emailTextField.setError(error.localizedDescription)
@@ -391,6 +450,7 @@ final class LoginViewController: UIViewController, Keyboardable {
                     print(error.localizedDescription)
                 }
             } catch {
+                showLoading(false)
                 print(error.localizedDescription)
             }
         }
@@ -399,22 +459,26 @@ final class LoginViewController: UIViewController, Keyboardable {
     @objc
     private func didTapGoogle() {
         Task {
+            showLoading(true)
             do {
                 try await viewModel.loginWithGoogle()
             } catch {
                 print("Google login error: \(error)")
             }
+            showLoading(false)
         }
     }
     
     @objc
     private func didTapFacebook() {
         Task {
+            showLoading(true)
             do {
                 try await viewModel.loginWithFacebook()
             } catch {
                 print("Facebook login error: \(error)")
             }
+            showLoading(false)
         }
     }
     
@@ -432,5 +496,21 @@ final class LoginViewController: UIViewController, Keyboardable {
     @objc
     private func dismissKeyboard() {
         view.endEditing(true)
+    }
+}
+
+extension LoginViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        topLabel.text = "signin_title".localized()
+        topTitleLabel.text = "signin_subtitle".localized()
+        emailLabel.text = "signin_email_label".localized()
+        emailTextField.placeholder = "signin_email_placeholder".localized()
+        passwordLabel.text = "signin_password_label".localized()
+        passwordTextField.placeholder = "signin_password_placeholder".localized()
+        forgotPasswordButton.setTitle("signin_forgot_password_button".localized(), for: .normal)
+        signInButton.setTitle("signin_button".localized(), for: .normal)
+        orContinueLabel.text = "signin_or_continue_label".localized()
+        signUpLabel.text = "signup_label".localized()
+        signUpButton.setTitle("signup_button".localized(), for: .normal)
     }
 }

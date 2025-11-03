@@ -8,11 +8,19 @@
 import UIKit
 import SnapKit
 
+nonisolated enum HomeBannerCollectionSection {
+    case main
+}
+
+typealias HomeBannerCollectionDataSource = UICollectionViewDiffableDataSource<HomeBannerCollectionSection, HomeBannerCollectionViewCell.Item>
+typealias HomeBannerCollectionSnapshot = NSDiffableDataSourceSnapshot<HomeBannerCollectionSection, HomeBannerCollectionViewCell.Item>
+
 final class HomeBannerTableViewCell: UITableViewCell {
     
     var onSelectBanner: ((HomeBannerCollectionViewCell.Item) -> Void)?
     
     private var bannerList: [HomeBannerCollectionViewCell.Item] = []
+    private var dataSource: HomeBannerCollectionDataSource?
     
     private lazy var collectionView: UICollectionView = {
         
@@ -27,13 +35,14 @@ final class HomeBannerTableViewCell: UITableViewCell {
         v.showsHorizontalScrollIndicator = false
         v.showsVerticalScrollIndicator = false
         v.delegate = self
-        v.dataSource = self
+        v.dataSource = dataSource
         v.register(HomeBannerCollectionViewCell.self, forCellWithReuseIdentifier: HomeBannerCollectionViewCell.identifier)
         return v
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        createDiffableDataSource()
         setupUI()
     }
     
@@ -49,35 +58,43 @@ final class HomeBannerTableViewCell: UITableViewCell {
             make.height.equalTo(144)
         }
     }
+    
+    private func createDiffableDataSource() {
+        dataSource = HomeBannerCollectionDataSource(collectionView: collectionView) { collectionView, indexPath, item in
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeBannerCollectionViewCell.identifier, for: indexPath) as? HomeBannerCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            cell.configure(item: item)
+            return cell
+        }
+    }
+    
+    private func applySnapshot(items: [HomeBannerCollectionViewCell.Item]) {
+        var snapshot = HomeBannerCollectionSnapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(items, toSection: .main)
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
 }
 
 extension HomeBannerTableViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let bannerList: [HomeBannerCollectionViewCell.Item]
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(bannerList)
+        }
     }
     
     func configure(item: Item) {
         self.bannerList = item.bannerList
-        self.collectionView.reloadData()
+        applySnapshot(items: item.bannerList)
     }
 }
 
-extension HomeBannerTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return bannerList.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeBannerCollectionViewCell.identifier, for: indexPath) as? HomeBannerCollectionViewCell {
-            cell.configure(item: bannerList[indexPath.row])
-            return cell
-        }
-        return UICollectionViewCell()
-    }
-    
+extension HomeBannerTableViewCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selected = bannerList[indexPath.item]
         onSelectBanner?(selected)
     }
-
 }

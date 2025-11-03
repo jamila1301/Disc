@@ -42,7 +42,7 @@ final class FacebookAuthProviderImpl: SocialAuthProvider {
                     if let error {
                         let nsError = error as NSError
                         if nsError.code == AuthErrorCode.accountExistsWithDifferentCredential.rawValue {
-                            self.showAlert(on: view, message: "This email is already registered with another provider.")
+                            self.showAlert(on: view, message: "facebook_error_account_exists".localized())
                         } else {
                             self.showAlert(on: view, message: error.localizedDescription)
                         }
@@ -74,7 +74,7 @@ final class FacebookAuthProviderImpl: SocialAuthProvider {
                             "email": email
                         ]
                         
-                        self.db.collection("users").document(firebaseUser.uid).setData(userData) { error in
+                        self.db.collection("users").document(firebaseUser.uid).setData(userData, merge: true) { error in
                             if let error {
                                 self.showAlert(on: view, message: error.localizedDescription)
                                 continuation.resume(throwing: error)
@@ -98,8 +98,8 @@ final class FacebookAuthProviderImpl: SocialAuthProvider {
     
     private func showAlert(on view: UIViewController, message: String) {
         DispatchQueue.main.async {
-            let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            let alert = UIAlertController(title: "facebook_error_title".localized(), message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "facebook_error_button".localized(), style: .default))
             view.present(alert, animated: true)
         }
     }

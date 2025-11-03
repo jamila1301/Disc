@@ -11,15 +11,11 @@ protocol EpisodeViewModelDelegate: AnyObject {
     func reloadTableView()
 }
 
-enum EpisodeCellType {
-    case episode(EpisodeTableViewCell.Item)
-}
-
 @MainActor
 final class EpisodeViewModel {
     private var router: EpisodeRouterProtocol
     weak var delegate: EpisodeViewModelDelegate? = nil
-    private(set) var cellTypes: [EpisodeCellType] = []
+    private(set) var items: [EpisodeTableViewCell.Item] = []
     private let collectionId: Int
     
     init(collectionId: Int, router: EpisodeRouterProtocol) {
@@ -28,20 +24,24 @@ final class EpisodeViewModel {
         Task {
             await fetchData()
         }
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            Task { await self?.fetchData() }
+        }
     }
     
     func fetchData() async {
         do {
             let episodeTracks = try await ITunesService.shared.fetchEpisode(for: collectionId)
-            self.cellTypes = episodeTracks.map { episode in
-                .episode(.init(
+            self.items = episodeTracks.map { episode in
+                EpisodeTableViewCell.Item(
                     trackId: episode.trackId,
                     image: episode.artworkUrl600,
                     episodeName: episode.trackName,
                     collectionName: episode.collectionName,
-                    timeLabel: "\(episode.trackTimeMillis?.formattedDuration ?? "")  mins",
+                    timeLabel: "\(episode.trackTimeMillis?.formattedDuration ?? "")  " + "home_episodes_mins".localized(),
                     previewUrl: episode.previewUrl
-                ))
+                )
             }
             self.delegate?.reloadTableView()
         } catch {
@@ -62,21 +62,18 @@ final class EpisodeViewModel {
             collectionName: item.collectionName
         )
         
-        let episodes: [Episode] = cellTypes.compactMap {
-            if case .episode(let item) = $0 {
-                return Episode(
-                    trackId: item.trackId,
-                    trackName: item.episodeName,
-                    artistName: item.collectionName,
-                    episodeUrl: nil,
-                    artworkUrl600: item.image,
-                    trackTimeMillis: nil,
-                    previewUrl: item.previewUrl,
-                    description: nil,
-                    collectionName: item.collectionName
-                )
-            }
-            return nil
+        let episodes: [Episode] = items.map { item in
+            Episode(
+                trackId: item.trackId,
+                trackName: item.episodeName,
+                artistName: item.collectionName,
+                episodeUrl: nil,
+                artworkUrl600: item.image,
+                trackTimeMillis: nil,
+                previewUrl: item.previewUrl,
+                description: nil,
+                collectionName: item.collectionName
+            )
         }
         
         PlayerManager.shared.playEpisode(episode, episodeList: episodes)

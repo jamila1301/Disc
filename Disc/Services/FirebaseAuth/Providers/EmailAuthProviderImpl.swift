@@ -71,7 +71,7 @@ final class EmailAuthProviderImpl: EmailAuthProvider {
                 self.db.collection("users").document(uid).setData([
                     "name": name,
                     "email": email
-                ])
+                ], merge: true)
                 
             }
             

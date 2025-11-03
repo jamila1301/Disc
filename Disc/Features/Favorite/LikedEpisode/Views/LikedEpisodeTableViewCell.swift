@@ -80,12 +80,18 @@ final class LikedEpisodeTableViewCell: UITableViewCell {
 }
 
 extension LikedEpisodeTableViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let image: String
         let episodeName: String
         let artistName: String
         let previewUrl: String?
         let collectionName: String
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(episodeName)
+            hasher.combine(artistName)
+            hasher.combine(collectionName)
+        }
     }
     
     func configure(item: Item) {

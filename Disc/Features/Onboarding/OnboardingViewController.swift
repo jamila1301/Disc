@@ -21,8 +21,8 @@ final class OnboardingViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let v = UILabel()
-        v.text = "Discover Latest Music and Podcast"
-        v.numberOfLines = .zero
+        v.text = "onboarding_title".localized()
+        v.numberOfLines = 0
         v.font = .plusJakartaSansSemiBold36
         v.textAlignment = .center
         return v
@@ -30,8 +30,8 @@ final class OnboardingViewController: UIViewController {
     
     private let subtitleLabel: UILabel = {
         let v = UILabel()
-        v.text = "Listen to the latest music and podcast releases\nusing Disc. app"
-        v.numberOfLines = .zero
+        v.text = "onboarding_subtitle".localized()
+        v.numberOfLines = 0
         v.font = .plusJakartaSansRegular14
         v.textAlignment = .center
         v.textColor = .lightGrayPrimary
@@ -40,7 +40,7 @@ final class OnboardingViewController: UIViewController {
     
     private lazy var startButton: UIButton = {
         let v = UIButton(type: .system)
-        v.setTitle("Start Exploring", for: .normal)
+        v.setTitle("onboarding_start_button".localized(), for: .normal)
         v.titleLabel?.font = .plusJakartaSansSemiBold16
         v.setTitleColor(.white, for: .normal)
         v.backgroundColor = .defaultBlue
@@ -78,6 +78,10 @@ final class OnboardingViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         navigationController?.setNavigationBarHidden(true, animated: false)
+        
+        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+            self?.didChangeLanguage()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -102,19 +106,19 @@ final class OnboardingViewController: UIViewController {
         
         mainStackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(32)
-            make.horizontalEdges.equalToSuperview().inset(24)
-            make.bottom.lessThanOrEqualTo(startButton.snp.top).offset(-24)
+            make.horizontalEdges.equalToSuperview().inset(20)
+            make.bottom.lessThanOrEqualTo(startButton.snp.top).offset(-20)
         }
         
         mainImageView.snp.makeConstraints { make in
-            make.height.lessThanOrEqualTo(view.snp.height).multipliedBy(0.45)
-            make.height.greaterThanOrEqualTo(150)
+            make.height.lessThanOrEqualTo(view.snp.height).multipliedBy(0.35)
+            make.height.greaterThanOrEqualTo(100)
         }
         
         startButton.snp.makeConstraints { make in
             make.height.equalTo(52)
-            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(24)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
     }
     
@@ -124,3 +128,10 @@ final class OnboardingViewController: UIViewController {
     }
 }
 
+extension OnboardingViewController: LocalizeUpdateable {
+    func didChangeLanguage() {
+        titleLabel.text = "onboarding_title".localized()
+        subtitleLabel.text = "onboarding_subtitle".localized()
+        startButton.setTitle("onboarding_start_button".localized(), for: .normal)
+    }
+}

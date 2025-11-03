@@ -80,12 +80,16 @@ final class MusicTableViewCell: UITableViewCell {
 }
 
 extension MusicTableViewCell {
-    struct Item {
+     nonisolated struct Item: Hashable {
         let trackId: Int?
         let image: String
         let musicName: String
         let artistName: String
         let previewUrl: String?
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(trackId)
+        }
     }
     
     func configure(item: Item) {

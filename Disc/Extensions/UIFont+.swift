@@ -21,6 +21,7 @@ extension UIFont {
     static let plusJakartaSansMedium12 = UIFont(name: PlusJakartaSansFont.medium, size: 12)
     static let plusJakartaSansMedium14 = UIFont(name: PlusJakartaSansFont.medium, size: 14)
     static let plusJakartaSansMedium16 = UIFont(name: PlusJakartaSansFont.medium, size: 16)
+    static let plusJakartaSansBold16 = UIFont(name: PlusJakartaSansFont.bold, size: 16)
     static let plusJakartaSansBold20 = UIFont(name: PlusJakartaSansFont.bold, size: 20)
 }
 

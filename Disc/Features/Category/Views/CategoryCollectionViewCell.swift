@@ -15,6 +15,7 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
         v.textColor = .white
         v.font = .plusJakartaSansBold20
         v.textAlignment = .center
+        v.numberOfLines = .zero
         return v
     }()
     
@@ -50,8 +51,12 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
 }
 
 extension CategoryCollectionViewCell {
-    struct Item {
+    nonisolated struct Item: Hashable {
         let categoryName: String
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(categoryName)
+        }
     }
     
     func configure(item: Item) {

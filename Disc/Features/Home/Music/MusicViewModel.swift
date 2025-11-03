@@ -11,15 +11,11 @@ protocol MusicViewModelDelegate: AnyObject {
     func reloadTableView()
 }
 
-enum MusicCellType {
-    case music(MusicTableViewCell.Item)
-}
-
 @MainActor
 final class MusicViewModel {
     private var router: MusicRouterProtocol
     weak var delegate: MusicViewModelDelegate? = nil
-    private(set) var cellTypes: [MusicCellType] = []
+    private(set) var items: [MusicTableViewCell.Item] = []
     
     init(router: MusicRouterProtocol) {
         self.router = router
@@ -31,14 +27,14 @@ final class MusicViewModel {
     func fetchData() async {
         do {
             let musicTracks = try await ITunesService.shared.fetchMusic(term: "music", limit: 199)
-            self.cellTypes = musicTracks.map { track in
-                    .music(.init(
-                        trackId: track.trackId,
-                        image: track.artworkUrl100,
-                        musicName: track.trackName,
-                        artistName: track.artistName,
-                        previewUrl: track.previewUrl
-                    ))
+            self.items = musicTracks.map { track in
+                MusicTableViewCell.Item(
+                    trackId: track.trackId,
+                    image: track.artworkUrl100,
+                    musicName: track.trackName,
+                    artistName: track.artistName,
+                    previewUrl: track.previewUrl
+                )
             }
             self.delegate?.reloadTableView()
             
@@ -57,18 +53,15 @@ final class MusicViewModel {
             previewUrl: item.previewUrl ?? ""
         )
         
-        let tracks: [Track] = cellTypes.compactMap {
-            if case .music(let item) = $0 {
-                return Track(
-                    trackId: item.trackId,
-                    trackName: item.musicName,
-                    artistName: item.artistName,
-                    artworkUrl100: item.image,
-                    trackTimeMillis: nil,
-                    previewUrl: item.previewUrl ?? ""
-                )
-            }
-            return nil
+        let tracks: [Track] = items.map { item in
+            Track(
+                trackId: item.trackId,
+                trackName: item.musicName,
+                artistName: item.artistName,
+                artworkUrl100: item.image,
+                trackTimeMillis: nil,
+                previewUrl: item.previewUrl ?? ""
+            )
         }
         
         PlayerManager.shared.playHomeMusic(track, trackList: tracks)
