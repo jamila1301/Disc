@@ -77,7 +77,7 @@ final class AccountDetailTableViewCell: UITableViewCell {
         
         mainStackView.snp.makeConstraints { make in
             make.top.horizontalEdges.equalToSuperview()
-            make.bottom.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview().inset(30)
         }
     }
 }

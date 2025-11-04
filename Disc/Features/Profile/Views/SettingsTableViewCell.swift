@@ -84,9 +84,9 @@ final class SettingsTableViewCell: UITableViewCell {
         }
         
         mainStackView.snp.makeConstraints { make in
-            make.top.equalTo(contentView.safeAreaLayoutGuide).inset(30)
+            make.top.equalTo(contentView.safeAreaLayoutGuide).inset(15)
             make.horizontalEdges.equalTo(contentView.safeAreaLayoutGuide)
-            make.bottom.equalToSuperview()
+            make.bottom.equalTo(contentView.safeAreaLayoutGuide).inset(15)
         }
         
         mainView.snp.makeConstraints { make in
