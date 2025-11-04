@@ -120,11 +120,19 @@ final class BaseTabBar: UITabBarController {
         NotificationCenter.default.addObserver(self, selector: #selector(hideMiniPlayer), name: .didStopPlaying, object: nil)
     }
     
+    private func updateBottomSpace(bottom: CGFloat) {
+        viewControllers?.forEach { vc in
+            vc.additionalSafeAreaInsets.bottom = bottom
+        }
+    }
+    
     @objc private func showMiniPlayer() {
         miniPlayer.isHidden = false
+        updateBottomSpace(bottom: 64 + 10)
     }
     
     @objc private func hideMiniPlayer() {
         miniPlayer.isHidden = true
+        updateBottomSpace(bottom: 0)
     }
 }
