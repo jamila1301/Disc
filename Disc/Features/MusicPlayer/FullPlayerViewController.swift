@@ -102,6 +102,26 @@ final class FullPlayerViewController: UIViewController {
         return v
     }()
     
+    private lazy var repeatImageView: UIImageView = {
+        let v = UIImageView()
+        v.image = .repeatOff
+        v.tintColor = .black
+        let repeatTap = UITapGestureRecognizer(target: self, action: #selector(didTapRepeat))
+        v.addGestureRecognizer(repeatTap)
+        v.isUserInteractionEnabled = true
+        return v
+    }()
+    
+    private lazy var shuffleImageView: UIImageView = {
+        let v = UIImageView()
+        v.image = .shuffleOff
+        v.tintColor = .black
+        let shuffleTap = UITapGestureRecognizer(target: self, action: #selector(didTapShuffle))
+        v.addGestureRecognizer(shuffleTap)
+        v.isUserInteractionEnabled = true
+        return v
+    }()
+    
     private var timeObserverToken: Any?
     private weak var observedPlayer: AVPlayer?
     private var isLiked: Bool = false
@@ -126,7 +146,7 @@ final class FullPlayerViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .white
         
-        [albumImageView, songTitleLabel, artistLabel, heartButton, progressView, currentTimeLabel, remainingTimeLabel, previousImageView, playPauseImageView, nextImageView].forEach { v in
+        [albumImageView, songTitleLabel, artistLabel, heartButton, progressView, currentTimeLabel, remainingTimeLabel, previousImageView, playPauseImageView, nextImageView, repeatImageView, shuffleImageView].forEach { v in
             view.addSubview(v)
         }
         
@@ -176,14 +196,26 @@ final class FullPlayerViewController: UIViewController {
         
         previousImageView.snp.makeConstraints { make in
             make.centerY.equalTo(playPauseImageView.snp.centerY)
-            make.trailing.equalTo(playPauseImageView.snp.leading).offset(-44)
+            make.trailing.equalTo(playPauseImageView.snp.leading).offset(-40)
             make.size.equalTo(40)
         }
         
         nextImageView.snp.makeConstraints { make in
             make.centerY.equalTo(playPauseImageView.snp.centerY)
-            make.leading.equalTo(playPauseImageView.snp.trailing).offset(44)
+            make.leading.equalTo(playPauseImageView.snp.trailing).offset(40)
             make.size.equalTo(40)
+        }
+        
+        shuffleImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(previousImageView)
+            make.trailing.equalTo(previousImageView.snp.leading).offset(-30)
+            make.size.equalTo(28)
+        }
+        
+        repeatImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(nextImageView)
+            make.leading.equalTo(nextImageView.snp.trailing).offset(30)
+            make.size.equalTo(24)
         }
     }
     
@@ -214,6 +246,8 @@ final class FullPlayerViewController: UIViewController {
         
         updatePlayPauseIcon()
         addPeriodicTimeObserver()
+        repeatImageView.image = manager.isRepeatEnabled ? .repeatOn : .repeatOff
+        shuffleImageView.image = manager.isShuffleEnabled ? .shuffleOn : .shuffleOff
     }
     
     @objc private func resetUI() {
@@ -351,4 +385,15 @@ final class FullPlayerViewController: UIViewController {
         let seconds = totalSeconds % 60
         return String(format: "%d:%02d", minutes, seconds)
     }
+    
+    @objc private func didTapRepeat() {
+        PlayerManager.shared.isRepeatEnabled.toggle()
+        repeatImageView.image = PlayerManager.shared.isRepeatEnabled ? .repeatOn : .repeatOff
+    }
+    
+    @objc private func didTapShuffle() {
+        PlayerManager.shared.isShuffleEnabled.toggle()
+        shuffleImageView.image = PlayerManager.shared.isShuffleEnabled ? .shuffleOn : .shuffleOff
+    }
+
 }
