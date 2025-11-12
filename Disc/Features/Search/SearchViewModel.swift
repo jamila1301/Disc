@@ -20,8 +20,8 @@ final class SearchViewModel {
     private var router: SearchRouterProtocol
     weak var delegate: SearchViewModelDelegate? = nil
     
-    private(set) var musicItems: [MusicTableViewCell.Item] = []
-    private(set) var podcastItems: [PodcastTableViewCell.Item] = []
+    var musicItems: [MusicTableViewCell.Item] = []
+    var podcastItems: [PodcastTableViewCell.Item] = []
     
     init(router: SearchRouterProtocol) {
         self.router = router
