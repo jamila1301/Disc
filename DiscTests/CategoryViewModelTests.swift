@@ -11,9 +11,9 @@ import XCTest
 @MainActor
 final class CategoryViewModelTests: XCTestCase {
     
-    var viewModel: CategoryViewModel!
-    var mockRouter: MockCategoryRouter!
-    var mockDelegate: MockCategoryDelegate!
+    private var viewModel: CategoryViewModel!
+    private var mockRouter: MockCategoryRouter!
+    private var mockDelegate: MockCategoryDelegate!
     
     override func setUp() {
         super.setUp()
@@ -30,55 +30,55 @@ final class CategoryViewModelTests: XCTestCase {
         super.tearDown()
     }
     
-    func test_categoriesCount_shouldMatchCategoryKeys() {
+    func test_categoriesCount_matchesKeysCount() {
         // Given
-        let expectedCount = 14
+        let expected = 14
         
         // When
-        let count = viewModel.categories.count
+        let actual = viewModel.categories.count
         
         // Then
-        XCTAssertEqual(count, expectedCount, "Category count should be \(expectedCount)")
+        XCTAssertEqual(actual, expected, "categories count must equal keys count")
     }
     
-    func test_colorsCount_shouldMatchAllCases() {
+    func test_colorsCount_matchesHardCodedCount() {
         // Given
-        let expectedCount = CategoryColor.allCases.count
+        let expected = 14
         
         // When
-        let count = viewModel.colors.count
+        let actual = viewModel.colors.count
         
         // Then
-        XCTAssertEqual(count, expectedCount, "Colors count should match allCases count")
+        XCTAssertEqual(actual, expected, "colors string array count must be 14")
     }
     
-    func test_didSelectCategory_shouldCallRouterWithCorrectCategory() {
+    func test_didSelectCategory_callsRouterWithCorrectName() {
         // Given
-        let indexToSelect = 0
-        let expectedCategory = viewModel.categories[indexToSelect].categoryName
+        let index = 2
+        let expected = viewModel.categories[index].categoryName
         
         // When
-        viewModel.didSelectCategory(index: indexToSelect)
+        viewModel.didSelectCategory(index: index)
         
         // Then
-        XCTAssertEqual(mockRouter.openedCategory, expectedCategory, "Router should be called with correct category")
+        XCTAssertEqual(mockRouter.openedCategory, expected, "router must receive correct category name")
     }
     
-    func test_languageChange_shouldTriggerDelegateReload() {
+    func test_languageChange_triggersDelegateReload() {
         // Given
-        XCTAssertFalse(mockDelegate.didReload)
+        XCTAssertFalse(mockDelegate.didReload, "pre-condition")
         
         // When
         LanguageManager.shared.set(language: .az)
         
         // Then
-        XCTAssertTrue(mockDelegate.didReload, "Delegate should reload tableView after language change")
+        XCTAssertTrue(mockDelegate.didReload, "delegate must be told to reload")
     }
 }
 
 final class MockCategoryRouter: CategoryRouterProtocol {
-    var view: UIViewController?
-    var openedCategory: String?
+    weak var view: UIViewController?
+    private(set) var openedCategory: String?
     
     func openMusicList(category: String) {
         openedCategory = category
@@ -86,7 +86,7 @@ final class MockCategoryRouter: CategoryRouterProtocol {
 }
 
 final class MockCategoryDelegate: CategoryViewModelDelegate {
-    var didReload = false
+    private(set) var didReload = false
     
     func reloadTableView() {
         didReload = true

@@ -18,7 +18,7 @@ typealias CategoryCollectionSnapshot = NSDiffableDataSourceSnapshot<CategoryColl
 final class CategoryTableViewCell: UITableViewCell {
         
     private var nameList: [CategoryCollectionViewCell.Item] = []
-    private var colors: [CategoryColor] = []
+    private var colorNames: [String] = []
     private var dataSource: CategoryCollectionDataSource?
     
     var onCategorySelected: ((String) -> ())?
@@ -59,6 +59,11 @@ final class CategoryTableViewCell: UITableViewCell {
         }
     }
     
+    @MainActor
+    private func color(name: String) -> UIColor {
+        UIColor(named: name) ?? .clear
+    }
+    
     private func createDiffableDataSource() {
         dataSource = CategoryCollectionDataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, item in
             guard let self else { return UICollectionViewCell() }
@@ -66,7 +71,7 @@ final class CategoryTableViewCell: UITableViewCell {
                 return UICollectionViewCell()
             }
             cell.configure(item: item)
-            cell.setBackgroundColor(color: self.colors[indexPath.row].uiColor)
+            cell.setBackgroundColor(color: self.color(name: self.colorNames[indexPath.row]))
             return cell
         }
     }
@@ -82,16 +87,17 @@ final class CategoryTableViewCell: UITableViewCell {
 extension CategoryTableViewCell {
     nonisolated struct Item: Hashable {
         let nameList: [CategoryCollectionViewCell.Item]
-        let colors: [CategoryColor]
+        let colorNames: [String]
         
         func hash(into hasher: inout Hasher) {
             hasher.combine(nameList)
+            hasher.combine(colorNames)
         }
     }
     
     func configure(item: Item) {
         self.nameList = item.nameList
-        self.colors = item.colors
+        self.colorNames = item.colorNames
         applySnapshot(items: item.nameList)
     }
 }

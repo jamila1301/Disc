@@ -103,7 +103,7 @@ final class CategoryViewController: UIViewController {
     private func applySnapshot() {
         var snapshot = CategorySnapshot()
         snapshot.appendSections([.main])
-        let item = CategoryTableViewCell.Item(nameList: viewModel.categories, colors: viewModel.colors)
+        let item = CategoryTableViewCell.Item(nameList: viewModel.categories, colorNames: viewModel.colors)
         snapshot.appendItems([item], toSection: .main)
         dataSource?.apply(snapshot, animatingDifferences: false)
     }
