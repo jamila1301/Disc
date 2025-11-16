@@ -24,12 +24,14 @@ final class TermsAndConditionsViewController: UIViewController {
         v.text = "profile_terms_intro".localized()
         v.font = .plusJakartaSansSemiBold16
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     
     private let bottomLabel: UILabel = {
         let v = UILabel()
         v.numberOfLines = .zero
+        v.textColor = .black
         
         let attributedText = NSMutableAttributedString()
         
@@ -66,7 +68,7 @@ final class TermsAndConditionsViewController: UIViewController {
         title = "profile_terms_title".localized()
         navigationController?.setNavigationBarHidden(false, animated: false)
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
     }

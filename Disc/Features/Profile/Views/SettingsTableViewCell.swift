@@ -27,6 +27,7 @@ final class SettingsTableViewCell: UITableViewCell {
         let v = UILabel()
         v.font = .plusJakartaSansSemiBold16
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     

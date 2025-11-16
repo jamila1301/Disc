@@ -35,6 +35,7 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
         v.text = "forgot_password_title".localized()
         v.font = .plusJakartaSansSemibold24
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     
@@ -110,7 +111,7 @@ final class ForgotPasswordViewController: UIViewController, Keyboardable {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tapGesture)
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
         

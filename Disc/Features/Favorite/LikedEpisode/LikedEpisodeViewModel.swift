@@ -40,7 +40,7 @@ final class LikedEpisodeViewModel {
     func fetchLikedEpisodes() async {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         do {
-            likedEpisodeList = try await FirestoreManager.shared.fetchLikedEpisodes(userId: userId)
+            likedEpisodeList = try await DIContainer.shared.firestoreManager.fetchLikedEpisodes(userId: userId)
             delegate?.reloadTableView()
         } catch {
             print(error.localizedDescription)
@@ -66,6 +66,6 @@ final class LikedEpisodeViewModel {
         
         let selectedEpisode = episodeList[index]
         
-        PlayerManager.shared.playEpisode(selectedEpisode, episodeList: episodeList)
+        DIContainer.shared.playerManager.playEpisode(selectedEpisode, episodeList: episodeList)
     }
 }

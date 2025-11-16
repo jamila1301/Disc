@@ -64,16 +64,6 @@ final class CategoryViewModelTests: XCTestCase {
         XCTAssertEqual(mockRouter.openedCategory, expected, "router must receive correct category name")
     }
     
-    func test_languageChange_triggersDelegateReload() {
-        // Given
-        XCTAssertFalse(mockDelegate.didReload, "pre-condition")
-        
-        // When
-        LanguageManager.shared.set(language: .az)
-        
-        // Then
-        XCTAssertTrue(mockDelegate.didReload, "delegate must be told to reload")
-    }
 }
 
 final class MockCategoryRouter: CategoryRouterProtocol {

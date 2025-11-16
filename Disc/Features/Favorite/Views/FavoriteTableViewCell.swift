@@ -29,7 +29,7 @@ final class FavoriteTableViewCell: UITableViewCell {
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.itemSize = .init(width: UIScreen.main.bounds.width / 2 - 32, height: 205)
+        layout.itemSize = .init(width: UIScreen.main.bounds.width / 2 - 32, height: 210)
         layout.minimumLineSpacing = 16
         layout.minimumInteritemSpacing = 16
         

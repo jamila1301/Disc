@@ -24,6 +24,7 @@ final class AccountDetailTableViewCell: UITableViewCell {
         v.font = .plusJakartaSansSemibold24
         v.textAlignment = .left
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     

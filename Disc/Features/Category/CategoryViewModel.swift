@@ -37,7 +37,7 @@ final class CategoryViewModel {
     init(router: CategoryRouterProtocol) {
         self.router = router
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.delegate?.reloadTableView()
         }
     }

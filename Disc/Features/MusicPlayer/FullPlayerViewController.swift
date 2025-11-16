@@ -226,7 +226,7 @@ final class FullPlayerViewController: UIViewController {
     }
     
     @objc private func updateUI(notification: Notification? = nil) {
-        let manager = PlayerManager.shared
+        let manager = DIContainer.shared.playerManager
         
         if manager.isEpisodeMode {
             if let episode = manager.currentEpisode {
@@ -264,45 +264,45 @@ final class FullPlayerViewController: UIViewController {
     }
     
     @objc private func updatePlayPauseIcon() {
-        let icon = PlayerManager.shared.isPlaying ? UIImage.pause : UIImage.play1
+        let icon = DIContainer.shared.playerManager.isPlaying ? UIImage.pause : UIImage.play1
         playPauseImageView.image = icon
     }
     
     @objc private func didTapPrevious() {
-        PlayerManager.shared.previous()
+        DIContainer.shared.playerManager.previous()
     }
     
     @objc private func didTapPlayPause() {
-        PlayerManager.shared.playPauseToggle()
+        DIContainer.shared.playerManager.playPauseToggle()
     }
     
     @objc private func didTapNext() {
-        PlayerManager.shared.next()
+        DIContainer.shared.playerManager.next()
     }
     
     @objc private func didTapHeart() {
-        let manager = PlayerManager.shared
+        let manager = DIContainer.shared.playerManager
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
         Task {
             do {
                 if manager.isEpisodeMode, let episode = manager.currentEpisode {
                     if isLiked {
-                        try await FirestoreManager.shared.removeLikedEpisode(userId: userId, episode: episode)
+                        try await DIContainer.shared.firestoreManager.removeLikedEpisode(userId: userId, episode: episode)
                         isLiked = false
                         heartButton.setImage(.heart, for: .normal)
                     } else {
-                        try await FirestoreManager.shared.saveLikedEpisode(userId: userId, episode: episode)
+                        try await DIContainer.shared.firestoreManager.saveLikedEpisode(userId: userId, episode: episode)
                         isLiked = true
                         heartButton.setImage(.heartFill, for: .normal)
                     }
                 } else if let track = manager.currentTrack {
                     if isLiked {
-                        try await FirestoreManager.shared.removeLikedMusic(userId: userId, track: track)
+                        try await DIContainer.shared.firestoreManager.removeLikedMusic(userId: userId, track: track)
                         isLiked = false
                         heartButton.setImage(.heart, for: .normal)
                     } else {
-                        try await FirestoreManager.shared.saveLikedMusic(userId: userId, track: track)
+                        try await DIContainer.shared.firestoreManager.saveLikedMusic(userId: userId, track: track)
                         isLiked = true
                         heartButton.setImage(.heartFill, for: .normal)
                     }
@@ -323,7 +323,7 @@ final class FullPlayerViewController: UIViewController {
         
         Task {
             do {
-                let likedTracks = try await FirestoreManager.shared.fetchLikedMusics(userId: userId)
+                let likedTracks = try await DIContainer.shared.firestoreManager.fetchLikedMusics(userId: userId)
                 isLiked = likedTracks.contains { $0.musicName == track.trackName && $0.artistName == track.artistName }
                 heartButton.setImage(isLiked ? .heartFill : .heart, for: .normal)
             } catch {
@@ -343,7 +343,7 @@ final class FullPlayerViewController: UIViewController {
         
         Task {
             do {
-                let likedEpisodes = try await FirestoreManager.shared.fetchLikedEpisodes(userId: userId)
+                let likedEpisodes = try await DIContainer.shared.firestoreManager.fetchLikedEpisodes(userId: userId)
                 isLiked = likedEpisodes.contains { $0.episodeName == episode.trackName }
                 heartButton.setImage(isLiked ? .heartFill : .heart, for: .normal)
             } catch {
@@ -355,7 +355,7 @@ final class FullPlayerViewController: UIViewController {
     }
     
     private func addPeriodicTimeObserver() {
-        guard let player = PlayerManager.shared.player else { return }
+        guard let player = DIContainer.shared.playerManager.player else { return }
         removePeriodicTimeObserver()
         observedPlayer = player
         
@@ -387,13 +387,13 @@ final class FullPlayerViewController: UIViewController {
     }
     
     @objc private func didTapRepeat() {
-        PlayerManager.shared.isRepeatEnabled.toggle()
-        repeatImageView.image = PlayerManager.shared.isRepeatEnabled ? .repeatOn : .repeatOff
+        DIContainer.shared.playerManager.isRepeatEnabled.toggle()
+        repeatImageView.image = DIContainer.shared.playerManager.isRepeatEnabled ? .repeatOn : .repeatOff
     }
     
     @objc private func didTapShuffle() {
-        PlayerManager.shared.isShuffleEnabled.toggle()
-        shuffleImageView.image = PlayerManager.shared.isShuffleEnabled ? .shuffleOn : .shuffleOff
+        DIContainer.shared.playerManager.isShuffleEnabled.toggle()
+        shuffleImageView.image = DIContainer.shared.playerManager.isShuffleEnabled ? .shuffleOn : .shuffleOff
     }
 
 }

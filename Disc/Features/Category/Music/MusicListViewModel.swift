@@ -28,7 +28,7 @@ final class MusicListViewModel {
     
     func fetchData() async {
         do {
-            let musicTracks = try await ITunesService.shared.fetchMusic(term: category, limit: 200)
+            let musicTracks = try await DIContainer.shared.networkService.fetchMusic(term: category, limit: 200)
             self.items = musicTracks.map { track in
                 MusicTableViewCell.Item(
                     trackId: track.trackId,
@@ -66,7 +66,7 @@ final class MusicListViewModel {
             )
         }
         
-        PlayerManager.shared.playHomeMusic(track, trackList: tracks)
+        DIContainer.shared.playerManager.playHomeMusic(track, trackList: tracks)
     }
 
 }

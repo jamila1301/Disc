@@ -40,7 +40,7 @@ final class LikedMusicViewModel {
     func fetchLikedMusics() async {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         do {
-            likedMusicList = try await FirestoreManager.shared.fetchLikedMusics(userId: userId)
+            likedMusicList = try await DIContainer.shared.firestoreManager.fetchLikedMusics(userId: userId)
             delegate?.reloadTableView()
         } catch {
             print(error.localizedDescription)
@@ -63,6 +63,6 @@ final class LikedMusicViewModel {
         
         let selectedTrack = trackList[index]
         
-        PlayerManager.shared.playHomeMusic(selectedTrack, trackList: trackList)
+        DIContainer.shared.playerManager.playHomeMusic(selectedTrack, trackList: trackList)
     }
 }

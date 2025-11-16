@@ -55,7 +55,7 @@ final class AccountViewModel {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
         do {
-            let urlString = try await FirebaseStorageManager.shared.uploadProfileImage(image, for: uid)
+            let urlString = try await DIContainer.shared.storageManager.uploadProfileImage(image, for: uid)
             
             try await db.collection("users").document(uid).updateData([
                 "profileImageURL": urlString

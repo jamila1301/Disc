@@ -17,7 +17,7 @@ typealias LanguageSnapshot = NSDiffableDataSourceSnapshot<LanguageSection, Langu
 
 final class LanguageViewController: UIViewController {
     
-    private let languageManager = LanguageManager.shared
+    private let languageManager = DIContainer.shared.languageManager
     private var dataSource: LanguageDataSource?
     
     private let languageItems: [LanguageTableViewCell.Item] = [
@@ -71,7 +71,7 @@ final class LanguageViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissView))
         backgroundView.addGestureRecognizer(tapGesture)
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
     }

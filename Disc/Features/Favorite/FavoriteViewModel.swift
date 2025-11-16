@@ -17,7 +17,7 @@ final class FavoriteViewModel {
         self.router = router
         setupFavorites()
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.setupFavorites()
         }
 

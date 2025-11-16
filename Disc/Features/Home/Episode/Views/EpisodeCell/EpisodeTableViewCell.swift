@@ -22,6 +22,7 @@ final class EpisodeTableViewCell: UITableViewCell {
         let v = UILabel()
         v.font = .plusJakartaSansSemiBold14
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     

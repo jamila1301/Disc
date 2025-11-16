@@ -12,11 +12,8 @@ protocol ITunesNetworkServiceProtocol {
 }
 
 final class ITunesService: ITunesNetworkServiceProtocol {
-    
-    static let shared = ITunesService()
+
     private let apiService: ITunesAPIService = URLSessionITunesAdapter()
-    
-    private init() {}
     
     func fetchMusic(term: String, limit: Int) async throws -> [Track] {
         let response = try await apiService.fetchMusic(term: term, limit: limit)

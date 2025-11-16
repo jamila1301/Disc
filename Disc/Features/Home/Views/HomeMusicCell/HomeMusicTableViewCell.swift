@@ -30,6 +30,7 @@ final class HomeMusicTableViewCell: UITableViewCell {
         v.font = .plusJakartaSansSemiBold18
         v.numberOfLines = .zero
         v.textAlignment = .left
+        v.textColor = .black
         return v
     }()
     

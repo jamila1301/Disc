@@ -24,12 +24,14 @@ final class AboutViewController: UIViewController {
         v.text = "profile_about_description".localized()
         v.font = .plusJakartaSansMedium16
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     
     private let mediumLabel: UILabel = {
         let v = UILabel()
         v.numberOfLines = .zero
+        v.textColor = .black
         
         let attributedText = NSMutableAttributedString()
         
@@ -61,6 +63,7 @@ final class AboutViewController: UIViewController {
         v.text = "profile_mission_description".localized()
         v.font = .plusJakartaSansMedium16
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     
@@ -70,7 +73,7 @@ final class AboutViewController: UIViewController {
         title = "profile_about_title".localized()
         navigationController?.setNavigationBarHidden(false, animated: false)
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
     }

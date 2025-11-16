@@ -61,7 +61,7 @@ final class EpisodeViewController: UIViewController {
         Task {
             await viewModel.fetchData()
         }
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
     }

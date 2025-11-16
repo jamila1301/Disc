@@ -9,7 +9,7 @@ import Foundation
 
 extension String {
     func localized() -> String {
-        if let path = Bundle.main.path(forResource: LanguageManager.shared.get().rawValue, ofType: "lproj"),
+        if let path = Bundle.main.path(forResource: DIContainer.shared.languageManager.get().rawValue, ofType: "lproj"),
            let bundle = Bundle(path: path) {
             return NSLocalizedString(self, bundle: bundle, comment: "")
         }

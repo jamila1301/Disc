@@ -9,10 +9,7 @@ import FirebaseFirestore
 import FirebaseAuth
 
 class FirestoreManager {
-    static let shared = FirestoreManager()
     private let db = Firestore.firestore()
-    
-    private init() {}
     
     func saveLikedMusic(userId: String, track: Track) async throws {
         let data: [String: Any] = [

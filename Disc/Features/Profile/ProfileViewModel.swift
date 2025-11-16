@@ -40,7 +40,7 @@ final class ProfileViewModel {
     init(router: ProfileRouterProtocol) {
         self.router = router
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             Task { self?.startListeningProfile() }
         }
     }
@@ -53,7 +53,7 @@ final class ProfileViewModel {
         
         profileListener = db.collection("users").document(uid)
             .addSnapshotListener { [weak self] snapshot, error in
-                guard let self = self else { return }
+                guard let self else { return }
                 
                 if let error = error {
                     print(error.localizedDescription)

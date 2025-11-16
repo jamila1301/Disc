@@ -42,6 +42,7 @@ final class SearchViewController: UIViewController, Keyboardable {
         v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     
@@ -113,7 +114,7 @@ final class SearchViewController: UIViewController, Keyboardable {
         tapGesture.cancelsTouchesInView = false
         view.addGestureRecognizer(tapGesture)
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
     }

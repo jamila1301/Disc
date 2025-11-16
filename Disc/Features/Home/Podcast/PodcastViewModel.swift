@@ -26,7 +26,7 @@ final class PodcastViewModel {
     
     func fetchData() async {
         do {
-            let podcastTracks = try await ITunesService.shared.fetchPodcast(term: "podcast", limit: 200)
+            let podcastTracks = try await DIContainer.shared.networkService.fetchPodcast(term: "podcast", limit: 200)
             self.items = podcastTracks.map { podcast in
                 PodcastTableViewCell.Item(
                     image: podcast.artworkUrl100,

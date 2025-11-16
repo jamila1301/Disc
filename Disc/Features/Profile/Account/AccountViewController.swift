@@ -38,7 +38,7 @@ final class AccountViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
         title = "profile_account_title".localized()
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
         
@@ -88,7 +88,6 @@ final class AccountViewController: UIViewController {
         }
     }
 
-    
     @objc private func didTapAddPhotoButton() {
         let picker = UIImagePickerController()
         picker.sourceType = .photoLibrary
