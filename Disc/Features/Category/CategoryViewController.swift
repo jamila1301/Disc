@@ -26,6 +26,7 @@ final class CategoryViewController: UIViewController {
         v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     
@@ -55,7 +56,7 @@ final class CategoryViewController: UIViewController {
         setupUI()
         viewModel.delegate = self
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
     }
@@ -85,7 +86,7 @@ final class CategoryViewController: UIViewController {
     
     private func createDiffableDataSource() {
         dataSource = CategoryDataSource(tableView: tableView) { [weak self] tableView, indexPath, item in
-            guard let self = self else { return UITableViewCell() }
+            guard let self else { return UITableViewCell() }
             guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryTableViewCell.identifier, for: indexPath) as? CategoryTableViewCell else {
                 return UITableViewCell()
             }
@@ -103,7 +104,7 @@ final class CategoryViewController: UIViewController {
     private func applySnapshot() {
         var snapshot = CategorySnapshot()
         snapshot.appendSections([.main])
-        let item = CategoryTableViewCell.Item(nameList: viewModel.categories, colors: viewModel.colors)
+        let item = CategoryTableViewCell.Item(nameList: viewModel.categories, colorNames: viewModel.colors)
         snapshot.appendItems([item], toSection: .main)
         dataSource?.apply(snapshot, animatingDifferences: false)
     }

@@ -25,9 +25,7 @@ enum Language: String, CaseIterable {
 }
 
 final class LanguageManager {
-    private let userDefaults: UserDefaultsHelper = UserDefaultsHelperImpl.shared
-    
-    static let shared = LanguageManager ()
+    private let userDefaults: UserDefaultsHelper = DIContainer.shared.userDefaultsHelper
     
     private var languageChangeCallbacks: [() -> Void] = []
     

@@ -9,10 +9,10 @@ import UIKit
 import AVFoundation
 
 final class PlayerManager {
-    static let shared = PlayerManager()
-    private init() {}
     
     var player: AVPlayer?
+    var isRepeatEnabled = false
+    var isShuffleEnabled = false
     
     private(set) var trackList: [Track] = []
     private(set) var currentTrackIndex: Int = 0
@@ -108,12 +108,20 @@ final class PlayerManager {
     func next() {
         if isEpisodeMode {
             guard !episodeList.isEmpty else { return }
-            currentEpisodeIndex = (currentEpisodeIndex + 1) % episodeList.count
-            playCurrentEpisode()
+            if isShuffleEnabled {
+                playRandomEpisode()
+            } else {
+                currentEpisodeIndex = (currentEpisodeIndex + 1) % episodeList.count
+                playCurrentEpisode()
+            }
         } else {
             guard !trackList.isEmpty else { return }
-            currentTrackIndex = (currentTrackIndex + 1) % trackList.count
-            playCurrentTrack()
+            if isShuffleEnabled {
+                playRandomTrack()
+            } else {
+                currentTrackIndex = (currentTrackIndex + 1) % trackList.count
+                playCurrentTrack()
+            }
         }
     }
     
@@ -142,8 +150,26 @@ final class PlayerManager {
         NotificationCenter.default.post(name: .didStopPlaying, object: nil)
     }
     
+    private func playRandomTrack() {
+        guard !trackList.isEmpty else { return }
+        currentTrackIndex = Int.random(in: 0..<trackList.count)
+        playCurrentTrack()
+    }
+    
+    private func playRandomEpisode() {
+        guard !episodeList.isEmpty else { return }
+        currentEpisodeIndex = Int.random(in: 0..<episodeList.count)
+        playCurrentEpisode()
+    }
+    
     @objc private func playerItemDidFinish(_ notification: Notification) {
-        next()
+        if isRepeatEnabled {
+            player?.seek(to: .zero)
+            player?.play()
+            NotificationCenter.default.post(name: .didUpdatePlayState, object: nil)
+        } else {
+            next()
+        }
     }
 }
 

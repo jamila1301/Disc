@@ -47,6 +47,7 @@ final class CustomTextField: UIView {
         v.isSecureTextEntry = true
         v.autocapitalizationType = .none
         v.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        v.textColor = .black
         return v
     }()
     

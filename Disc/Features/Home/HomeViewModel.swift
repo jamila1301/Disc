@@ -43,15 +43,15 @@ final class HomeViewModel {
             await fetchData()
         }
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             Task { await self?.fetchData() }
         }
     }
     
     func fetchData() async {
         do {
-            async let trackResult = ITunesService.shared.fetchMusic(term: "Too Good at Goodbyes", limit: 1)
-            async let trackResult2 = ITunesService.shared.fetchMusic(term: "Sia", limit: 1)
+            async let trackResult = DIContainer.shared.networkService.fetchMusic(term: "Too Good at Goodbyes", limit: 1)
+            async let trackResult2 = DIContainer.shared.networkService.fetchMusic(term: "Sia", limit: 1)
             let (tracks1, tracks2) = try await (trackResult, trackResult2)
             let allTracks = tracks1 + tracks2
             
@@ -69,7 +69,7 @@ final class HomeViewModel {
                 ))
             }
             
-            let musicTracks = try await ITunesService.shared.fetchMusic(term: "music", limit: 5)
+            let musicTracks = try await DIContainer.shared.networkService.fetchMusic(term: "music", limit: 5)
             let musicItems: [HomeMusicCollectionViewCell.Item] = musicTracks.map { track in
                     .init(
                         trackId: track.trackId,
@@ -80,7 +80,7 @@ final class HomeViewModel {
                     )
             }
             
-            let podcastTracks = try await ITunesService.shared.fetchPodcast(term: "podcast", limit: 5)
+            let podcastTracks = try await DIContainer.shared.networkService.fetchPodcast(term: "podcast", limit: 5)
             let podcastItems: [HomePodcastCollectionViewCell.Item] = podcastTracks.map { podcast in
                     .init(
                         image: podcast.artworkUrl100,
@@ -116,7 +116,7 @@ final class HomeViewModel {
     }
     
     func playBannerTrack(item: HomeBannerCollectionViewCell.Item) async {
-        guard let musicTracks = try? await ITunesService.shared.fetchMusic(term: "music", limit: 199) else { return }
+        guard let musicTracks = try? await DIContainer.shared.networkService.fetchMusic(term: "music", limit: 199) else { return }
         
         let track = Track(
             trackId: item.trackId,
@@ -138,11 +138,11 @@ final class HomeViewModel {
             )
         }
         
-        PlayerManager.shared.playBannerTrack(track, trackList: tracks)
+        DIContainer.shared.playerManager.playBannerTrack(track, trackList: tracks)
     }
     
     func playHomeMusic(item: HomeMusicCollectionViewCell.Item) async {
-        guard let musicTracks = try? await ITunesService.shared.fetchMusic(term: "music", limit: 199) else { return }
+        guard let musicTracks = try? await DIContainer.shared.networkService.fetchMusic(term: "music", limit: 199) else { return }
         
         let track = Track(
             trackId: item.trackId,
@@ -164,7 +164,7 @@ final class HomeViewModel {
             )
         }
         
-        PlayerManager.shared.playHomeMusic(track, trackList: tracks)
+        DIContainer.shared.playerManager.playHomeMusic(track, trackList: tracks)
     }
 
 }

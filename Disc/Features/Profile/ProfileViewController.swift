@@ -62,7 +62,7 @@ final class ProfileViewController: UIViewController {
         createDiffableDataSource()
         setupUI()
         viewModel.delegate = self
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
         
@@ -90,7 +90,7 @@ final class ProfileViewController: UIViewController {
         }
         logoutButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-100)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-40)
             make.width.equalTo(180)
             make.height.equalTo(44)
         }

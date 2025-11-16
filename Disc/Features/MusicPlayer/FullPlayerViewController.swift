@@ -102,6 +102,26 @@ final class FullPlayerViewController: UIViewController {
         return v
     }()
     
+    private lazy var repeatImageView: UIImageView = {
+        let v = UIImageView()
+        v.image = .repeatOff
+        v.tintColor = .black
+        let repeatTap = UITapGestureRecognizer(target: self, action: #selector(didTapRepeat))
+        v.addGestureRecognizer(repeatTap)
+        v.isUserInteractionEnabled = true
+        return v
+    }()
+    
+    private lazy var shuffleImageView: UIImageView = {
+        let v = UIImageView()
+        v.image = .shuffleOff
+        v.tintColor = .black
+        let shuffleTap = UITapGestureRecognizer(target: self, action: #selector(didTapShuffle))
+        v.addGestureRecognizer(shuffleTap)
+        v.isUserInteractionEnabled = true
+        return v
+    }()
+    
     private var timeObserverToken: Any?
     private weak var observedPlayer: AVPlayer?
     private var isLiked: Bool = false
@@ -126,7 +146,7 @@ final class FullPlayerViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .white
         
-        [albumImageView, songTitleLabel, artistLabel, heartButton, progressView, currentTimeLabel, remainingTimeLabel, previousImageView, playPauseImageView, nextImageView].forEach { v in
+        [albumImageView, songTitleLabel, artistLabel, heartButton, progressView, currentTimeLabel, remainingTimeLabel, previousImageView, playPauseImageView, nextImageView, repeatImageView, shuffleImageView].forEach { v in
             view.addSubview(v)
         }
         
@@ -176,14 +196,26 @@ final class FullPlayerViewController: UIViewController {
         
         previousImageView.snp.makeConstraints { make in
             make.centerY.equalTo(playPauseImageView.snp.centerY)
-            make.trailing.equalTo(playPauseImageView.snp.leading).offset(-44)
+            make.trailing.equalTo(playPauseImageView.snp.leading).offset(-40)
             make.size.equalTo(40)
         }
         
         nextImageView.snp.makeConstraints { make in
             make.centerY.equalTo(playPauseImageView.snp.centerY)
-            make.leading.equalTo(playPauseImageView.snp.trailing).offset(44)
+            make.leading.equalTo(playPauseImageView.snp.trailing).offset(40)
             make.size.equalTo(40)
+        }
+        
+        shuffleImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(previousImageView)
+            make.trailing.equalTo(previousImageView.snp.leading).offset(-30)
+            make.size.equalTo(28)
+        }
+        
+        repeatImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(nextImageView)
+            make.leading.equalTo(nextImageView.snp.trailing).offset(30)
+            make.size.equalTo(24)
         }
     }
     
@@ -194,7 +226,7 @@ final class FullPlayerViewController: UIViewController {
     }
     
     @objc private func updateUI(notification: Notification? = nil) {
-        let manager = PlayerManager.shared
+        let manager = DIContainer.shared.playerManager
         
         if manager.isEpisodeMode {
             if let episode = manager.currentEpisode {
@@ -214,6 +246,8 @@ final class FullPlayerViewController: UIViewController {
         
         updatePlayPauseIcon()
         addPeriodicTimeObserver()
+        repeatImageView.image = manager.isRepeatEnabled ? .repeatOn : .repeatOff
+        shuffleImageView.image = manager.isShuffleEnabled ? .shuffleOn : .shuffleOff
     }
     
     @objc private func resetUI() {
@@ -230,45 +264,45 @@ final class FullPlayerViewController: UIViewController {
     }
     
     @objc private func updatePlayPauseIcon() {
-        let icon = PlayerManager.shared.isPlaying ? UIImage.pause : UIImage.play1
+        let icon = DIContainer.shared.playerManager.isPlaying ? UIImage.pause : UIImage.play1
         playPauseImageView.image = icon
     }
     
     @objc private func didTapPrevious() {
-        PlayerManager.shared.previous()
+        DIContainer.shared.playerManager.previous()
     }
     
     @objc private func didTapPlayPause() {
-        PlayerManager.shared.playPauseToggle()
+        DIContainer.shared.playerManager.playPauseToggle()
     }
     
     @objc private func didTapNext() {
-        PlayerManager.shared.next()
+        DIContainer.shared.playerManager.next()
     }
     
     @objc private func didTapHeart() {
-        let manager = PlayerManager.shared
+        let manager = DIContainer.shared.playerManager
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
         Task {
             do {
                 if manager.isEpisodeMode, let episode = manager.currentEpisode {
                     if isLiked {
-                        try await FirestoreManager.shared.removeLikedEpisode(userId: userId, episode: episode)
+                        try await DIContainer.shared.firestoreManager.removeLikedEpisode(userId: userId, episode: episode)
                         isLiked = false
                         heartButton.setImage(.heart, for: .normal)
                     } else {
-                        try await FirestoreManager.shared.saveLikedEpisode(userId: userId, episode: episode)
+                        try await DIContainer.shared.firestoreManager.saveLikedEpisode(userId: userId, episode: episode)
                         isLiked = true
                         heartButton.setImage(.heartFill, for: .normal)
                     }
                 } else if let track = manager.currentTrack {
                     if isLiked {
-                        try await FirestoreManager.shared.removeLikedMusic(userId: userId, track: track)
+                        try await DIContainer.shared.firestoreManager.removeLikedMusic(userId: userId, track: track)
                         isLiked = false
                         heartButton.setImage(.heart, for: .normal)
                     } else {
-                        try await FirestoreManager.shared.saveLikedMusic(userId: userId, track: track)
+                        try await DIContainer.shared.firestoreManager.saveLikedMusic(userId: userId, track: track)
                         isLiked = true
                         heartButton.setImage(.heartFill, for: .normal)
                     }
@@ -289,7 +323,7 @@ final class FullPlayerViewController: UIViewController {
         
         Task {
             do {
-                let likedTracks = try await FirestoreManager.shared.fetchLikedMusics(userId: userId)
+                let likedTracks = try await DIContainer.shared.firestoreManager.fetchLikedMusics(userId: userId)
                 isLiked = likedTracks.contains { $0.musicName == track.trackName && $0.artistName == track.artistName }
                 heartButton.setImage(isLiked ? .heartFill : .heart, for: .normal)
             } catch {
@@ -309,7 +343,7 @@ final class FullPlayerViewController: UIViewController {
         
         Task {
             do {
-                let likedEpisodes = try await FirestoreManager.shared.fetchLikedEpisodes(userId: userId)
+                let likedEpisodes = try await DIContainer.shared.firestoreManager.fetchLikedEpisodes(userId: userId)
                 isLiked = likedEpisodes.contains { $0.episodeName == episode.trackName }
                 heartButton.setImage(isLiked ? .heartFill : .heart, for: .normal)
             } catch {
@@ -321,7 +355,7 @@ final class FullPlayerViewController: UIViewController {
     }
     
     private func addPeriodicTimeObserver() {
-        guard let player = PlayerManager.shared.player else { return }
+        guard let player = DIContainer.shared.playerManager.player else { return }
         removePeriodicTimeObserver()
         observedPlayer = player
         
@@ -351,4 +385,15 @@ final class FullPlayerViewController: UIViewController {
         let seconds = totalSeconds % 60
         return String(format: "%d:%02d", minutes, seconds)
     }
+    
+    @objc private func didTapRepeat() {
+        DIContainer.shared.playerManager.isRepeatEnabled.toggle()
+        repeatImageView.image = DIContainer.shared.playerManager.isRepeatEnabled ? .repeatOn : .repeatOff
+    }
+    
+    @objc private func didTapShuffle() {
+        DIContainer.shared.playerManager.isShuffleEnabled.toggle()
+        shuffleImageView.image = DIContainer.shared.playerManager.isShuffleEnabled ? .shuffleOn : .shuffleOff
+    }
+
 }

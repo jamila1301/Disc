@@ -22,6 +22,7 @@ final class LikedMusicTableViewCell: UITableViewCell {
         let v = UILabel()
         v.font = .plusJakartaSansSemiBold14
         v.numberOfLines = 1
+        v.textColor = .black
         return v
     }()
     

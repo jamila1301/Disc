@@ -24,6 +24,7 @@ final class AccountDetailTableViewCell: UITableViewCell {
         v.font = .plusJakartaSansSemibold24
         v.textAlignment = .left
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     
@@ -77,7 +78,7 @@ final class AccountDetailTableViewCell: UITableViewCell {
         
         mainStackView.snp.makeConstraints { make in
             make.top.horizontalEdges.equalToSuperview()
-            make.bottom.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview().inset(30)
         }
     }
 }

@@ -27,6 +27,7 @@ final class FavoriteViewController: UIViewController {
         v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     
@@ -61,12 +62,11 @@ final class FavoriteViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         createDiffableDataSource()
-        applySnapshot()
         setupUI()
         lottieView.play()
         lottieView.loopMode = .loop
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
     }

@@ -10,14 +10,12 @@ import UIKit
 protocol OnboardingRouterProtocol {
     var view: UIViewController? { get set }
     
-    @MainActor
     func navigateToLogin()
 }
 
 final class OnboardingRouter: OnboardingRouterProtocol {
     weak var view: UIViewController? = nil
     
-    @MainActor
     func navigateToLogin() {
         let loginVC = LoginBuilder().build()
         view?.navigationController?.pushViewController(loginVC, animated: true)

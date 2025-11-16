@@ -25,6 +25,7 @@ final class OnboardingViewController: UIViewController {
         v.numberOfLines = 0
         v.font = .plusJakartaSansSemiBold36
         v.textAlignment = .center
+        v.textColor = .black
         return v
     }()
     
@@ -79,7 +80,7 @@ final class OnboardingViewController: UIViewController {
         setupUI()
         navigationController?.setNavigationBarHidden(true, animated: false)
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
     }

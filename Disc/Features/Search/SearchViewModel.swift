@@ -20,8 +20,8 @@ final class SearchViewModel {
     private var router: SearchRouterProtocol
     weak var delegate: SearchViewModelDelegate? = nil
     
-    private(set) var musicItems: [MusicTableViewCell.Item] = []
-    private(set) var podcastItems: [PodcastTableViewCell.Item] = []
+    var musicItems: [MusicTableViewCell.Item] = []
+    var podcastItems: [PodcastTableViewCell.Item] = []
     
     init(router: SearchRouterProtocol) {
         self.router = router
@@ -39,8 +39,8 @@ final class SearchViewModel {
         delegate?.showLoading()
         
         do {
-            async let musicResults = ITunesService.shared.fetchMusic(term: trimmed, limit: 200)
-            async let podcastResults = ITunesService.shared.fetchPodcast(term: trimmed, limit: 200)
+            async let musicResults = DIContainer.shared.networkService.fetchMusic(term: trimmed, limit: 200)
+            async let podcastResults = DIContainer.shared.networkService.fetchPodcast(term: trimmed, limit: 200)
             
             let (musicTracks, podcastTracks) = try await (musicResults, podcastResults)
             
@@ -101,7 +101,7 @@ final class SearchViewModel {
             )
         }
         
-        PlayerManager.shared.playHomeMusic(track, trackList: tracks)
+        DIContainer.shared.playerManager.playHomeMusic(track, trackList: tracks)
     }
 
     func resetState() {

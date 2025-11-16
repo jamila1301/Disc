@@ -27,6 +27,7 @@ final class HomeViewController: UIViewController {
         v.font = .plusJakartaSansSemiBold20
         v.textAlignment = .left
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     
@@ -132,7 +133,7 @@ final class HomeViewController: UIViewController {
     
     private func createDiffableDataSource() {
         dataSource = HomeDataSource(tableView: tableView) { [weak self] tableView, indexPath, item in
-            guard let self = self else { return UITableViewCell() }
+            guard let self else { return UITableViewCell() }
             
             switch item {
             case .banner(let model):

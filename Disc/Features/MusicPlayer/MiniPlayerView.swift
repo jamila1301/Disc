@@ -136,7 +136,7 @@ final class MiniPlayerView: UIView {
     }
         
     @objc private func updateUI(_ notification: Notification) {
-        let manager = PlayerManager.shared
+        let manager = DIContainer.shared.playerManager
         
         if manager.isEpisodeMode {
             if let episode = notification.object as? Episode {
@@ -157,7 +157,7 @@ final class MiniPlayerView: UIView {
 
     
     @objc private func updatePlayPauseIcon() {
-        let icon = PlayerManager.shared.isPlaying ? UIImage.pause : UIImage.play1
+        let icon = DIContainer.shared.playerManager.isPlaying ? UIImage.pause : UIImage.play1
         playPauseButton.setImage(icon, for: .normal)
     }
     
@@ -173,14 +173,14 @@ final class MiniPlayerView: UIView {
     }
     
     @objc private func didTapPlayPause() {
-        PlayerManager.shared.playPauseToggle()
+        DIContainer.shared.playerManager.playPauseToggle()
     }
     
     @objc private func didTapNext() {
-        PlayerManager.shared.next()
+        DIContainer.shared.playerManager.next()
     }
     
     @objc private func didTapPrevious() {
-        PlayerManager.shared.previous()
+        DIContainer.shared.playerManager.previous()
     }
 }

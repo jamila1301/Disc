@@ -20,8 +20,6 @@ final class UserDefaultsHelperImpl: UserDefaultsHelper {
     
     private let userDefault: UserDefaults = UserDefaults.standard
     
-    static let shared = UserDefaultsHelperImpl()
-    
     func save(key: UserDefaultKey, value: String) {
         userDefault.set(value, forKey: key.rawValue)
     }

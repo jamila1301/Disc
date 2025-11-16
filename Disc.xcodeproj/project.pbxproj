@@ -20,8 +20,19 @@
 		3BF3A1DE2E92F0F300A0D290 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 3BF3A1DD2E92F0F300A0D290 /* FacebookLogin */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		3B9060722EBD130C0063C5A6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B70416B2E8EEB1100CB8FFE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B7041722E8EEB1100CB8FFE;
+			remoteInfo = Disc;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		3B7041732E8EEB1200CB8FFE /* Disc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Disc.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B90606E2EBD130C0063C5A6 /* DiscTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DiscTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -41,6 +52,11 @@
 				3B7041852E8EEB1400CB8FFE /* Exceptions for "Disc" folder in "Disc" target */,
 			);
 			path = Disc;
+			sourceTree = "<group>";
+		};
+		3B90606F2EBD130C0063C5A6 /* DiscTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = DiscTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -64,6 +80,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3B90606B2EBD130C0063C5A6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -71,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				3B7041752E8EEB1200CB8FFE /* Disc */,
+				3B90606F2EBD130C0063C5A6 /* DiscTests */,
 				3B7041742E8EEB1200CB8FFE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -79,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				3B7041732E8EEB1200CB8FFE /* Disc.app */,
+				3B90606E2EBD130C0063C5A6 /* DiscTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -119,6 +144,29 @@
 			productReference = 3B7041732E8EEB1200CB8FFE /* Disc.app */;
 			productType = "com.apple.product-type.application";
 		};
+		3B90606D2EBD130C0063C5A6 /* DiscTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B9060762EBD130C0063C5A6 /* Build configuration list for PBXNativeTarget "DiscTests" */;
+			buildPhases = (
+				3B90606A2EBD130C0063C5A6 /* Sources */,
+				3B90606B2EBD130C0063C5A6 /* Frameworks */,
+				3B90606C2EBD130C0063C5A6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3B9060732EBD130C0063C5A6 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				3B90606F2EBD130C0063C5A6 /* DiscTests */,
+			);
+			name = DiscTests;
+			packageProductDependencies = (
+			);
+			productName = DiscTests;
+			productReference = 3B90606E2EBD130C0063C5A6 /* DiscTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -127,10 +175,15 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					3B7041722E8EEB1100CB8FFE = {
 						CreatedOnToolsVersion = 26.0;
+					};
+					3B90606D2EBD130C0063C5A6 = {
+						CreatedOnToolsVersion = 26.0.1;
+						LastSwiftMigration = 2600;
+						TestTargetID = 3B7041722E8EEB1100CB8FFE;
 					};
 				};
 			};
@@ -159,12 +212,20 @@
 			projectRoot = "";
 			targets = (
 				3B7041722E8EEB1100CB8FFE /* Disc */,
+				3B90606D2EBD130C0063C5A6 /* DiscTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		3B7041712E8EEB1100CB8FFE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3B90606C2EBD130C0063C5A6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -181,7 +242,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3B90606A2EBD130C0063C5A6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3B9060732EBD130C0063C5A6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3B7041722E8EEB1100CB8FFE /* Disc */;
+			targetProxy = 3B9060722EBD130C0063C5A6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3B7041872E8EEB1400CB8FFE /* Debug */ = {
@@ -310,6 +386,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -368,8 +445,54 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3B9060742EBD130C0063C5A6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2H5H8AUKBK;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamilamahammadli.DiscTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Disc.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Disc";
+			};
+			name = Debug;
+		};
+		3B9060752EBD130C0063C5A6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2H5H8AUKBK;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamilamahammadli.DiscTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Disc.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Disc";
 			};
 			name = Release;
 		};
@@ -390,6 +513,15 @@
 			buildConfigurations = (
 				3B7041872E8EEB1400CB8FFE /* Debug */,
 				3B7041882E8EEB1400CB8FFE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3B9060762EBD130C0063C5A6 /* Build configuration list for PBXNativeTarget "DiscTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3B9060742EBD130C0063C5A6 /* Debug */,
+				3B9060752EBD130C0063C5A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

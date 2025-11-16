@@ -45,6 +45,7 @@ final class LoginViewController: UIViewController, Keyboardable {
         v.text = "signin_title".localized()
         v.font = .plusJakartaSansSemibold24
         v.numberOfLines = .zero
+        v.textColor = .black
         return v
     }()
     
@@ -273,7 +274,7 @@ final class LoginViewController: UIViewController, Keyboardable {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         scrollView.addGestureRecognizer(tapGesture)
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.didChangeLanguage()
         }
         

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 protocol CategoryViewModelDelegate: AnyObject {
     func reloadTableView()
@@ -27,12 +26,18 @@ final class CategoryViewModel {
         categoryKeys.map { CategoryCollectionViewCell.Item(categoryName: $0.localized()) }
     }
     
-    let colors: [CategoryColor] = CategoryColor.allCases
+    let colors: [String] = [
+        "CategoryRedColor", "CategoryBlueColor", "CategoryPurpleColor",
+        "CategoryOrangeColor", "CategoryGrayColor", "CategoryDarkPurpleColor",
+        "CategoryDarkOrangeColor", "CategoryVioletColor", "CategoryPinkColor",
+        "CategoryTealColor", "CategoryNavyColor", "CategoryGreenColor",
+        "CategoryOliveColor", "CategoryDarkOrangeAltColor"
+    ]
     
     init(router: CategoryRouterProtocol) {
         self.router = router
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             self?.delegate?.reloadTableView()
         }
     }
@@ -42,27 +47,4 @@ final class CategoryViewModel {
         router.openMusicList(category: category)
     }
     
-}
-
-enum CategoryColor: CaseIterable {
-    case red, blue, purple, orange, gray, darkPurple, darkOrange, violet, pink, teal, navy, green, olive, darkOrangeAlt
-    
-    var uiColor: UIColor {
-        switch self {
-        case .red: return UIColor(named: "CategoryRedColor") ?? .red
-        case .blue: return UIColor(named: "CategoryBlueColor") ?? .blue
-        case .purple: return UIColor(named: "CategoryPurpleColor") ?? .purple
-        case .orange: return UIColor(named: "CategoryOrangeColor") ?? .orange
-        case .gray: return UIColor(named: "CategoryGrayColor") ?? .gray
-        case .darkPurple: return UIColor(named: "CategoryDarkPurpleColor") ?? .purple
-        case .darkOrange: return UIColor(named: "CategoryDarkOrangeColor") ?? .orange
-        case .violet: return UIColor(named: "CategoryVioletColor") ?? .purple
-        case .pink: return UIColor(named: "CategoryPinkColor") ?? .systemPink
-        case .teal: return UIColor(named: "CategoryTealColor") ?? .systemTeal
-        case .navy: return UIColor(named: "CategoryNavyColor") ?? .blue
-        case .green: return UIColor(named: "CategoryGreenColor") ?? .green
-        case .olive: return UIColor(named: "CategoryOliveColor") ?? .brown
-        case .darkOrangeAlt: return UIColor(named: "CategoryDarkOrangeAltColor") ?? .orange
-        }
-    }
 }

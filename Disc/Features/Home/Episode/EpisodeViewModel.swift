@@ -25,14 +25,14 @@ final class EpisodeViewModel {
             await fetchData()
         }
         
-        LanguageManager.shared.addLanguageChangeListener { [weak self] in
+        DIContainer.shared.languageManager.addLanguageChangeListener { [weak self] in
             Task { await self?.fetchData() }
         }
     }
     
     func fetchData() async {
         do {
-            let episodeTracks = try await ITunesService.shared.fetchEpisode(for: collectionId)
+            let episodeTracks = try await DIContainer.shared.networkService.fetchEpisode(collectionId: collectionId)
             self.items = episodeTracks.map { episode in
                 EpisodeTableViewCell.Item(
                     trackId: episode.trackId,
@@ -76,6 +76,6 @@ final class EpisodeViewModel {
             )
         }
         
-        PlayerManager.shared.playEpisode(episode, episodeList: episodes)
+        DIContainer.shared.playerManager.playEpisode(episode, episodeList: episodes)
     }
 }
